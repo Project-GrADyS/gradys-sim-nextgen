@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from protocols.IProtocol import IProtocol
+from simulator.protocols.IProtocol import IProtocol
 
 
 class IEncapsulator(ABC):

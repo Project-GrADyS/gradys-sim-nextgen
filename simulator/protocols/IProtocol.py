@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from provider.IProvider import IProvider
+from simulator.provider.IProvider import IProvider
 
 
 class IProtocol(ABC):

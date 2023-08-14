@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
-from messages.CommunicationCommand import CommunicationCommand
-from messages.MobilityCommand import MobilityCommand
+from simulator.messages.CommunicationCommand import CommunicationCommand
+from simulator.messages.MobilityCommand import MobilityCommand
 
 
 class IProvider(ABC):

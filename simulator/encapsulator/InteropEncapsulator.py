@@ -1,11 +1,11 @@
 from enum import Enum
 from typing import Tuple, Union, List, Type
 
-from encapsulator.IEncapsulator import IEncapsulator
-from messages.CommunicationCommand import CommunicationCommand
-from messages.MobilityCommand import MobilityCommand
-from protocols.IProtocol import IProtocol
-from provider.IProvider import IProvider
+from simulator.encapsulator.IEncapsulator import IEncapsulator
+from simulator.messages.CommunicationCommand import CommunicationCommand
+from simulator.messages.MobilityCommand import MobilityCommand
+from simulator.protocols.IProtocol import IProtocol
+from simulator.provider.IProvider import IProvider
 
 
 class _ConsequenceType(Enum):

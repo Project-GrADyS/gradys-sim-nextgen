@@ -1,8 +1,8 @@
-from protocols.IProtocol import IProtocol
-from provider.IProvider import IProvider
-from messages.CommunicationCommand import SendMessageCommand
-from messages.Telemetry import Telemetry
-from protocols.simple.SimpleMessage import SimpleMessage, SenderType
+from simulator.protocols.IProtocol import IProtocol
+from simulator.provider.IProvider import IProvider
+from simulator.messages.CommunicationCommand import SendMessageCommand
+from simulator.messages.Telemetry import Telemetry
+from simulator.protocols.simple.SimpleMessage import SimpleMessage, SenderType
 
 
 class SimpleProtocolSensor(IProtocol):
