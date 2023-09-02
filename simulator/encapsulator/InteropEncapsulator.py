@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Tuple, Union, List, Type
+from typing import Tuple, Union, List, Type, Callable, Any
 
 from simulator.encapsulator.IEncapsulator import IEncapsulator
 from simulator.messages.CommunicationCommand import CommunicationCommand
@@ -12,11 +12,24 @@ class _ConsequenceType(Enum):
     COMMUNICATION = 1
     MOBILITY = 2
     TIMER = 3
+    TRACK_VARIABLE = 4
 
 
 _TimerParams = Tuple[dict, float]
 
-_Consequence = Tuple[_ConsequenceType, Union[CommunicationCommand, MobilityCommand, _TimerParams]]
+_TrackVariableParams = Tuple[str, Any]
+
+_Consequence = Tuple[_ConsequenceType, Union[CommunicationCommand, MobilityCommand, _TimerParams, _TrackVariableParams]]
+
+
+class _TrackedVariableContainer(dict):
+    def __init__(self, setter_callback: Callable[[str, Any], None]):
+        super().__init__()
+        self.callback = setter_callback
+
+    def __setitem__(self, key, value):
+        self.callback(key, value)
+        self[key] = value
 
 
 class _InteropProvider(IProvider):
@@ -26,6 +39,9 @@ class _InteropProvider(IProvider):
     def __init__(self):
         self.consequences = []
         self.timestamp = 0
+        self.tracked_variables = \
+            _TrackedVariableContainer(lambda key, value: self.consequences.append((_ConsequenceType.TRACK_VARIABLE,
+                                                                                   (key, value))))
 
     def send_communication_command(self, command: CommunicationCommand):
         self.consequences.append((_ConsequenceType.COMMUNICATION, command))
