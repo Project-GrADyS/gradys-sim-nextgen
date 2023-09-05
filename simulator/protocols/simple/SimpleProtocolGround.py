@@ -9,21 +9,25 @@ class SimpleProtocolGround(IProtocol):
 
     def initialize(self, stage: int):
         self.packets = 0
+        self.provider.tracked_variables["packets"] = self.packets
 
     def handle_timer(self, timer: dict):
         pass
 
-    def handle_message(self, message: SimpleMessage):
-        if message['sender'] == SenderType.DRONE:
+    def handle_packet(self, message: dict):
+        print(f"SimpleProtocolGround packets: {self.packets}, {message['sender']}")
+        if message["sender"] == SenderType.DRONE:
+            print(f"SimpleProtocolGround packets2: {self.packets}, {message['sender']}")
             self.packets += message['content']
+            self.provider.tracked_variables["packets"] = self.packets
             response: SimpleMessage = {
-                'sender': SenderType.GROUND_STATION,
-                'content': self.packets
+                "sender": SenderType.GROUND_STATION.name,
+                "content": self.packets,
             }
             self.provider.send_communication_command(SendMessageCommand(response))
 
     def handle_telemetry(self, telemetry: Telemetry):
         pass
 
-    def finalize(self):
+    def finish(self):
         pass

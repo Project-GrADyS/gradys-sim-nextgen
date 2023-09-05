@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 
+from simulator.messages.Telemetry import Telemetry
 from simulator.provider.IProvider import IProvider
 
 
@@ -21,9 +22,13 @@ class IProtocol(ABC):
         pass
 
     @abstractmethod
-    def handle_message(self, message: dict):
+    def handle_packet(self, message: dict):
         pass
 
     @abstractmethod
-    def finalize(self):
+    def handle_telemetry(self, telemetry: Telemetry):
+        pass
+
+    @abstractmethod
+    def finish(self):
         pass
