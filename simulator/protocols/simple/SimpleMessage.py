@@ -3,10 +3,9 @@ from typing import TypedDict
 
 
 class SenderType(Enum):
-    DRONE = 1
-    SENSOR = 2
-    GROUND_STATION = 3
-
+    DRONE = 0
+    SENSOR = 1
+    GROUND_STATION = 2
 
 class SimpleMessage(TypedDict):
     sender: SenderType
