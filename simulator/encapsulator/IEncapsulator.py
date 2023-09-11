@@ -19,9 +19,9 @@ class IEncapsulator(ABC):
         pass
 
     @abstractmethod
-    def handle_message(self, message: dict):
+    def handle_packet(self, message: dict):
         pass
 
     @abstractmethod
-    def finalize(self):
+    def finish(self):
         pass
