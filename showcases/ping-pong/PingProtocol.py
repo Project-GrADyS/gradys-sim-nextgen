@@ -1,0 +1,3 @@
+
+
+class PingProtocol(IProtocol):
