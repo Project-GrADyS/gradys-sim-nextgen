@@ -1,5 +1,5 @@
-from simulator.encapsulator.InteropEncapsulator import InteropEncapsulator
-from simulator.protocols.simple.SimpleProtocolMobile import SimpleProtocolMobile
+from simulator.encapsulator.interop import InteropEncapsulator
+from simulator.protocols.simple.protocol_mobile import SimpleProtocolMobile
 
 
 def create_node():
