@@ -1,12 +1,12 @@
 from enum import Enum
 from typing import Tuple, Union, List, Type, Callable, Any
 
-from simulator.encapsulator.encapsulator import IEncapsulator
+from simulator.encapsulator import IEncapsulator
 from simulator.messages.communication import CommunicationCommand
 from simulator.messages.mobility import MobilityCommand
 from simulator.messages.telemetry import Telemetry
-from simulator.protocols.protocol import IProtocol
-from simulator.provider.provider import IProvider
+from simulator.protocols import IProtocol
+from simulator.provider import IProvider
 
 
 class _ConsequenceType(Enum):

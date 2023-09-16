@@ -1,14 +1,13 @@
 import random
-from simulator.protocols.protocol import IProtocol
-from simulator.provider.provider import IProvider
 from simulator.messages.communication import SendMessageCommand
 from simulator.messages.telemetry import Telemetry
+from simulator.protocols import IProtocol
 from simulator.protocols.simple.message import SimpleMessage, SenderType
+from simulator.provider import IProvider
 
 
 class SimpleProtocolSensor(IProtocol):
     packets: int
-    provider: IProvider
 
     def initialize(self, stage: int):   
         self.packets = 5
