@@ -32,7 +32,7 @@ class InteropEncapsulator(IEncapsulator):
         self.protocol.handle_timer(timer)
         return self._collect_consequences()
 
-    def handle_packet(self, message: dict) -> List[Consequence]:
+    def handle_packet(self, message: str) -> List[Consequence]:
         self.protocol.handle_packet(message)
         return self._collect_consequences()
 

@@ -1,6 +1,10 @@
 import random
 from simulator.messages.communication import SendMessageCommand
-from simulator.messages.mobility import SetModeCommand, MobilityMode, ReverseCommand
+from simulator.messages.mobility import (
+    SetModeCommand,
+    MobilityMode,
+    ReverseCommand
+)
 from simulator.messages.telemetry import Telemetry
 from simulator.protocols.interface import IProtocol
 from simulator.protocols.simple.message import SimpleMessage, SenderType
@@ -20,30 +24,27 @@ class SimpleProtocolMobile(IProtocol):
         self.provider.schedule_timer({}, self.provider.current_time() + random.random())
 
     def handle_timer(self, timer: dict):
-        ping: SimpleMessage = {
-            'sender': SenderType.DRONE.name,
-            'content': self.packets
-        }
-        self.provider.send_communication_command(SendMessageCommand(ping))
+        ping = SimpleMessage(sender=SenderType.DRONE, content=self.packets)
+        self.provider.send_communication_command(SendMessageCommand(ping.to_json()))
         self.provider.schedule_timer({}, self.provider.current_time() + 2)
 
-    def handle_packet(self, message: dict):
-        print(f"SimpleProtocolMobile packets: {self.packets}, {message['sender']}, "
-              f"{self.last_telemetry_message.is_reversed}")
-        if message['sender'] == SenderType.GROUND_STATION:
-            print(f"SimpleProtocolMobile packets2: {self.packets}, {message['sender']}")
+    def handle_packet(self, message: str):
+        message: SimpleMessage = SimpleMessage.from_json(message)
+        print(f"SimpleProtocolMobile received packet: "
+              f"{self.packets}, {message.sender}, {self.last_telemetry_message.is_reversed}")
+
+        if message.sender == SenderType.GROUND_STATION:
             self.packets = 0
             self.provider.tracked_variables["packets"] = self.packets
+
             if self.last_telemetry_message.is_reversed:
                 self.provider.send_mobility_command(ReverseCommand())
 
-        elif message['sender'] == SenderType.SENSOR:
-            print(f"SimpleProtocolMobile packets3: {self.packets}, {message['sender']}")
-            self.packets += message['content']
+        elif message.sender == SenderType.SENSOR:
+            self.packets += message.content
             self.provider.tracked_variables["packets"] = self.packets
 
     def handle_telemetry(self, telemetry: Telemetry):
-        print(telemetry)
         self.last_telemetry_message = telemetry
 
     def finish(self):

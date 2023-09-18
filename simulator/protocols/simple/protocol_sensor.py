@@ -8,7 +8,7 @@ from simulator.protocols.simple.message import SimpleMessage, SenderType
 class SimpleProtocolSensor(IProtocol):
     packets: int
 
-    def initialize(self, stage: int):   
+    def initialize(self, stage: int):
         self.packets = 5
         self.provider.tracked_variables["packets"] = self.packets
         self.provider.schedule_timer({}, self.provider.current_time() + random.random())
@@ -18,15 +18,16 @@ class SimpleProtocolSensor(IProtocol):
         self.provider.tracked_variables["packets"] = self.packets
         self.provider.schedule_timer({}, self.provider.current_time() + 2)
 
-    def handle_packet(self, message: SimpleMessage):
-        print(f"SimpleProtocolSensor packets: {self.packets}, {message['sender']}")
-        if message['sender'] == SenderType.DRONE:
-            print(f"SimpleProtocolSensor packets2: {self.packets}")
-            response: SimpleMessage = {
-                'sender': SenderType.SENSOR.name,
-                'content': self.packets
-            }
-            self.provider.send_communication_command(SendMessageCommand(response))
+    def handle_packet(self, message: str):
+        message: SimpleMessage = SimpleMessage.from_json(message)
+        print(f"SimpleProtocolSensor received packet: {self.packets}, {message.sender}")
+
+        if message.sender == SenderType.DRONE:
+            response = SimpleMessage(sender=SenderType.SENSOR, content=self.packets)
+            self.provider.send_communication_command(
+                SendMessageCommand(response.to_json())
+            )
+
             self.packets = 0
             self.provider.tracked_variables["packets"] = self.packets
 

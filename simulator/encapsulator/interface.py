@@ -21,7 +21,7 @@ class IEncapsulator(ABC):
         pass
 
     @abstractmethod
-    def handle_packet(self, message: dict):
+    def handle_packet(self, message: str):
         pass
 
     @abstractmethod
