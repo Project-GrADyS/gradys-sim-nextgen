@@ -1,4 +1,6 @@
 from enum import Enum
+from typing import Optional
+
 
 class CommunicationCommandType(Enum):
     SEND = 1
@@ -6,12 +8,14 @@ class CommunicationCommandType(Enum):
 
 
 class CommunicationCommand:
-    def __init__(self, command: CommunicationCommandType, message: dict):
-        self.command = command
+    def __init__(self, command: CommunicationCommandType, message: dict, destination: Optional[int] = None):
+        self.type = command
         self.message = message
+        self.destination = destination
 
-    command: CommunicationCommandType
+    type: CommunicationCommandType
     message: dict
+    destination: Optional[int]
 
 
 class SendMessageCommand(CommunicationCommand):

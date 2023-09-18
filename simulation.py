@@ -3,4 +3,6 @@ from simulator.protocols.simple.protocol_mobile import SimpleProtocolMobile
 
 
 def create_node():
-    return InteropEncapsulator.encapsulate(SimpleProtocolMobile)
+    encapsulator = InteropEncapsulator()
+    encapsulator.encapsulate(SimpleProtocolMobile)
+    return encapsulator
