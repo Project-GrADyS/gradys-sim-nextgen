@@ -1,12 +1,12 @@
 from enum import Enum
 from typing import Tuple, Union, List, Type, Callable, Any
 
-from simulator.encapsulator import IEncapsulator
+from simulator.encapsulator.interface import IEncapsulator
 from simulator.messages.communication import CommunicationCommand
 from simulator.messages.mobility import MobilityCommand
 from simulator.messages.telemetry import Telemetry
-from simulator.protocols import IProtocol
-from simulator.provider import IProvider
+from simulator.protocols.interface import IProtocol
+from simulator.provider.interface import IProvider
 
 
 class _ConsequenceType(Enum):
@@ -64,13 +64,11 @@ class _InteropProvider(IProvider):
 class InteropEncapsulator(IEncapsulator):
     provider: _InteropProvider
 
-    @classmethod
-    def encapsulate(cls, protocol: Type[IProtocol]):
-        encapsulator = cls()
+    def __init__(self):
+        self.provider = _InteropProvider()
 
-        encapsulator.provider = _InteropProvider()
-        encapsulator.protocol = protocol.instantiate(encapsulator.provider)
-        return encapsulator
+    def encapsulate(self, protocol: Type[IProtocol]):
+        self.protocol = protocol.instantiate(self.provider)
 
     def _collect_consequences(self) -> List[_Consequence]:
         consequences = self.provider.consequences

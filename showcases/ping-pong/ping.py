@@ -2,7 +2,7 @@ import random
 
 from simulator.messages.communication import CommunicationCommand, CommunicationCommandType
 from simulator.messages.telemetry import Telemetry
-from simulator.protocols import IProtocol
+from simulator.protocols.interface import IProtocol
 
 
 class PingProtocol(IProtocol):
