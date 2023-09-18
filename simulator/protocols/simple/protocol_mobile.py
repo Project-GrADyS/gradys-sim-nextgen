@@ -28,7 +28,8 @@ class SimpleProtocolMobile(IProtocol):
         self.provider.schedule_timer({}, self.provider.current_time() + 2)
 
     def handle_packet(self, message: dict):
-        print(f"SimpleProtocolMobile packets: {self.packets}, {message['sender']}, {self.last_telemetry_message.is_reversed}")
+        print(f"SimpleProtocolMobile packets: {self.packets}, {message['sender']}, "
+              f"{self.last_telemetry_message.is_reversed}")
         if message['sender'] == SenderType.GROUND_STATION:
             print(f"SimpleProtocolMobile packets2: {self.packets}, {message['sender']}")
             self.packets = 0

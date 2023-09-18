@@ -55,8 +55,8 @@ class CommunicationHandler(INodeHandler):
 
     def handle_command(self, command:  CommunicationCommand, sender: Node):
         if sender.id == command.destination:
-            raise CommunicationException(f"Error transmitting message: message destination is equal to sender. Try "
-                                         f"using schedule_timer.")
+            raise CommunicationException("Error transmitting message: message destination is equal to sender. Try "
+                                         "using schedule_timer.")
 
         source = self.sources[sender.id]
 
@@ -67,8 +67,8 @@ class CommunicationHandler(INodeHandler):
         else:
             destination = command.destination
             if destination is None:
-                raise CommunicationException(f"Error transmitting message: a destination is "
-                                             f"required when command type SEND is used.")
+                raise CommunicationException("Error transmitting message: a destination is "
+                                             "required when command type SEND is used.")
             if destination not in self.destinations:
                 raise CommunicationException(f"Error transmitting message: destination {destination} does not exist.")
 
