@@ -1,10 +1,10 @@
 from typing import List, Type
 
 from simulator.encapsulator.interface import IEncapsulator
-from simulator.provider.interop import InteropProvider, Consequence
 
 from simulator.messages.telemetry import Telemetry
 from simulator.protocols.interface import IProtocol
+from simulator.provider.interop import InteropProvider, Consequence
 
 
 class InteropEncapsulator(IEncapsulator):
