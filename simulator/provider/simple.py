@@ -1,6 +1,6 @@
-from simulator.messages.CommunicationCommand import CommunicationCommand
-from simulator.messages.MobilityCommand import MobilityCommand
-from simulator.provider.IProvider import IProvider
+from simulator.messages.communication import CommunicationCommand
+from simulator.messages.mobility import MobilityCommand
+from simulator.provider.interface import IProvider
 
 
 class SimpleProvider(IProvider):

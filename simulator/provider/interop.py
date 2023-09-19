@@ -1,9 +1,9 @@
 from enum import Enum
 from typing import Tuple, Any, Union, Callable, List
 
-from simulator.messages.CommunicationCommand import CommunicationCommand
-from simulator.messages.MobilityCommand import MobilityCommand
-from simulator.provider.IProvider import IProvider
+from simulator.messages.communication import CommunicationCommand
+from simulator.messages.mobility import MobilityCommand
+from simulator.provider.interface import IProvider
 
 
 class ConsequenceType(int, Enum):
@@ -27,7 +27,6 @@ class _TrackedVariableContainer(dict):
 
     def __setitem__(self, key, value):
         self.callback(key, value)
-        self[key] = value
 
 
 class InteropProvider(IProvider):
