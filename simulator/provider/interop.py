@@ -1,16 +1,16 @@
 from enum import Enum
 from typing import Tuple, Any, Union, Callable, List
 
-from simulator.messages.CommunicationCommand import CommunicationCommand
-from simulator.messages.MobilityCommand import MobilityCommand
-from simulator.provider.IProvider import IProvider
+from simulator.messages.communication import CommunicationCommand
+from simulator.messages.mobility import MobilityCommand
+from simulator.provider.interface import IProvider
 
 
-class ConsequenceType(Enum):
-    COMMUNICATION = 1
-    MOBILITY = 2
-    TIMER = 3
-    TRACK_VARIABLE = 4
+class ConsequenceType(int, Enum):
+    COMMUNICATION = 0
+    MOBILITY = 1
+    TIMER = 2
+    TRACK_VARIABLE = 3
 
 
 TimerParams = Tuple[dict, float]
@@ -27,7 +27,6 @@ class _TrackedVariableContainer(dict):
 
     def __setitem__(self, key, value):
         self.callback(key, value)
-        self[key] = value
 
 
 class InteropProvider(IProvider):
@@ -47,7 +46,7 @@ class InteropProvider(IProvider):
     def send_mobility_command(self, command: MobilityCommand):
         self.consequences.append((ConsequenceType.MOBILITY, command))
 
-    def schedule_timer(self, timer: dict, timestamp: float):
+    def schedule_timer(self, timer: str, timestamp: float):
         self.consequences.append((ConsequenceType.TIMER, (timer, timestamp)))
 
     def current_time(self) -> int:

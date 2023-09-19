@@ -15,7 +15,7 @@ class IProvider(ABC):
         pass
 
     @abstractmethod
-    def schedule_timer(self, timer: dict, timestamp: float):
+    def schedule_timer(self, timer: str, timestamp: float):
         pass
 
     @abstractmethod

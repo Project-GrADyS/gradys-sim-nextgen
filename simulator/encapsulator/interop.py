@@ -28,7 +28,7 @@ class InteropEncapsulator(IEncapsulator):
         self.protocol.initialize(stage)
         return self._collect_consequences()
 
-    def handle_timer(self, timer: dict) -> List[Consequence]:
+    def handle_timer(self, timer: str) -> List[Consequence]:
         self.protocol.handle_timer(timer)
         return self._collect_consequences()
 
