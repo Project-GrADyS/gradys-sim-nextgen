@@ -10,7 +10,7 @@ class SimpleProvider(IProvider):
     def send_mobility_command(self, command: MobilityCommand):
         pass
 
-    def schedule_timer(self, timer: dict, timestamp: float):
+    def schedule_timer(self, timer: str, timestamp: float):
         pass
 
     def current_time(self) -> int:

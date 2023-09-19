@@ -4,8 +4,8 @@ from typing import Optional
 
 
 class CommunicationCommandType(int, Enum):
-    SEND = 1
-    BROADCAST = 2
+    SEND = 0
+    BROADCAST = 1
 
 
 class CommunicationCommand:
