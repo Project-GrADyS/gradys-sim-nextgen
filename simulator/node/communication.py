@@ -11,7 +11,7 @@ class CommunicationDestination:
     def __init__(self, node: Node):
         self.node = node
 
-    def receive_message(self, message: dict, source: 'CommunicationSource'):
+    def receive_message(self, message: str, source: 'CommunicationSource'):
         self.node.protocol_encapsulator.handle_packet(message)
 
 
@@ -21,7 +21,7 @@ class CommunicationSource:
     def __init__(self, node: Node):
         self.node = node
 
-    def send_message(self, message: dict, endpoint: CommunicationDestination):
+    def send_message(self, message: str, endpoint: CommunicationDestination):
         endpoint.receive_message(message, self)
 
 
@@ -74,6 +74,6 @@ class CommunicationHandler(INodeHandler):
 
             self._transmit_message(command.message, source, self.destinations[destination])
 
-    def _transmit_message(self, message: dict, source: CommunicationSource, destination: CommunicationDestination):
+    def _transmit_message(self, message: str, source: CommunicationSource, destination: CommunicationDestination):
         if can_transmit(source.node.position, destination.node.position, self.communication_medium):
             destination.receive_message(message, source)
