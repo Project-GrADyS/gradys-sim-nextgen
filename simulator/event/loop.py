@@ -1,5 +1,5 @@
 import heapq
-from typing import Tuple, Callable, List
+from typing import Callable, List
 
 
 class Event:
