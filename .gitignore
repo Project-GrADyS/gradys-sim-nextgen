@@ -1,2 +1,4 @@
 build/**
 .idea/**
+
+simulator.egg-info/**

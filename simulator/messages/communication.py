@@ -4,8 +4,8 @@ from typing import Optional
 
 
 class CommunicationCommandType(int, Enum):
-    SEND = 1
-    BROADCAST = 2
+    SEND = 0
+    BROADCAST = 1
 
 
 class CommunicationCommand:
@@ -21,11 +21,11 @@ class CommunicationCommand:
 
 class SendMessageCommand(CommunicationCommand):
     def __init__(self, message: str):
-        self.command = CommunicationCommandType.SEND.name
+        self.command = CommunicationCommandType.SEND
         self.message = message
 
 
 class BroadcastMessageCommand(CommunicationCommand):
     def __init__(self, message: str):
-        self.command = CommunicationCommandType.BROADCAST.name
+        self.command = CommunicationCommandType.BROADCAST
         self.message = message

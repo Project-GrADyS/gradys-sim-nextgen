@@ -1,17 +1,17 @@
 from enum import Enum
 
 
-class MobilityCommandType(Enum):
-    SET_MODE = 1
-    GOTO_COORDS = 2
+class MobilityCommandType(int, Enum):
+    SET_MODE = 0
+    GOTO_COORDS = 1
 
-    GOTO_WAYPOINT = 3
-    REVERSE = 4
+    GOTO_WAYPOINT = 2
+    REVERSE = 3
 
 
-class MobilityMode(Enum):
-    GUIDED = 1
-    AUTO = 2
+class MobilityMode(int, Enum):
+    GUIDED = 0
+    AUTO = 1
 
 
 class MobilityCommand:
@@ -27,7 +27,7 @@ class MobilityCommand:
 
 class ReverseCommand(MobilityCommand):
     def __init__(self):
-        self.command = MobilityCommandType.REVERSE.name
+        self.command = MobilityCommandType.REVERSE
 
         self.param_1 = 0
         self.param_2 = 0
@@ -39,7 +39,7 @@ class ReverseCommand(MobilityCommand):
 
 class SetModeCommand(MobilityCommand):
     def __init__(self, mode: MobilityMode):
-        self.command = MobilityCommandType.SET_MODE.name
+        self.command = MobilityCommandType.SET_MODE
         self.param_1 = mode.value
 
         self.param_2 = 0

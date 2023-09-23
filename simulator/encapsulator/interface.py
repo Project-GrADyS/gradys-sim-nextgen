@@ -17,7 +17,7 @@ class IEncapsulator(ABC):
         pass
 
     @abstractmethod
-    def handle_timer(self, timer: dict):
+    def handle_timer(self, timer: str):
         pass
 
     @abstractmethod

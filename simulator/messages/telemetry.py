@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class DroneActivity(Enum):
+class DroneActivity(int, Enum):
     IDLE = 0
     NAVIGATING = 1
     REACHED_EDGE = 2
