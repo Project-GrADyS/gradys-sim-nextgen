@@ -7,9 +7,7 @@ from simulator.node.communication import Medium, can_transmit, CommunicationHand
 
 class TestCommunication(unittest.TestCase):
     def test_transmission_range(self):
-        medium: Medium = {
-            "transmission_range": 10
-        }
+        medium = Medium(transmission_range=10)
 
         self.assertTrue(can_transmit((0, 0, 0), (10, 0, 0), medium))
         self.assertTrue(can_transmit((0, 0, 0), (0, 0, 0), medium))
@@ -21,9 +19,7 @@ class TestCommunication(unittest.TestCase):
         self.assertFalse(can_transmit((0, 0, 0), (8, 8, 8), medium))
 
     def handle_command_helper(self, command: CommunicationCommand):
-        medium: Medium = {
-            "transmission_range": 10
-        }
+        medium = Medium(transmission_range=10)
 
         received = 0
 

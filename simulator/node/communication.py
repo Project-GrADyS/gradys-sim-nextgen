@@ -29,15 +29,18 @@ class CommunicationException(Exception):
     pass
 
 
-class Medium(TypedDict):
+class Medium:
     transmission_range: float
+
+    def __init__(self, transmission_range: float = 60):
+        self.transmission_range = transmission_range
 
 
 def can_transmit(source_position: Position, destination_position: Position, communication_medium: Medium):
     squared_distance = (destination_position[0] - source_position[0]) ** 2 + \
                        (destination_position[1] - source_position[1]) ** 2 + \
                        (destination_position[2] - source_position[2]) ** 2
-    return squared_distance <= (communication_medium['transmission_range'] * communication_medium['transmission_range'])
+    return squared_distance <= (communication_medium.transmission_range * communication_medium.transmission_range)
 
 
 class CommunicationHandler(INodeHandler):
