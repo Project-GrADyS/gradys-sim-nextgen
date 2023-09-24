@@ -3,11 +3,11 @@ import unittest
 from simulator.event import EventLoop
 from simulator.messages.communication import CommunicationCommand, CommunicationCommandType
 from simulator.node import Node
-from simulator.node.handler.communication import Medium, can_transmit, CommunicationHandler, CommunicationException
+from simulator.node.handler.communication import CommunicationMedium, can_transmit, CommunicationHandler, CommunicationException
 
 
 def handle_command_helper(command: CommunicationCommand):
-    medium = Medium(transmission_range=10)
+    medium = CommunicationMedium(transmission_range=10)
 
     received = 0
 
@@ -40,7 +40,7 @@ def handle_command_helper(command: CommunicationCommand):
 
 class TestCommunication(unittest.TestCase):
     def test_transmission_range(self):
-        medium = Medium(transmission_range=10)
+        medium = CommunicationMedium(transmission_range=10)
 
         self.assertTrue(can_transmit((0, 0, 0), (10, 0, 0), medium))
         self.assertTrue(can_transmit((0, 0, 0), (0, 0, 0), medium))
@@ -96,7 +96,7 @@ class TestCommunication(unittest.TestCase):
         node1.id = 1
         node1.position = (0, 0, 0)
 
-        medium = Medium()
+        medium = CommunicationMedium()
         comm_handler = CommunicationHandler(medium)
 
         with self.assertRaises(CommunicationException):
@@ -122,7 +122,7 @@ class TestCommunication(unittest.TestCase):
 
         # Setting up comm_handler
         delay = 1
-        medium = Medium(delay=delay)
+        medium = CommunicationMedium(delay=delay)
         event_loop = EventLoop()
         comm_handler = CommunicationHandler(medium)
         comm_handler.inject(event_loop)

@@ -39,7 +39,7 @@ class CommunicationException(Exception):
     pass
 
 
-class Medium:
+class CommunicationMedium:
     transmission_range: float
     delay: float
 
@@ -48,7 +48,7 @@ class Medium:
         self.delay = delay
 
 
-def can_transmit(source_position: Position, destination_position: Position, communication_medium: Medium):
+def can_transmit(source_position: Position, destination_position: Position, communication_medium: CommunicationMedium):
     squared_distance = (destination_position[0] - source_position[0]) ** 2 + \
                        (destination_position[1] - source_position[1]) ** 2 + \
                        (destination_position[2] - source_position[2]) ** 2
@@ -63,7 +63,7 @@ class CommunicationHandler(INodeHandler):
     _destinations: dict[int, CommunicationDestination]
     _event_loop: EventLoop
 
-    def __init__(self, communication_medium: Medium):
+    def __init__(self, communication_medium: CommunicationMedium):
         self._injected = False
 
         self._sources = {}
