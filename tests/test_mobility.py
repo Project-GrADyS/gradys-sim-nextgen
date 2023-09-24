@@ -23,7 +23,8 @@ class TestMobility(unittest.TestCase):
         speed = 1.2
         update_rate = 0.3
 
-        event_loop, mobility_handler = setup_mobility_handler(MobilitySettings(update_rate=update_rate, default_speed=speed))
+        event_loop, mobility_handler = setup_mobility_handler(MobilitySettings(update_rate=update_rate,
+                                                                               default_speed=speed))
         mobility_handler.register_node(node)
         mobility_handler.handle_command(MobilityCommand(
             MobilityCommandType.GOTO_COORDS,
@@ -84,7 +85,8 @@ class TestMobility(unittest.TestCase):
 
         update_rate = 0.3
         speed = 1
-        event_loop, mobility_handler = setup_mobility_handler(MobilitySettings(update_rate=update_rate, default_speed=speed))
+        event_loop, mobility_handler = setup_mobility_handler(MobilitySettings(update_rate=update_rate,
+                                                                               default_speed=speed))
         mobility_handler.register_node(node)
 
         mobility_handler.handle_command(MobilityCommand(
@@ -110,7 +112,8 @@ class TestMobility(unittest.TestCase):
 
         update_rate = 1
         speed = 100
-        event_loop, mobility_handler = setup_mobility_handler(MobilitySettings(update_rate=update_rate, default_speed=speed))
+        event_loop, mobility_handler = setup_mobility_handler(MobilitySettings(update_rate=update_rate,
+                                                                               default_speed=speed))
         mobility_handler.register_node(node)
 
         mobility_handler.handle_command(MobilityCommand(
