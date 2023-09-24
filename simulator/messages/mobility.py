@@ -8,6 +8,8 @@ class MobilityCommandType(int, Enum):
     GOTO_WAYPOINT = 2
     REVERSE = 3
 
+    SET_SPEED = 4
+
 
 class MobilityMode(int, Enum):
     GUIDED = 0
