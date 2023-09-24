@@ -17,12 +17,27 @@ class MobilityMode(int, Enum):
 class MobilityCommand:
     command: MobilityCommandType
 
-    param_1: int
-    param_2: int
-    param_3: int
-    param_4: int
-    param_5: int
-    param_6: int
+    param_1: float
+    param_2: float
+    param_3: float
+    param_4: float
+    param_5: float
+    param_6: float
+
+    def __init__(self, command: MobilityCommandType,
+                 param_1: float = 0,
+                 param_2: float = 0,
+                 param_3: float = 0,
+                 param_4: float = 0,
+                 param_5: float = 0,
+                 param_6: float = 0):
+        self.command = command
+        self.param_1 = param_1
+        self.param_2 = param_2
+        self.param_3 = param_3
+        self.param_4 = param_4
+        self.param_5 = param_5
+        self.param_6 = param_6
 
 
 class ReverseCommand(MobilityCommand):
