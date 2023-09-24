@@ -1,7 +1,7 @@
 import math
 import unittest
 
-from simulator.event.loop import EventLoop
+from simulator.event import EventLoop
 from simulator.messages.mobility import MobilityCommand, MobilityCommandType
 from simulator.node import Node
 from simulator.node.mobility import MobilityHandler, MobilitySettings, MobilityException

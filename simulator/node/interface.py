@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from simulator.event.loop import EventLoop
+from simulator.event import EventLoop
 from simulator.node import Node
 
 

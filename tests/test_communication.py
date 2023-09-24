@@ -1,6 +1,6 @@
 import unittest
 
-from simulator.event.loop import EventLoop
+from simulator.event import EventLoop
 from simulator.messages.communication import CommunicationCommand, CommunicationCommandType
 from simulator.node import Node
 from simulator.node.communication import Medium, can_transmit, CommunicationHandler, CommunicationException

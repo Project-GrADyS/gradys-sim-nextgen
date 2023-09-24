@@ -1,6 +1,6 @@
 from typing import Dict
 
-from simulator.event.loop import EventLoop
+from simulator.event import EventLoop
 from simulator.messages.communication import CommunicationCommand, CommunicationCommandType
 from simulator.node import Node, Position
 from simulator.node.interface import INodeHandler

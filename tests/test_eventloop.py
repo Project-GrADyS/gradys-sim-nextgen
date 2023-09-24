@@ -1,6 +1,6 @@
 import unittest
 
-from simulator.event.loop import EventLoop, EventLoopException
+from simulator.event import EventLoop, EventLoopException
 
 
 class TestEventLoop(unittest.TestCase):
