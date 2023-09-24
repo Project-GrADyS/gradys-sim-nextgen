@@ -46,6 +46,9 @@ class Simulator:
         return new_node
 
     def start_simulation(self):
+        for node in self._nodes.values():
+            node.protocol_encapsulator.initialize(1)
+
         while not self._is_simulation_done():
             event = self._event_loop.pop_event()
             event.callback()
@@ -61,21 +64,15 @@ class Simulator:
 
 
 class PositionScheme:
-    position: Position
-
-    class Random('PositionScheme'):
-        def __init__(self, x_range: tuple[float, float] = (-10, 10),
-                     y_range: tuple[float, float] = (-10, 10),
-                     z_range: tuple[float, float] = (0, 10)):
-            self.position = (
-                random.uniform(*x_range),
-                random.uniform(*y_range),
-                random.uniform(*z_range)
-            )
-
-    class Positioned('PositionScheme'):
-        def __init__(self, position: Position):
-            self.position = position
+    @staticmethod
+    def random(x_range: tuple[float, float] = (-10, 10),
+               y_range: tuple[float, float] = (-10, 10),
+               z_range: tuple[float, float] = (0, 10)) -> Position:
+        return (
+            random.uniform(*x_range),
+            random.uniform(*y_range),
+            random.uniform(*z_range)
+        )
 
 
 class SimulationBuilder:
@@ -87,8 +84,8 @@ class SimulationBuilder:
     def add_handler(self, handler: INodeHandler):
         self._handlers[handler.get_label()] = handler
 
-    def add_node(self, protocol: Type[IProtocol], position_scheme: PositionScheme):
-        self._nodes_to_add.append((position_scheme.position, protocol))
+    def add_node(self, protocol: Type[IProtocol], position: Position):
+        self._nodes_to_add.append((position, protocol))
 
     def build(self) -> Simulator:
         simulator = Simulator(
