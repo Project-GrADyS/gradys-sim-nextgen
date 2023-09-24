@@ -1,3 +1,5 @@
+import logging
+
 from simulator.event import EventLoop
 from simulator.messages.communication import CommunicationCommand, CommunicationCommandType
 from simulator.node import Node, Position
@@ -10,7 +12,12 @@ class CommunicationDestination:
     def __init__(self, node: Node):
         self.node = node
 
-    def receive_message(self, message: str, source: 'CommunicationSource'):
+    def receive_message(self, message: str, source: 'CommunicationSource') -> None:
+        """
+        Function responsible for receiving the message through the communication handler.
+        """
+        logging.info(f"Node {self.node.id} received message from {source.node.id}")
+
         self.node.protocol_encapsulator.handle_packet(message)
 
 
@@ -20,8 +27,12 @@ class CommunicationSource:
     def __init__(self, node: Node):
         self.node = node
 
-    def send_message(self, message: str, endpoint: CommunicationDestination):
-        endpoint.receive_message(message, self)
+    def hand_over_message(self, message: str, endpoint: CommunicationDestination) -> None:
+        """
+        Function called immediately before the communication handler sends a message. Doesn't deliver the actual
+        message
+        """
+        logging.info(f"Node {self.node.id} sending message to {endpoint.node.id}")
 
 
 class CommunicationException(Exception):
@@ -97,6 +108,8 @@ class CommunicationHandler(INodeHandler):
             self._transmit_message(command.message, source, self._destinations[destination])
 
     def _transmit_message(self, message: str, source: CommunicationSource, destination: CommunicationDestination):
+        source.hand_over_message(message, destination)
+
         if can_transmit(source.node.position, destination.node.position, self.communication_medium):
             if self.communication_medium.delay <= 0:
                 destination.receive_message(message, source)
