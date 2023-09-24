@@ -5,7 +5,7 @@ from simulator.messages.communication import CommunicationCommand
 from simulator.messages.mobility import MobilityCommand
 from simulator.messages.telemetry import Telemetry
 from simulator.node import Node
-from simulator.node.communication import CommunicationHandler
+from simulator.node.handler.communication import CommunicationHandler
 from simulator.protocols.interface import IProtocol
 from simulator.provider.interface import IProvider
 
@@ -29,8 +29,8 @@ class _PythonProvider(IProvider):
 
 
 class PythonEncapsulator(IEncapsulator):
-    def __init__(self, node: Node, communication_handler: CommunicationHandler):
-        self.provider = _PythonProvider(node, communication_handler)
+    def __init__(self, node: Node, communication: CommunicationHandler):
+        self.provider = _PythonProvider(node, communication)
 
     def encapsulate(self, protocol: Type[IProtocol]):
         self.protocol = protocol.instantiate(self.provider)

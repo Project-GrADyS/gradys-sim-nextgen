@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Dict, Any
+from typing import Any
 
 from simulator.messages.communication import CommunicationCommand
 from simulator.messages.mobility import MobilityCommand
@@ -22,4 +22,4 @@ class IProvider(ABC):
     def current_time(self) -> float:
         pass
 
-    tracked_variables: Dict[str, Any]
+    tracked_variables: dict[str, Any]

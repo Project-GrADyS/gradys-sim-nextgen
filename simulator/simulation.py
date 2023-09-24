@@ -1,0 +1,101 @@
+import random
+from typing import Type, Optional
+
+from simulator.encapsulator.python import PythonEncapsulator
+from simulator.event import EventLoop
+from simulator.node import Node, Position
+from simulator.node.interface import INodeHandler
+from simulator.protocols.interface import IProtocol
+
+
+class SimulationConfiguration:
+    duration: Optional[float]
+    real_time: bool
+
+    def __init__(self, duration: Optional[float] = None, real_time=False):
+        self.duration = duration
+        self.real_time = real_time
+
+
+class Simulator:
+    def __init__(self, handlers: dict[str, INodeHandler], configuration: SimulationConfiguration):
+        self._event_loop = EventLoop()
+        self._nodes: dict[int, Node] = {}
+        self._handlers: dict[str, INodeHandler] = handlers
+
+        for handler in self._handlers.values():
+            handler.inject(self._event_loop)
+
+        self._free_id = 0
+        self._configuration = configuration
+
+    def create_node(self, position: Position, protocol: Type[IProtocol]) -> Node:
+        new_node = Node()
+        new_node.id = self._free_id
+        new_node.position = position
+
+        encapsulator = PythonEncapsulator(new_node, **self._handlers)
+        encapsulator.encapsulate(protocol)
+
+        new_node.protocol_encapsulator = encapsulator
+
+        for handler in self._handlers.values():
+            handler.register_node(new_node)
+
+        self._free_id += 1
+        return new_node
+
+    def start_simulation(self):
+        while not self._is_simulation_done():
+            event = self._event_loop.pop_event()
+            event.callback()
+
+    def _is_simulation_done(self):
+        if len(self._event_loop) == 0:
+            return True
+
+        if self._event_loop.current_time > self._configuration.duration:
+            return True
+
+        return False
+
+
+class PositionScheme:
+    position: Position
+
+    class Random('PositionScheme'):
+        def __init__(self, x_range: tuple[float, float] = (-10, 10),
+                     y_range: tuple[float, float] = (-10, 10),
+                     z_range: tuple[float, float] = (0, 10)):
+            self.position = (
+                random.uniform(*x_range),
+                random.uniform(*y_range),
+                random.uniform(*z_range)
+            )
+
+    class Positioned('PositionScheme'):
+        def __init__(self, position: Position):
+            self.position = position
+
+
+class SimulationBuilder:
+    def __init__(self, configuration: SimulationConfiguration):
+        self._configuration = configuration
+        self._handlers: dict[str, INodeHandler] = {}
+        self._nodes_to_add: list[tuple[Position, Type[IProtocol]]] = []
+
+    def add_handler(self, handler: INodeHandler):
+        self._handlers[handler.get_label()] = handler
+
+    def add_node(self, protocol: Type[IProtocol], position_scheme: PositionScheme):
+        self._nodes_to_add.append((position_scheme.position, protocol))
+
+    def build(self) -> Simulator:
+        simulator = Simulator(
+            self._handlers,
+            self._configuration
+        )
+        for node_to_add in self._nodes_to_add:
+            simulator.create_node(*node_to_add)
+
+        return simulator
