@@ -1,5 +1,5 @@
 import math
-from typing import Dict
+from typing import dict
 
 from simulator.event import EventLoop
 from simulator.messages.mobility import MobilityCommand, MobilityCommandType
@@ -21,11 +21,14 @@ class MobilitySettings:
 
 
 class MobilityHandler(INodeHandler):
+    def get_label(self) -> str:
+        return "mobility"
+
     event_loop: EventLoop
 
-    _nodes: Dict[int, Node]
-    _targets: Dict[int, Position]
-    _speeds: Dict[int, float]
+    _nodes: dict[int, Node]
+    _targets: dict[int, Position]
+    _speeds: dict[int, float]
 
     def __init__(self, settings: MobilitySettings):
         self.settings = settings

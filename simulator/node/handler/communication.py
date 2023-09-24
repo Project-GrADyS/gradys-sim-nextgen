@@ -1,5 +1,3 @@
-from typing import Dict
-
 from simulator.event import EventLoop
 from simulator.messages.communication import CommunicationCommand, CommunicationCommandType
 from simulator.node import Node, Position
@@ -47,8 +45,11 @@ def can_transmit(source_position: Position, destination_position: Position, comm
 
 
 class CommunicationHandler(INodeHandler):
-    _sources: Dict[int, CommunicationSource]
-    _destinations: Dict[int, CommunicationDestination]
+    def get_label(self) -> str:
+        return "communication"
+
+    _sources: dict[int, CommunicationSource]
+    _destinations: dict[int, CommunicationDestination]
     _event_loop: EventLoop
 
     def __init__(self, communication_medium: Medium):
@@ -69,7 +70,7 @@ class CommunicationHandler(INodeHandler):
         self._sources[node.id] = CommunicationSource(node)
         self._destinations[node.id] = CommunicationDestination(node)
 
-    def handle_command(self, command:  CommunicationCommand, sender: Node):
+    def handle_command(self, command: CommunicationCommand, sender: Node):
         """
         Performs a communication command
         :param command: Command being issued

@@ -4,7 +4,7 @@ import unittest
 from simulator.event import EventLoop
 from simulator.messages.mobility import MobilityCommand, MobilityCommandType
 from simulator.node import Node
-from simulator.node.mobility import MobilityHandler, MobilitySettings, MobilityException
+from simulator.node.handler.mobility import MobilityHandler, MobilitySettings, MobilityException
 
 
 def setup_mobility_handler(settings: MobilitySettings):

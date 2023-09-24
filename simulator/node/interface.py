@@ -6,9 +6,13 @@ from simulator.node import Node
 
 class INodeHandler(ABC):
     @abstractmethod
-    def inject(self, event_loop: EventLoop):
+    def get_label(self) -> str:
         pass
 
     @abstractmethod
-    def register_node(self, node: Node):
+    def inject(self, event_loop: EventLoop) -> None:
+        pass
+
+    @abstractmethod
+    def register_node(self, node: Node) -> None:
         pass
