@@ -1,5 +1,4 @@
 import math
-from typing import dict
 
 from simulator.event import EventLoop
 from simulator.messages.mobility import MobilityCommand, MobilityCommandType
