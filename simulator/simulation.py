@@ -1,6 +1,6 @@
 import logging
 import random
-from typing import Type, Optional
+from typing import Type, Optional, Dict, Tuple
 
 from simulator.encapsulator.python import PythonEncapsulator
 from simulator.event import EventLoop
@@ -23,10 +23,10 @@ class SimulationConfiguration:
 
 
 class Simulator:
-    def __init__(self, handlers: dict[str, INodeHandler], configuration: SimulationConfiguration):
+    def __init__(self, handlers: Dict[str, INodeHandler], configuration: SimulationConfiguration):
         self._event_loop = EventLoop()
-        self._nodes: dict[int, Node] = {}
-        self._handlers: dict[str, INodeHandler] = handlers
+        self._nodes: Dict[int, Node] = {}
+        self._handlers: Dict[str, INodeHandler] = handlers
 
         for handler in self._handlers.values():
             handler.inject(self._event_loop)
@@ -71,9 +71,9 @@ class Simulator:
 
 class PositionScheme:
     @staticmethod
-    def random(x_range: tuple[float, float] = (-10, 10),
-               y_range: tuple[float, float] = (-10, 10),
-               z_range: tuple[float, float] = (0, 10)) -> Position:
+    def random(x_range: Tuple[float, float] = (-10, 10),
+               y_range: Tuple[float, float] = (-10, 10),
+               z_range: Tuple[float, float] = (0, 10)) -> Position:
         return (
             random.uniform(*x_range),
             random.uniform(*y_range),
@@ -84,8 +84,8 @@ class PositionScheme:
 class SimulationBuilder:
     def __init__(self, configuration: SimulationConfiguration):
         self._configuration = configuration
-        self._handlers: dict[str, INodeHandler] = {}
-        self._nodes_to_add: list[tuple[Position, Type[IProtocol]]] = []
+        self._handlers: Dict[str, INodeHandler] = {}
+        self._nodes_to_add: list[Tuple[Position, Type[IProtocol]]] = []
 
     def add_handler(self, handler: INodeHandler):
         self._handlers[handler.get_label()] = handler

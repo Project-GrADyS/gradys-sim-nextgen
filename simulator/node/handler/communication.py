@@ -5,6 +5,8 @@ from simulator.messages.communication import CommunicationCommand, Communication
 from simulator.node import Node, Position
 from simulator.node.interface import INodeHandler
 
+from typing import Dict
+
 
 class CommunicationDestination:
     node: Node
@@ -59,8 +61,8 @@ class CommunicationHandler(INodeHandler):
     def get_label(self) -> str:
         return "communication"
 
-    _sources: dict[int, CommunicationSource]
-    _destinations: dict[int, CommunicationDestination]
+    _sources: Dict[int, CommunicationSource]
+    _destinations: Dict[int, CommunicationDestination]
     _event_loop: EventLoop
 
     def __init__(self, communication_medium: CommunicationMedium):
