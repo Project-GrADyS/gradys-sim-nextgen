@@ -13,6 +13,9 @@ class TimerHandler(INodeHandler):
     def __init__(self):
         self._registed_nodes: set[Node] = set()
 
+    def get_current_time(self):
+        return self._event_loop.current_time
+
     def get_label(self) -> str:
         return "timer"
 

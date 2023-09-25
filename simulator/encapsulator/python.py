@@ -24,10 +24,10 @@ class _PythonProvider(IProvider):
         pass
 
     def schedule_timer(self, timer: str, timestamp: float):
-        self.timer_handler.set_timer(timer, timestamp)
+        self.timer_handler.set_timer(timer, timestamp, self.node)
 
     def current_time(self) -> float:
-        pass
+        return self.timer_handler.get_current_time()
 
 
 class PythonEncapsulator(IEncapsulator):
