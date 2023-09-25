@@ -7,21 +7,21 @@ from simulator.protocols.interface import IProtocol
 
 class PingProtocol(IProtocol):
     def initialize(self, stage: int):
-        self.provider.schedule_timer({}, self.provider.current_time() + random.random() + 2)
+        self.provider.schedule_timer("", self.provider.current_time() + random.random() + 2)
 
     def handle_timer(self, timer: dict):
         command = CommunicationCommand(
             CommunicationCommandType.BROADCAST,
-            {"type": "Ping"}
+            "ping"
         )
         self.provider.send_communication_command(command)
-        self.provider.schedule_timer({}, self.provider.current_time() + 2)
+        self.provider.schedule_timer("", self.provider.current_time() + 2)
 
-    def handle_packet(self, message: dict):
-        if message['type'] == "Ping":
+    def handle_packet(self, message: str):
+        if message == "ping":
             command = CommunicationCommand(
                 CommunicationCommandType.BROADCAST,
-                {"type": "Pong"}
+                "pong"
             )
             self.provider.send_communication_command(command)
 
