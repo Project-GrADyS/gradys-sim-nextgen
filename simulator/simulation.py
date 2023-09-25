@@ -1,3 +1,4 @@
+import logging
 import random
 from typing import Type, Optional
 
@@ -11,10 +12,14 @@ from simulator.protocols.interface import IProtocol
 class SimulationConfiguration:
     duration: Optional[float]
     real_time: bool
+    debug: bool
 
-    def __init__(self, duration: Optional[float] = None, real_time=False):
+    def __init__(self, duration: Optional[float] = None, real_time=False, debug=False):
         self.duration = duration
         self.real_time = real_time
+
+        if debug:
+            logging.basicConfig(level=logging.DEBUG)
 
 
 class Simulator:
@@ -43,6 +48,7 @@ class Simulator:
             handler.register_node(new_node)
 
         self._free_id += 1
+        self._nodes[new_node.id] = new_node
         return new_node
 
     def start_simulation(self):
