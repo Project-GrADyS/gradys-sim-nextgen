@@ -10,10 +10,10 @@ class CommunicationCommandType(int, Enum):
 
 class CommunicationCommand:
     type: CommunicationCommandType
-    message: dict
+    message: str
     destination: Optional[int]
 
-    def __init__(self, command: CommunicationCommandType, message: dict, destination: Optional[int] = None):
+    def __init__(self, command: CommunicationCommandType, message: str, destination: Optional[int] = None):
         self.type = command
         self.message = message
         self.destination = destination

@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Dict, Any
+from typing import Any, Dict
 
 from simulator.messages.communication import CommunicationCommand
 from simulator.messages.mobility import MobilityCommand
