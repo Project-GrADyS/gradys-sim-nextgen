@@ -1,9 +1,12 @@
 import logging
 import random
+import time
+from datetime import timedelta
 from typing import Type, Optional, Dict, Tuple
 
 from simulator.encapsulator.python import PythonEncapsulator
 from simulator.event import EventLoop
+from simulator.log import SIMULATION_LOGGER, setup_simulation_formatter
 from simulator.node import Node, Position
 from simulator.node.interface import INodeHandler
 from simulator.protocols.interface import IProtocol
@@ -17,9 +20,7 @@ class SimulationConfiguration:
     def __init__(self, duration: Optional[float] = None, real_time=False, debug=False):
         self.duration = duration
         self.real_time = real_time
-
-        if debug:
-            logging.basicConfig(level=logging.DEBUG)
+        self.debug = debug
 
 
 class Simulator:
@@ -33,6 +34,11 @@ class Simulator:
 
         self._free_id = 0
         self._configuration = configuration
+
+        self._iteration = 0
+
+        self._formatter = setup_simulation_formatter(configuration.debug)
+        self._logger = logging.getLogger(SIMULATION_LOGGER)
 
     def create_node(self, position: Position, protocol: Type[IProtocol]) -> Node:
         new_node = Node()
@@ -52,12 +58,32 @@ class Simulator:
         return new_node
 
     def start_simulation(self):
+        self._logger.info("[--------- Simulation started ---------]")
+        start_time = time.time()
         for node in self._nodes.values():
             node.protocol_encapsulator.initialize(1)
 
         while not self._is_simulation_done():
             event = self._event_loop.pop_event()
+
+            self._formatter.set_iteration(self._iteration, event.timestamp, event.author)
+
             event.callback()
+
+            self._iteration += 1
+
+        self._formatter.clear_iteration()
+        self._logger.info("[--------- Simulation finished ---------]")
+        total_time = time.time() - start_time
+
+        try:
+            last_timestamp = event.timestamp
+        except NameError:
+            last_timestamp = 0
+
+        self._logger.info(f"Real time elapsed: {timedelta(seconds=total_time)}\t"
+                          f"Total iterations: {self._iteration}\t"
+                          f"Simulation time: {timedelta(seconds=last_timestamp)}")
 
     def _is_simulation_done(self):
         if len(self._event_loop) == 0:
