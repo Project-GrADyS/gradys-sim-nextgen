@@ -1,6 +1,7 @@
 import logging
 
 from simulator.event import EventLoop
+from simulator.log import SIMULATION_LOGGER
 from simulator.messages.communication import CommunicationCommand, CommunicationCommandType
 from simulator.node import Node, Position
 from simulator.node.interface import INodeHandler
@@ -13,12 +14,13 @@ class CommunicationDestination:
 
     def __init__(self, node: Node):
         self.node = node
+        self._logger = logging.getLogger(SIMULATION_LOGGER)
 
     def receive_message(self, message: str, source: 'CommunicationSource') -> None:
         """
         Function responsible for receiving the message through the communication handler.
         """
-        logging.info(f"Node {self.node.id} received message from {source.node.id}")
+        self._logger.debug(f"Node {self.node.id} received message from {source.node.id}")
 
         self.node.protocol_encapsulator.handle_packet(message)
 
@@ -28,13 +30,14 @@ class CommunicationSource:
 
     def __init__(self, node: Node):
         self.node = node
+        self._logger = logging.getLogger(SIMULATION_LOGGER)
 
     def hand_over_message(self, message: str, endpoint: CommunicationDestination) -> None:
         """
         Function called immediately before the communication handler sends a message. Doesn't deliver the actual
         message
         """
-        logging.info(f"Node {self.node.id} sending message to {endpoint.node.id}")
+        self._logger.debug(f"Node {self.node.id} sending message to {endpoint.node.id}")
 
 
 class CommunicationException(Exception):
@@ -114,9 +117,14 @@ class CommunicationHandler(INodeHandler):
 
         if can_transmit(source.node.position, destination.node.position, self.communication_medium):
             if self.communication_medium.delay <= 0:
-                destination.receive_message(message, source)
+                self._event_loop.schedule_event(
+                    self._event_loop.current_time,
+                    lambda: destination.receive_message(message, source),
+                    f"Node {destination.node.id}"
+                )
             else:
                 self._event_loop.schedule_event(
                     self._event_loop.current_time + self.communication_medium.delay,
-                    lambda: destination.receive_message(message, source)
+                    lambda: destination.receive_message(message, source),
+                    f"Node {destination.node.id}"
                 )

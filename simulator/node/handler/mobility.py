@@ -41,7 +41,7 @@ class MobilityHandler(INodeHandler):
         self._injected = True
         self.event_loop = event_loop
 
-        event_loop.schedule_event(event_loop.current_time + self.settings.update_rate, self._update_movement)
+        event_loop.schedule_event(event_loop.current_time + self.settings.update_rate, self._update_movement, "Mobility")
 
     def register_node(self, node: Node):
         if not self._injected:
@@ -77,7 +77,9 @@ class MobilityHandler(INodeHandler):
                     current_position[2] + target_vector[2] * target_vector_multiplier
                 )
 
-        self.event_loop.schedule_event(self.event_loop.current_time + self.settings.update_rate, self._update_movement)
+        self.event_loop.schedule_event(self.event_loop.current_time + self.settings.update_rate,
+                                       self._update_movement,
+                                       "Mobility")
 
     def handle_command(self, command: MobilityCommand, node: Node):
         """
