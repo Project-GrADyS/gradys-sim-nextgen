@@ -9,8 +9,8 @@ class SimulationFormatter(logging.Formatter):
 
     _prefix: str = ""
 
-    def set_iteration(self, iteration: int, timestamp: float, author: str):
-        self._prefix = f"[it={iteration} time={timedelta(seconds=timestamp)} | {author}] "
+    def scope_event(self, iteration: int, timestamp: float, handler: str):
+        self._prefix = f"[it={iteration} time={timedelta(seconds=timestamp)} | {handler}] "
 
     def clear_iteration(self):
         self._prefix = ""

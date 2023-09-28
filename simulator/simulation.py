@@ -66,7 +66,7 @@ class Simulator:
         while not self._is_simulation_done():
             event = self._event_loop.pop_event()
 
-            self._formatter.set_iteration(self._iteration, event.timestamp, event.author)
+            self._formatter.scope_event(self._iteration, event.timestamp, event.handler)
 
             event.callback()
 

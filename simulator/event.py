@@ -3,10 +3,10 @@ from typing import Callable, List
 
 
 class Event:
-    def __init__(self, timestamp: float, callback: Callable, author: str):
+    def __init__(self, timestamp: float, callback: Callable, handler: str):
         self.timestamp = timestamp
         self.callback = callback
-        self.author = author
+        self.handler = handler
 
     def __lt__(self, other):
         return self.timestamp < other.timestamp
@@ -24,12 +24,12 @@ class EventLoop:
         self._event_queue = []
         self._current_time = 0
 
-    def schedule_event(self, timestamp: float, callback: Callable, author: str = ""):
+    def schedule_event(self, timestamp: float, callback: Callable, handler: str = ""):
         if timestamp < self.current_time:
             raise EventLoopException(f"Could not schedule event: tried to schedule at {timestamp} which is "
                                      f"earlier than the current time {self.current_time}. ")
 
-        heapq.heappush(self._event_queue, Event(timestamp, callback, author))
+        heapq.heappush(self._event_queue, Event(timestamp, callback, handler))
 
     def pop_event(self) -> Event:
         if len(self._event_queue) == 0:
