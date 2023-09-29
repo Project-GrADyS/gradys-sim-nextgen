@@ -41,7 +41,9 @@ class MobilityHandler(INodeHandler):
         self._injected = True
         self.event_loop = event_loop
 
-        event_loop.schedule_event(event_loop.current_time + self.settings.update_rate, self._update_movement, "Mobility")
+        event_loop.schedule_event(event_loop.current_time + self.settings.update_rate,
+                                  self._update_movement,
+                                  "Mobility")
 
     def register_node(self, node: Node):
         if not self._injected:
