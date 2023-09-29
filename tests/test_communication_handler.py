@@ -28,7 +28,8 @@ def handle_command_helper(command: CommunicationCommand):
     node2.protocol_encapsulator = DummyEncapsulator()
 
     comm_handler = CommunicationHandler(medium)
-    comm_handler.inject(None)
+    event_loop = EventLoop()
+    comm_handler.inject(event_loop)
 
     comm_handler.register_node(node1)
     comm_handler.register_node(node2)
@@ -36,6 +37,7 @@ def handle_command_helper(command: CommunicationCommand):
     # Testing successful command
     comm_handler.handle_command(command, node1)
 
+    event_loop.pop_event().callback()
     return received
 
 

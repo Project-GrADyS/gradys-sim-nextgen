@@ -29,4 +29,6 @@ class TimerHandler(INodeHandler):
         if node not in self._registed_nodes:
             raise TimerException(f"Could not set timer: Node {node.id} not registered")
 
-        self._event_loop.schedule_event(timestamp, lambda: node.protocol_encapsulator.handle_timer(message))
+        self._event_loop.schedule_event(timestamp,
+                                        lambda: node.protocol_encapsulator.handle_timer(message),
+                                        f"Node {node.id}")
