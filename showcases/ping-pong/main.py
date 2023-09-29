@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from simulator.node.handler.communication import CommunicationHandler, CommunicationMedium
 from simulator.node.handler.timer import TimerHandler
 from simulator.simulation import SimulationBuilder, SimulationConfiguration

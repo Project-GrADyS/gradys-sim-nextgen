@@ -1,5 +1,7 @@
 import logging
 from datetime import timedelta
+from pathlib import Path
+from typing import Optional
 
 SIMULATION_LOGGER = "gradys-sim"
 
@@ -20,16 +22,22 @@ class SimulationFormatter(logging.Formatter):
         return self._prefix + log
 
 
-def setup_simulation_formatter(debug=False) -> SimulationFormatter:
+def setup_simulation_formatter(debug: bool, log_file: Optional[Path]) -> SimulationFormatter:
     logger = logging.getLogger(SIMULATION_LOGGER)
-    handler = logging.StreamHandler()
+
     if debug:
         logger.setLevel(logging.DEBUG)
     else:
         logger.setLevel(logging.INFO)
 
     formatter = SimulationFormatter()
-    handler.setFormatter(formatter)
+    console_handler = logging.StreamHandler()
+    console_handler.setFormatter(formatter)
+    logger.addHandler(console_handler)
 
-    logger.addHandler(handler)
+    if log_file is not None:
+        file_handler = logging.FileHandler(log_file)
+        file_handler.setFormatter(formatter)
+        logger.addHandler(file_handler)
+
     return formatter

@@ -2,6 +2,7 @@ import logging
 import random
 import time
 from datetime import timedelta
+from pathlib import Path
 from typing import Type, Optional, Dict, Tuple
 
 from simulator.encapsulator.python import PythonEncapsulator
@@ -16,11 +17,13 @@ class SimulationConfiguration:
     duration: Optional[float]
     real_time: bool
     debug: bool
+    log_file: Optional[Path]
 
-    def __init__(self, duration: Optional[float] = None, real_time=False, debug=False):
+    def __init__(self, duration: Optional[float] = None, real_time=False, debug=False, log_file: Optional[Path] = None):
         self.duration = duration
         self.real_time = real_time
         self.debug = debug
+        self.log_file = log_file
 
 
 class Simulator:
@@ -37,7 +40,7 @@ class Simulator:
 
         self._iteration = 0
 
-        self._formatter = setup_simulation_formatter(configuration.debug)
+        self._formatter = setup_simulation_formatter(configuration.debug, configuration.log_file)
         self._logger = logging.getLogger(SIMULATION_LOGGER)
 
     def create_node(self, position: Position, protocol: Type[IProtocol]) -> Node:
