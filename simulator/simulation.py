@@ -9,6 +9,8 @@ from simulator.encapsulator.python import PythonEncapsulator
 from simulator.event import EventLoop
 from simulator.log import SIMULATION_LOGGER, setup_simulation_formatter
 from simulator.node import Node, Position
+from simulator.node.handler.communication import CommunicationMedium, CommunicationHandler
+from simulator.node.handler.timer import TimerHandler
 from simulator.node.interface import INodeHandler
 from simulator.protocols.interface import IProtocol
 
@@ -111,10 +113,15 @@ class PositionScheme:
 
 
 class SimulationBuilder:
-    def __init__(self, configuration: SimulationConfiguration):
+    def __init__(self,
+                 configuration: SimulationConfiguration,
+                 communication_medium: CommunicationMedium = None):
         self._configuration = configuration
         self._handlers: Dict[str, INodeHandler] = {}
         self._nodes_to_add: list[Tuple[Position, Type[IProtocol]]] = []
+
+        self.add_handler(CommunicationHandler(communication_medium or CommunicationMedium()))
+        self.add_handler(TimerHandler())
 
     def add_handler(self, handler: INodeHandler):
         self._handlers[handler.get_label()] = handler
