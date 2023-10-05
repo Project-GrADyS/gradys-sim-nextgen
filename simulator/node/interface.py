@@ -5,8 +5,9 @@ from simulator.node import Node
 
 
 class INodeHandler(ABC):
+    @staticmethod
     @abstractmethod
-    def get_label(self) -> str:
+    def get_label() -> str:
         pass
 
     @abstractmethod

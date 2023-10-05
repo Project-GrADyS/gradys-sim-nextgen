@@ -21,7 +21,8 @@ class MobilitySettings:
 
 
 class MobilityHandler(INodeHandler):
-    def get_label(self) -> str:
+    @staticmethod
+    def get_label() -> str:
         return "mobility"
 
     event_loop: EventLoop

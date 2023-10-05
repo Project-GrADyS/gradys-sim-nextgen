@@ -61,7 +61,8 @@ def can_transmit(source_position: Position, destination_position: Position, comm
 
 
 class CommunicationHandler(INodeHandler):
-    def get_label(self) -> str:
+    @staticmethod
+    def get_label() -> str:
         return "communication"
 
     _sources: Dict[int, CommunicationSource]

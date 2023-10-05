@@ -16,7 +16,8 @@ class TimerHandler(INodeHandler):
     def get_current_time(self):
         return self._event_loop.current_time
 
-    def get_label(self) -> str:
+    @staticmethod
+    def get_label() -> str:
         return "timer"
 
     def inject(self, event_loop: EventLoop) -> None:
