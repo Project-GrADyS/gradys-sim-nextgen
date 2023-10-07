@@ -70,7 +70,7 @@ class CommunicationHandler(INodeHandler):
     _destinations: Dict[int, CommunicationDestination]
     _event_loop: EventLoop
 
-    def __init__(self, communication_medium: CommunicationMedium):
+    def __init__(self, communication_medium: CommunicationMedium = CommunicationMedium()):
         self._injected = False
 
         self._sources = {}
