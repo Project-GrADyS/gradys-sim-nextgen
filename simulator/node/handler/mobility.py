@@ -1,5 +1,7 @@
 import math
-from typing import Dict
+from typing import Dict, Tuple
+
+from matplotlib import pyplot as plt
 
 from simulator.event import EventLoop
 from simulator.messages.mobility import MobilityCommand, MobilityCommandType
@@ -24,6 +26,11 @@ class MobilityConfiguration:
                  visualization_update_rate: float = 0.1):
         self.update_rate = update_rate
         self.default_speed = default_speed
+        self.x_range = x_range
+        self.y_range = y_range
+        self.z_range = z_range
+        self.visualization = visualization
+        self.visualization_update_rate = visualization_update_rate
 
 
 class MobilityHandler(INodeHandler):
@@ -44,13 +51,49 @@ class MobilityHandler(INodeHandler):
         self._speeds = {}
         self._injected = False
 
+        if self._configuration.visualization:
+            self._initialize_plot()
+
     def inject(self, event_loop: EventLoop):
         self._injected = True
         self.event_loop = event_loop
 
-        event_loop.schedule_event(event_loop.current_time + self.settings.update_rate,
+        event_loop.schedule_event(event_loop.current_time + self._configuration.update_rate,
                                   self._update_movement,
                                   "Mobility")
+
+        if self._configuration.visualization:
+            self.event_loop.schedule_event(self.event_loop.current_time + self._configuration.visualization_update_rate,
+                                           self._update_plot,
+                                           "Mobility")
+
+    def _initialize_plot(self):
+        plt.ion()
+        plt.show()
+
+        # Initialize the figure and 3D axes
+        self._fig = plt.figure()
+        self._ax = self._fig.add_subplot(111, projection='3d')
+        self._ax.set_xlim(*self._configuration.x_range)
+        self._ax.set_ylim(*self._configuration.y_range)
+        self._ax.set_zlim(*self._configuration.z_range)
+
+    def _update_plot(self):
+        plt.cla()
+        self._ax.scatter(
+            [node.position[0] for node in self._nodes.values()],
+            [node.position[1] for node in self._nodes.values()],
+            [node.position[2] for node in self._nodes.values()]
+        )
+        self._ax.set_xlim(*self._configuration.x_range)
+        self._ax.set_ylim(*self._configuration.y_range)
+        self._ax.set_zlim(*self._configuration.z_range)
+        plt.draw()
+        plt.pause(0.001)
+
+        self.event_loop.schedule_event(self.event_loop.current_time + self._configuration.visualization_update_rate,
+                                       self._update_plot,
+                                       "Mobility")
 
     def register_node(self, node: Node):
         if not self._injected:
