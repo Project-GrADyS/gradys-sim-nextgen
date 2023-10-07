@@ -8,10 +8,10 @@ from typing import Type, Optional, Dict, Tuple
 from simulator.encapsulator.python import PythonEncapsulator
 from simulator.event import EventLoop
 from simulator.log import SIMULATION_LOGGER, setup_simulation_formatter
-from simulator.node import Node, Position
+from simulator.node.node import Node, Position
 from simulator.node.handler.communication import CommunicationMedium, CommunicationHandler
 from simulator.node.handler.timer import TimerHandler
-from simulator.node.interface import INodeHandler
+from simulator.node.handler.interface import INodeHandler
 from simulator.protocols.interface import IProtocol
 
 

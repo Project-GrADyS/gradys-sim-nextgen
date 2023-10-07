@@ -1,6 +1,6 @@
 from simulator.event import EventLoop
-from simulator.node import Node
-from simulator.node.interface import INodeHandler
+from simulator.node.node import Node
+from simulator.node.handler.interface import INodeHandler
 
 
 class TimerException(Exception):

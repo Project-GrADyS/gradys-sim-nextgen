@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
 from simulator.event import EventLoop
-from simulator.node import Node
+from simulator.node.node import Node
 
 
 class INodeHandler(ABC):

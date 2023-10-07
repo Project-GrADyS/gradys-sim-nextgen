@@ -2,7 +2,7 @@ from typing import Type
 
 from simulator.encapsulator.interface import IEncapsulator
 from simulator.messages.telemetry import Telemetry
-from simulator.node import Node
+from simulator.node.node import Node
 from simulator.node.handler.communication import CommunicationHandler
 from simulator.node.handler.timer import TimerHandler
 from simulator.protocols.interface import IProtocol

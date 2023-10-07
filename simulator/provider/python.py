@@ -1,6 +1,6 @@
 from simulator.messages.communication import CommunicationCommand
 from simulator.messages.mobility import MobilityCommand
-from simulator.node import Node
+from simulator.node.node import Node
 from simulator.node.handler.communication import CommunicationHandler
 from simulator.node.handler.timer import TimerHandler
 from simulator.provider.interface import IProvider
