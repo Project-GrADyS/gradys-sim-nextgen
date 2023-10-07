@@ -3,7 +3,8 @@ import logging
 from simulator.event import EventLoop
 from simulator.log import SIMULATION_LOGGER
 from simulator.messages.communication import CommunicationCommand, CommunicationCommandType
-from simulator.node.node import Node, Position
+from simulator.node.node import Node
+from simulator.position import Position
 from simulator.node.handler.interface import INodeHandler
 
 from typing import Dict

@@ -3,7 +3,8 @@ from typing import Dict
 
 from simulator.event import EventLoop
 from simulator.messages.mobility import MobilityCommand, MobilityCommandType
-from simulator.node.node import Node, Position
+from simulator.node.node import Node
+from simulator.position import Position
 from simulator.node.handler.interface import INodeHandler
 
 

@@ -1,9 +1,5 @@
-from typing import Tuple
-
 from simulator.encapsulator.interface import IEncapsulator
-
-
-Position = Tuple[float, float, float]
+from simulator.position import Position
 
 
 class Node:
