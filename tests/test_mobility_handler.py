@@ -6,13 +6,13 @@ from simulator.encapsulator.interface import IEncapsulator
 from simulator.event import EventLoop
 from simulator.messages.mobility import MobilityCommand, MobilityCommandType
 from simulator.messages.telemetry import Telemetry
-from simulator.node.handler.mobility import MobilityHandler, MobilitySettings, MobilityException
+from simulator.node.handler.mobility import MobilityHandler, MobilityConfiguration, MobilityException
 from simulator.node.node import Node
 from simulator.protocols.interface import IProtocol
 from simulator.simulation import SimulationBuilder, SimulationConfiguration
 
 
-def setup_mobility_handler(settings: MobilitySettings):
+def setup_mobility_handler(settings: MobilityConfiguration):
     mobility_handler = MobilityHandler(settings)
     event_loop = EventLoop()
     mobility_handler.inject(event_loop)
@@ -50,8 +50,8 @@ class TestMobility(unittest.TestCase):
         speed = 1.2
         update_rate = 0.3
 
-        event_loop, mobility_handler = setup_mobility_handler(MobilitySettings(update_rate=update_rate,
-                                                                               default_speed=speed))
+        event_loop, mobility_handler = setup_mobility_handler(MobilityConfiguration(update_rate=update_rate,
+                                                                                    default_speed=speed))
         mobility_handler.register_node(node)
         mobility_handler.handle_command(MobilityCommand(
             MobilityCommandType.GOTO_COORDS,
@@ -72,7 +72,7 @@ class TestMobility(unittest.TestCase):
         node.protocol_encapsulator = DummyEncapsulator()
 
         update_rate = 0.3
-        event_loop, mobility_handler = setup_mobility_handler(MobilitySettings(update_rate=update_rate))
+        event_loop, mobility_handler = setup_mobility_handler(MobilityConfiguration(update_rate=update_rate))
         mobility_handler.register_node(node)
 
         mobility_handler.handle_command(MobilityCommand(
@@ -96,7 +96,7 @@ class TestMobility(unittest.TestCase):
 
     def test_update_rate(self):
         update_rate = 0.1
-        event_loop, mobility_handler = setup_mobility_handler(MobilitySettings(update_rate=update_rate))
+        event_loop, mobility_handler = setup_mobility_handler(MobilityConfiguration(update_rate=update_rate))
 
         self.assertEqual(len(event_loop), 1)
         event = event_loop.pop_event()
@@ -114,8 +114,8 @@ class TestMobility(unittest.TestCase):
 
         update_rate = 0.3
         speed = 1
-        event_loop, mobility_handler = setup_mobility_handler(MobilitySettings(update_rate=update_rate,
-                                                                               default_speed=speed))
+        event_loop, mobility_handler = setup_mobility_handler(MobilityConfiguration(update_rate=update_rate,
+                                                                                    default_speed=speed))
         mobility_handler.register_node(node)
 
         mobility_handler.handle_command(MobilityCommand(
@@ -142,8 +142,8 @@ class TestMobility(unittest.TestCase):
 
         update_rate = 1
         speed = 100
-        event_loop, mobility_handler = setup_mobility_handler(MobilitySettings(update_rate=update_rate,
-                                                                               default_speed=speed))
+        event_loop, mobility_handler = setup_mobility_handler(MobilityConfiguration(update_rate=update_rate,
+                                                                                    default_speed=speed))
         mobility_handler.register_node(node)
 
         mobility_handler.handle_command(MobilityCommand(
@@ -178,7 +178,7 @@ class TestMobility(unittest.TestCase):
                 nonlocal received
                 received += 1
 
-        builder = SimulationBuilder(SimulationConfiguration(max_steps=5))
+        builder = SimulationBuilder(SimulationConfiguration(max_iterations=5))
         builder.add_node(DummyProtocol, (0, 0, 0))
         builder.add_handler(MobilityHandler())
         simulation = builder.build()
@@ -188,7 +188,7 @@ class TestMobility(unittest.TestCase):
         self.assertEqual(5, received)
 
     def test_register_not_injected(self):
-        mobility_handler = MobilityHandler(MobilitySettings())
+        mobility_handler = MobilityHandler(MobilityConfiguration())
 
         node = Node()
         node.id = 0
@@ -197,7 +197,7 @@ class TestMobility(unittest.TestCase):
             mobility_handler.register_node(node)
 
     def test_command_not_registered(self):
-        mobility_handler = MobilityHandler(MobilitySettings())
+        mobility_handler = MobilityHandler(MobilityConfiguration())
         node = Node()
         node.id = 0
 

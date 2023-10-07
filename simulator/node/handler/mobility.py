@@ -13,11 +13,15 @@ class MobilityException(Exception):
     pass
 
 
-class MobilitySettings:
-    update_rate: float
-    default_speed: float
-
-    def __init__(self, update_rate: float = 0.01, default_speed: float = 10):
+class MobilityConfiguration:
+    def __init__(self,
+                 update_rate: float = 0.01,
+                 default_speed: float = 10,
+                 x_range: Tuple[float, float] = (-50, 50),
+                 y_range: Tuple[float, float] = (-50, 50),
+                 z_range: Tuple[float, float] = (0, 50),
+                 visualization: bool = False,
+                 visualization_update_rate: float = 0.1):
         self.update_rate = update_rate
         self.default_speed = default_speed
 
@@ -33,8 +37,8 @@ class MobilityHandler(INodeHandler):
     _targets: Dict[int, Position]
     _speeds: Dict[int, float]
 
-    def __init__(self, settings: MobilitySettings = MobilitySettings()):
-        self.settings = settings
+    def __init__(self, configuration: MobilityConfiguration = MobilityConfiguration()):
+        self._configuration = configuration
         self._nodes = {}
         self._targets = {}
         self._speeds = {}
@@ -54,7 +58,7 @@ class MobilityHandler(INodeHandler):
                                     "is uninitialized.")
 
         self._nodes[node.id] = node
-        self._speeds[node.id] = self.settings.default_speed
+        self._speeds[node.id] = self._configuration.default_speed
 
     def _update_movement(self):
         for node_id in self._nodes.keys():
@@ -68,7 +72,7 @@ class MobilityHandler(INodeHandler):
                 target_vector: Position = (target[0] - current_position[0],
                                            target[1] - current_position[1],
                                            target[2] - current_position[2])
-                movement_multiplier = speed * self.settings.update_rate
+                movement_multiplier = speed * self._configuration.update_rate
                 distance_delta = math.sqrt(target_vector[0] ** 2 + target_vector[1] ** 2 + target_vector[2] ** 2)
 
                 if movement_multiplier >= distance_delta:
@@ -88,7 +92,7 @@ class MobilityHandler(INodeHandler):
             telemetry = Telemetry(current_position=node.position)
             node.protocol_encapsulator.handle_telemetry(telemetry)
 
-        self.event_loop.schedule_event(self.event_loop.current_time + self.settings.update_rate,
+        self.event_loop.schedule_event(self.event_loop.current_time + self._configuration.update_rate,
                                        self._update_movement,
                                        "Mobility")
 
