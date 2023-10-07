@@ -67,6 +67,7 @@ class Simulator:
         self._logger.info("[--------- Simulation started ---------]")
         start_time = time.time()
         for node in self._nodes.values():
+            self._formatter.scope_event(0, 0, f"Node {node.id} Initialization")
             node.protocol_encapsulator.initialize(1)
 
         while not self._is_simulation_done():

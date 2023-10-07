@@ -7,7 +7,7 @@ SIMULATION_LOGGER = "gradys-sim"
 
 class SimulationFormatter(logging.Formatter):
     def __init__(self):
-        super().__init__("%(levelname)s: %(message)s")
+        super().__init__("%(message)s")
 
     _prefix: str = ""
 
@@ -19,7 +19,7 @@ class SimulationFormatter(logging.Formatter):
 
     def format(self, record: logging.LogRecord) -> str:
         log = super().format(record)
-        return self._prefix + log
+        return f"{record.levelname: <8} {self._prefix}{log}"
 
 
 def setup_simulation_formatter(debug: bool, log_file: Optional[Path]) -> SimulationFormatter:
