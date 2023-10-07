@@ -1,6 +1,9 @@
+import logging
 import random
+import types
 from typing import Tuple, Type, Callable
 
+from simulator.log import SIMULATION_LOGGER
 from simulator.messages.mobility import MobilityCommand, MobilityCommandType
 from simulator.messages.telemetry import Telemetry
 from simulator.position import Position, squared_distance
@@ -25,8 +28,9 @@ class RandomMobilityAddon:
     protocols
     """
     def __init__(self, protocol: IProtocol, config: RandomMobilityConfig = RandomMobilityConfig()):
-        self.instance = protocol
-        self.config = config
+        self._instance = protocol
+        self._config = config
+        self._logger = logging.getLogger(SIMULATION_LOGGER)
 
     def travel_to_random_waypoint(self) -> Position:
         """
@@ -35,9 +39,9 @@ class RandomMobilityAddon:
         :return: Node's new destination
         """
         random_waypoint = (
-            random.uniform(*self.config.x_range),
-            random.uniform(*self.config.y_range),
-            random.uniform(*self.config.z_range)
+            random.uniform(*self._config.x_range),
+            random.uniform(*self._config.y_range),
+            random.uniform(*self._config.z_range)
         )
 
         command = MobilityCommand(
@@ -45,7 +49,9 @@ class RandomMobilityAddon:
             *random_waypoint
         )
 
-        self.instance.provider.send_mobility_command(command)
+        self._logger.info(f"RandomMobilityAddon: traveling to waypoint {random_waypoint}")
+
+        self._instance.provider.send_mobility_command(command)
         return random_waypoint
 
     _current_target: Position
@@ -57,17 +63,18 @@ class RandomMobilityAddon:
         Initiates a random trip. This means this node will draw a random waypoing, travel to it and repeat
         this process until finish_random_trip is called.
         """
+        self._logger.info("RandomMobilityAddon: Initiating a random trip")
         self._current_target = self.travel_to_random_waypoint()
 
-        self._instance_handle_telemetry = self.instance.handle_telemetry
+        self._instance_handle_telemetry = self._instance.handle_telemetry
 
-        def patched_handle_telemetry(_instance: IProtocol, telemetry: Telemetry):
-            if squared_distance(telemetry.current_position, self._current_target) <= self.config.squared_tolerance:
+        def patched_handle_telemetry(instance: IProtocol, telemetry: Telemetry):
+            if squared_distance(telemetry.current_position, self._current_target) <= self._config.squared_tolerance:
                 self.travel_to_random_waypoint()
 
             self._instance_handle_telemetry(telemetry)
 
-        self.instance.handle_telemetry = patched_handle_telemetry
+        self._instance.handle_telemetry = types.MethodType(patched_handle_telemetry, self._instance)
 
         self._trip_ongoing = True
 
@@ -75,8 +82,9 @@ class RandomMobilityAddon:
         """
         Finishes an ongoing random trip
         """
+        self._logger.info("RandomMobilityAddon: Finishing a random trip")
         if self._trip_ongoing:
-            self.instance.handle_telemetry = self._instance_handle_telemetry
+            self._instance.handle_telemetry = self._instance_handle_telemetry
             self._trip_ongoing = False
 
     @property
