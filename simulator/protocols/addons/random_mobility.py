@@ -11,7 +11,8 @@ from simulator.protocols.interface import IProtocol
 
 
 class RandomMobilityConfig:
-    def __init__(self, x_range: Tuple[float, float] = (-50, 50),
+    def __init__(self,
+                 x_range: Tuple[float, float] = (-50, 50),
                  y_range: Tuple[float, float] = (-50, 50),
                  z_range: Tuple[float, float] = (0, 50),
                  tolerance: float = 0.5):
