@@ -3,6 +3,7 @@ from typing import Dict
 
 from simulator.event import EventLoop
 from simulator.messages.mobility import MobilityCommand, MobilityCommandType
+from simulator.messages.telemetry import Telemetry
 from simulator.node.node import Node
 from simulator.position import Position
 from simulator.node.handler.interface import INodeHandler
@@ -56,30 +57,36 @@ class MobilityHandler(INodeHandler):
         self._speeds[node.id] = self.settings.default_speed
 
     def _update_movement(self):
-        for node_id, target in self._targets.items():
+        for node_id in self._nodes.keys():
             node = self._nodes[node_id]
-            current_position = node.position
-            speed = self._speeds[node_id]
-            target_vector: Position = (target[0] - current_position[0],
-                                       target[1] - current_position[1],
-                                       target[2] - current_position[2])
-            movement_multiplier = speed * self.settings.update_rate
-            distance_delta = math.sqrt(target_vector[0] ** 2 + target_vector[1] ** 2 + target_vector[2] ** 2)
 
-            if movement_multiplier >= distance_delta:
-                node.position = (
-                    target[0],
-                    target[1],
-                    target[2]
-                )
-            else:
-                target_vector_multiplier = movement_multiplier / distance_delta
+            # If the node has a target update its position
+            if node_id in self._targets:
+                target = self._targets[node_id]
+                current_position = node.position
+                speed = self._speeds[node_id]
+                target_vector: Position = (target[0] - current_position[0],
+                                           target[1] - current_position[1],
+                                           target[2] - current_position[2])
+                movement_multiplier = speed * self.settings.update_rate
+                distance_delta = math.sqrt(target_vector[0] ** 2 + target_vector[1] ** 2 + target_vector[2] ** 2)
 
-                node.position = (
-                    current_position[0] + target_vector[0] * target_vector_multiplier,
-                    current_position[1] + target_vector[1] * target_vector_multiplier,
-                    current_position[2] + target_vector[2] * target_vector_multiplier
-                )
+                if movement_multiplier >= distance_delta:
+                    node.position = (
+                        target[0],
+                        target[1],
+                        target[2]
+                    )
+                else:
+                    target_vector_multiplier = movement_multiplier / distance_delta
+
+                    node.position = (
+                        current_position[0] + target_vector[0] * target_vector_multiplier,
+                        current_position[1] + target_vector[1] * target_vector_multiplier,
+                        current_position[2] + target_vector[2] * target_vector_multiplier
+                    )
+            telemetry = Telemetry(current_position=node.position)
+            node.protocol_encapsulator.handle_telemetry(telemetry)
 
         self.event_loop.schedule_event(self.event_loop.current_time + self.settings.update_rate,
                                        self._update_movement,
