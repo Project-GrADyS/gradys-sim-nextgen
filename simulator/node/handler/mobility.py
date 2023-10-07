@@ -32,7 +32,7 @@ class MobilityHandler(INodeHandler):
     _targets: Dict[int, Position]
     _speeds: Dict[int, float]
 
-    def __init__(self, settings: MobilitySettings):
+    def __init__(self, settings: MobilitySettings = MobilitySettings()):
         self.settings = settings
         self._nodes = {}
         self._targets = {}
