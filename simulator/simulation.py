@@ -17,13 +17,11 @@ from simulator.protocols.interface import IProtocol
 
 
 class SimulationConfiguration:
-    duration: Optional[float]
-    max_iterations: Optional[int]
-    real_time: bool
-    debug: bool
-    log_file: Optional[Path]
-
-    def __init__(self, duration: Optional[float] = None, max_steps: Optional[int] = None, real_time=False, debug=False, log_file: Optional[Path] = None):
+    def __init__(self,
+                 duration: Optional[float] = None,
+                 max_steps: Optional[int] = None,
+                 real_time=False, debug=False,
+                 log_file: Optional[Path] = None):
         self.duration = duration
         self.max_iterations = max_steps
         self.real_time = real_time
@@ -120,14 +118,10 @@ class PositionScheme:
 
 class SimulationBuilder:
     def __init__(self,
-                 configuration: SimulationConfiguration,
-                 communication_medium: CommunicationMedium = None):
+                 configuration: SimulationConfiguration):
         self._configuration = configuration
         self._handlers: Dict[str, INodeHandler] = {}
         self._nodes_to_add: list[Tuple[Position, Type[IProtocol]]] = []
-
-        self.add_handler(CommunicationHandler(communication_medium or CommunicationMedium()))
-        self.add_handler(TimerHandler())
 
     def add_handler(self, handler: INodeHandler):
         self._handlers[handler.get_label()] = handler
