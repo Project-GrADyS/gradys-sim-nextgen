@@ -19,11 +19,11 @@ from simulator.protocols.interface import IProtocol
 class SimulationConfiguration:
     def __init__(self,
                  duration: Optional[float] = None,
-                 max_steps: Optional[int] = None,
+                 max_iterations: Optional[int] = None,
                  real_time=False, debug=False,
                  log_file: Optional[Path] = None):
         self.duration = duration
-        self.max_iterations = max_steps
+        self.max_iterations = max_iterations
         self.real_time = real_time
         self.debug = debug
         self.log_file = log_file
