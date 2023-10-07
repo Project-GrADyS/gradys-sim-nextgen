@@ -13,9 +13,9 @@ from simulator.provider.python import PythonProvider
 class PythonEncapsulator(IEncapsulator):
     def __init__(self,
                  node: Node,
-                 communication: CommunicationHandler,
-                 timer: TimerHandler,
-                 mobility: MobilityHandler,
+                 communication: CommunicationHandler = None,
+                 timer: TimerHandler = None,
+                 mobility: MobilityHandler = None,
                  **kwargs):
         self.provider = PythonProvider(node, communication, timer, mobility)
 
