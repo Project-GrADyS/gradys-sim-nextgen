@@ -1,8 +1,6 @@
 from typing import Type
 
 from simulator.encapsulator.interface import IEncapsulator
-from simulator.messages.communication import CommunicationCommand
-from simulator.messages.mobility import MobilityCommand
 from simulator.messages.telemetry import Telemetry
 from simulator.node import Node
 from simulator.node.handler.communication import CommunicationHandler
