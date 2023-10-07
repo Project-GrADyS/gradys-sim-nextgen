@@ -18,12 +18,14 @@ from simulator.protocols.interface import IProtocol
 
 class SimulationConfiguration:
     duration: Optional[float]
+    max_iterations: Optional[int]
     real_time: bool
     debug: bool
     log_file: Optional[Path]
 
-    def __init__(self, duration: Optional[float] = None, real_time=False, debug=False, log_file: Optional[Path] = None):
+    def __init__(self, duration: Optional[float] = None, max_steps: Optional[int] = None, real_time=False, debug=False, log_file: Optional[Path] = None):
         self.duration = duration
+        self.max_iterations = max_steps
         self.real_time = real_time
         self.debug = debug
         self.log_file = log_file
@@ -95,7 +97,10 @@ class Simulator:
         if len(self._event_loop) == 0:
             return True
 
-        if self._event_loop.current_time > self._configuration.duration:
+        if self._configuration.duration is not None and self._event_loop.current_time >= self._configuration.duration:
+            return True
+
+        if self._configuration.max_iterations is not None and self._iteration >= self._configuration.max_iterations:
             return True
 
         return False
