@@ -4,15 +4,18 @@ import random
 from simulator.log import SIMULATION_LOGGER
 from simulator.messages.communication import CommunicationCommand, CommunicationCommandType
 from simulator.messages.telemetry import Telemetry
+from simulator.protocols.addons.random_mobility import RandomMobilityAddon
 from simulator.protocols.interface import IProtocol
 
 
 class PingProtocol(IProtocol):
     def __init__(self):
         self._logger = logging.getLogger(SIMULATION_LOGGER)
+        self._movement = RandomMobilityAddon(self)
 
     def initialize(self, stage: int):
         self.provider.schedule_timer("", self.provider.current_time() + random.random() + 2)
+        self._movement.initiate_random_trip()
 
     def handle_timer(self, timer: dict):
         command = CommunicationCommand(
@@ -31,4 +34,4 @@ class PingProtocol(IProtocol):
         pass
 
     def finish(self):
-        pass
+        self._movement.initiate_random_trip()
