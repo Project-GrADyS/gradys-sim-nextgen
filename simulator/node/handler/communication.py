@@ -1,4 +1,5 @@
 import logging
+from dataclasses import dataclass
 
 from simulator.event import EventLoop
 from simulator.log import SIMULATION_LOGGER
@@ -45,13 +46,10 @@ class CommunicationException(Exception):
     pass
 
 
+@dataclass
 class CommunicationMedium:
-    transmission_range: float
-    delay: float
-
-    def __init__(self, transmission_range: float = 60, delay: float = 0):
-        self.transmission_range = transmission_range
-        self.delay = delay
+    transmission_range: float = 60
+    delay: float = 0
 
 
 def can_transmit(source_position: Position, destination_position: Position, communication_medium: CommunicationMedium):

@@ -1,6 +1,7 @@
 import logging
 import random
 import time
+from dataclasses import dataclass
 from datetime import timedelta
 from pathlib import Path
 from typing import Type, Optional, Dict, Tuple
@@ -10,23 +11,17 @@ from simulator.event import EventLoop
 from simulator.log import SIMULATION_LOGGER, setup_simulation_formatter
 from simulator.node.node import Node
 from simulator.position import Position
-from simulator.node.handler.communication import CommunicationMedium, CommunicationHandler
-from simulator.node.handler.timer import TimerHandler
 from simulator.node.handler.interface import INodeHandler
 from simulator.protocols.interface import IProtocol
 
 
+@dataclass
 class SimulationConfiguration:
-    def __init__(self,
-                 duration: Optional[float] = None,
-                 max_iterations: Optional[int] = None,
-                 real_time=False, debug=False,
-                 log_file: Optional[Path] = None):
-        self.duration = duration
-        self.max_iterations = max_iterations
-        self.real_time = real_time
-        self.debug = debug
-        self.log_file = log_file
+    duration: Optional[float] = None
+    max_iterations: Optional[int] = None
+    real_time = False
+    debug = False
+    log_file: Optional[Path] = None
 
 
 class Simulator:

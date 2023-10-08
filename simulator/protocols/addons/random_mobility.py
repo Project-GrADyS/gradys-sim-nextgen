@@ -1,7 +1,8 @@
 import logging
 import random
 import types
-from typing import Tuple, Type, Callable
+from dataclasses import dataclass
+from typing import Tuple, Type
 
 from simulator.log import SIMULATION_LOGGER
 from simulator.messages.mobility import MobilityCommand, MobilityCommandType
@@ -10,17 +11,12 @@ from simulator.position import Position, squared_distance
 from simulator.protocols.interface import IProtocol
 
 
+@dataclass
 class RandomMobilityConfig:
-    def __init__(self,
-                 x_range: Tuple[float, float] = (-50, 50),
-                 y_range: Tuple[float, float] = (-50, 50),
-                 z_range: Tuple[float, float] = (0, 50),
-                 tolerance: float = 0.5):
-        self.x_range = x_range
-        self.y_range = y_range
-        self.z_range = z_range
-        self.tolerance = tolerance
-        self.squared_tolerance = tolerance * tolerance
+    x_range: Tuple[float, float] = (-50, 50)
+    y_range: Tuple[float, float] = (-50, 50)
+    z_range: Tuple[float, float] = (0, 50)
+    tolerance: float = 0.5
 
 
 class RandomMobilityAddon:

@@ -1,4 +1,5 @@
 import math
+from dataclasses import dataclass
 from typing import Dict, Tuple
 
 from matplotlib import pyplot as plt
@@ -15,22 +16,15 @@ class MobilityException(Exception):
     pass
 
 
+@dataclass
 class MobilityConfiguration:
-    def __init__(self,
-                 update_rate: float = 0.01,
-                 default_speed: float = 10,
-                 x_range: Tuple[float, float] = (-50, 50),
-                 y_range: Tuple[float, float] = (-50, 50),
-                 z_range: Tuple[float, float] = (0, 50),
-                 visualization: bool = False,
-                 visualization_update_rate: float = 0.1):
-        self.update_rate = update_rate
-        self.default_speed = default_speed
-        self.x_range = x_range
-        self.y_range = y_range
-        self.z_range = z_range
-        self.visualization = visualization
-        self.visualization_update_rate = visualization_update_rate
+    update_rate: float = 0.01
+    default_speed: float = 10
+    x_range: Tuple[float, float] = (-50, 50)
+    y_range: Tuple[float, float] = (-50, 50)
+    z_range: Tuple[float, float] = (0, 50)
+    visualization: bool = False
+    visualization_update_rate: float = 0.1
 
 
 class MobilityHandler(INodeHandler):
