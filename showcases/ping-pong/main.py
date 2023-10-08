@@ -6,7 +6,7 @@ from ping import PingProtocol
 
 
 if __name__ == '__main__':
-    builder = SimulationBuilder(SimulationConfiguration(duration=10, debug=True))
+    builder = SimulationBuilder(SimulationConfiguration(duration=10, debug=True, real_time=True))
     builder.add_handler(CommunicationHandler())
     builder.add_handler(TimerHandler())
     builder.add_handler(MobilityHandler(MobilityConfiguration(visualization=True)))
