@@ -70,14 +70,24 @@ class Simulator:
             self._formatter.scope_event(0, 0, f"Node {node.id} Initialization")
             node.protocol_encapsulator.initialize(1)
 
+        last_timestamp = 0
+        event_duration = 0
         while not self._is_simulation_done():
             event = self._event_loop.pop_event()
 
+            if self._configuration.real_time:
+                sleep_duration = event.timestamp - (last_timestamp + event_duration)
+                if sleep_duration > 0:
+                    time.sleep(sleep_duration)
+
             self._formatter.scope_event(self._iteration, event.timestamp, event.handler)
 
+            event_start = time.time()
             event.callback()
+            event_duration = time.time() - event_start
 
             self._iteration += 1
+            last_timestamp = event.timestamp
 
         self._formatter.clear_iteration()
         self._logger.info("[--------- Simulation finished ---------]")
