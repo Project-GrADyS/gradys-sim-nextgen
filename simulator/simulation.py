@@ -88,11 +88,6 @@ class Simulator:
         self._logger.info("[--------- Simulation finished ---------]")
         total_time = time.time() - start_time
 
-        try:
-            last_timestamp = event.timestamp
-        except NameError:
-            last_timestamp = 0
-
         self._logger.info(f"Real time elapsed: {timedelta(seconds=total_time)}\t"
                           f"Total iterations: {self._iteration}\t"
                           f"Simulation time: {timedelta(seconds=last_timestamp)}")
