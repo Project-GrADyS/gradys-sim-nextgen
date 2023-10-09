@@ -19,8 +19,8 @@ from simulator.protocols.interface import IProtocol
 class SimulationConfiguration:
     duration: Optional[float] = None
     max_iterations: Optional[int] = None
-    real_time = False
-    debug = False
+    real_time: bool = False
+    debug: bool = False
     log_file: Optional[Path] = None
 
 

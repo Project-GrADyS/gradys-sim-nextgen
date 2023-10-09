@@ -66,7 +66,8 @@ class RandomMobilityAddon:
         self._instance_handle_telemetry = self._instance.handle_telemetry
 
         def patched_handle_telemetry(instance: IProtocol, telemetry: Telemetry):
-            if squared_distance(telemetry.current_position, self._current_target) <= self._config.squared_tolerance:
+            if squared_distance(telemetry.current_position, self._current_target) <= \
+                    (self._config.tolerance * self._config.tolerance):
                 self.travel_to_random_waypoint()
 
             self._instance_handle_telemetry(telemetry)
