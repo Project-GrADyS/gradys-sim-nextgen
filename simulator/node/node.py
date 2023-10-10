@@ -7,5 +7,3 @@ class Node:
     protocol_encapsulator: IEncapsulator
 
     position: Position
-
-
