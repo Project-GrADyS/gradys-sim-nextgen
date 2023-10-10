@@ -1,27 +1,35 @@
 import math
-from typing import Dict
+from dataclasses import dataclass
+from typing import Dict, Tuple
+
+from matplotlib import pyplot as plt
 
 from simulator.event import EventLoop
 from simulator.messages.mobility import MobilityCommand, MobilityCommandType
-from simulator.node import Node, Position
-from simulator.node.interface import INodeHandler
+from simulator.messages.telemetry import Telemetry
+from simulator.node.node import Node
+from simulator.position import Position
+from simulator.node.handler.interface import INodeHandler
 
 
 class MobilityException(Exception):
     pass
 
 
-class MobilitySettings:
-    update_rate: float
-    default_speed: float
-
-    def __init__(self, update_rate: float = 0.01, default_speed: float = 10):
-        self.update_rate = update_rate
-        self.default_speed = default_speed
+@dataclass
+class MobilityConfiguration:
+    update_rate: float = 0.01
+    default_speed: float = 10
+    x_range: Tuple[float, float] = (-50, 50)
+    y_range: Tuple[float, float] = (-50, 50)
+    z_range: Tuple[float, float] = (0, 50)
+    visualization: bool = False
+    visualization_update_rate: float = 0.1
 
 
 class MobilityHandler(INodeHandler):
-    def get_label(self) -> str:
+    @staticmethod
+    def get_label() -> str:
         return "mobility"
 
     event_loop: EventLoop
@@ -30,20 +38,56 @@ class MobilityHandler(INodeHandler):
     _targets: Dict[int, Position]
     _speeds: Dict[int, float]
 
-    def __init__(self, settings: MobilitySettings):
-        self.settings = settings
+    def __init__(self, configuration: MobilityConfiguration = MobilityConfiguration()):
+        self._configuration = configuration
         self._nodes = {}
         self._targets = {}
         self._speeds = {}
         self._injected = False
 
+        if self._configuration.visualization:
+            self._initialize_plot()
+
     def inject(self, event_loop: EventLoop):
         self._injected = True
         self.event_loop = event_loop
 
-        event_loop.schedule_event(event_loop.current_time + self.settings.update_rate,
+        event_loop.schedule_event(event_loop.current_time + self._configuration.update_rate,
                                   self._update_movement,
                                   "Mobility")
+
+        if self._configuration.visualization:
+            self.event_loop.schedule_event(self.event_loop.current_time + self._configuration.visualization_update_rate,
+                                           self._update_plot,
+                                           "Mobility")
+
+    def _initialize_plot(self):
+        plt.ion()
+        plt.show()
+
+        # Initialize the figure and 3D axes
+        self._fig = plt.figure()
+        self._ax = self._fig.add_subplot(111, projection='3d')
+        self._ax.set_xlim(*self._configuration.x_range)
+        self._ax.set_ylim(*self._configuration.y_range)
+        self._ax.set_zlim(*self._configuration.z_range)
+
+    def _update_plot(self):
+        plt.cla()
+        self._ax.scatter(
+            [node.position[0] for node in self._nodes.values()],
+            [node.position[1] for node in self._nodes.values()],
+            [node.position[2] for node in self._nodes.values()]
+        )
+        self._ax.set_xlim(*self._configuration.x_range)
+        self._ax.set_ylim(*self._configuration.y_range)
+        self._ax.set_zlim(*self._configuration.z_range)
+        plt.draw()
+        plt.pause(0.001)
+
+        self.event_loop.schedule_event(self.event_loop.current_time + self._configuration.visualization_update_rate,
+                                       self._update_plot,
+                                       "Mobility")
 
     def register_node(self, node: Node):
         if not self._injected:
@@ -51,35 +95,41 @@ class MobilityHandler(INodeHandler):
                                     "is uninitialized.")
 
         self._nodes[node.id] = node
-        self._speeds[node.id] = self.settings.default_speed
+        self._speeds[node.id] = self._configuration.default_speed
 
     def _update_movement(self):
-        for node_id, target in self._targets.items():
+        for node_id in self._nodes.keys():
             node = self._nodes[node_id]
-            current_position = node.position
-            speed = self._speeds[node_id]
-            target_vector: Position = (target[0] - current_position[0],
-                                       target[1] - current_position[1],
-                                       target[2] - current_position[2])
-            movement_multiplier = speed * self.settings.update_rate
-            distance_delta = math.sqrt(target_vector[0] ** 2 + target_vector[1] ** 2 + target_vector[2] ** 2)
 
-            if movement_multiplier >= distance_delta:
-                node.position = (
-                    target[0],
-                    target[1],
-                    target[2]
-                )
-            else:
-                target_vector_multiplier = movement_multiplier / distance_delta
+            # If the node has a target update its position
+            if node_id in self._targets:
+                target = self._targets[node_id]
+                current_position = node.position
+                speed = self._speeds[node_id]
+                target_vector: Position = (target[0] - current_position[0],
+                                           target[1] - current_position[1],
+                                           target[2] - current_position[2])
+                movement_multiplier = speed * self._configuration.update_rate
+                distance_delta = math.sqrt(target_vector[0] ** 2 + target_vector[1] ** 2 + target_vector[2] ** 2)
 
-                node.position = (
-                    current_position[0] + target_vector[0] * target_vector_multiplier,
-                    current_position[1] + target_vector[1] * target_vector_multiplier,
-                    current_position[2] + target_vector[2] * target_vector_multiplier
-                )
+                if movement_multiplier >= distance_delta:
+                    node.position = (
+                        target[0],
+                        target[1],
+                        target[2]
+                    )
+                else:
+                    target_vector_multiplier = movement_multiplier / distance_delta
 
-        self.event_loop.schedule_event(self.event_loop.current_time + self.settings.update_rate,
+                    node.position = (
+                        current_position[0] + target_vector[0] * target_vector_multiplier,
+                        current_position[1] + target_vector[1] * target_vector_multiplier,
+                        current_position[2] + target_vector[2] * target_vector_multiplier
+                    )
+            telemetry = Telemetry(current_position=node.position)
+            node.protocol_encapsulator.handle_telemetry(telemetry)
+
+        self.event_loop.schedule_event(self.event_loop.current_time + self._configuration.update_rate,
                                        self._update_movement,
                                        "Mobility")
 

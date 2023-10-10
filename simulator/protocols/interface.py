@@ -8,7 +8,7 @@ class IProtocol(ABC):
     provider: IProvider
 
     @classmethod
-    def instantiate(cls, provider: IProvider):
+    def instantiate(cls, provider: IProvider) -> 'IProtocol':
         protocol = cls()
         protocol.provider = provider
         return protocol

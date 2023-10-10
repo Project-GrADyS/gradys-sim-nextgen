@@ -1,12 +1,13 @@
 from abc import ABC, abstractmethod
 
 from simulator.event import EventLoop
-from simulator.node import Node
+from simulator.node.node import Node
 
 
 class INodeHandler(ABC):
+    @staticmethod
     @abstractmethod
-    def get_label(self) -> str:
+    def get_label() -> str:
         pass
 
     @abstractmethod

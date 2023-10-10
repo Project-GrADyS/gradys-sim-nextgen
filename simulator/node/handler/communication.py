@@ -1,10 +1,12 @@
 import logging
+from dataclasses import dataclass
 
 from simulator.event import EventLoop
 from simulator.log import SIMULATION_LOGGER
 from simulator.messages.communication import CommunicationCommand, CommunicationCommandType
-from simulator.node import Node, Position
-from simulator.node.interface import INodeHandler
+from simulator.node.node import Node
+from simulator.position import Position
+from simulator.node.handler.interface import INodeHandler
 
 from typing import Dict
 
@@ -44,13 +46,10 @@ class CommunicationException(Exception):
     pass
 
 
+@dataclass
 class CommunicationMedium:
-    transmission_range: float
-    delay: float
-
-    def __init__(self, transmission_range: float = 60, delay: float = 0):
-        self.transmission_range = transmission_range
-        self.delay = delay
+    transmission_range: float = 60
+    delay: float = 0
 
 
 def can_transmit(source_position: Position, destination_position: Position, communication_medium: CommunicationMedium):
@@ -61,14 +60,15 @@ def can_transmit(source_position: Position, destination_position: Position, comm
 
 
 class CommunicationHandler(INodeHandler):
-    def get_label(self) -> str:
+    @staticmethod
+    def get_label() -> str:
         return "communication"
 
     _sources: Dict[int, CommunicationSource]
     _destinations: Dict[int, CommunicationDestination]
     _event_loop: EventLoop
 
-    def __init__(self, communication_medium: CommunicationMedium):
+    def __init__(self, communication_medium: CommunicationMedium = CommunicationMedium()):
         self._injected = False
 
         self._sources = {}

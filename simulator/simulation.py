@@ -1,6 +1,7 @@
 import logging
 import random
 import time
+from dataclasses import dataclass
 from datetime import timedelta
 from pathlib import Path
 from typing import Type, Optional, Dict, Tuple
@@ -8,22 +9,19 @@ from typing import Type, Optional, Dict, Tuple
 from simulator.encapsulator.python import PythonEncapsulator
 from simulator.event import EventLoop
 from simulator.log import SIMULATION_LOGGER, setup_simulation_formatter
-from simulator.node import Node, Position
-from simulator.node.interface import INodeHandler
+from simulator.node.node import Node
+from simulator.position import Position
+from simulator.node.handler.interface import INodeHandler
 from simulator.protocols.interface import IProtocol
 
 
+@dataclass
 class SimulationConfiguration:
-    duration: Optional[float]
-    real_time: bool
-    debug: bool
-    log_file: Optional[Path]
-
-    def __init__(self, duration: Optional[float] = None, real_time=False, debug=False, log_file: Optional[Path] = None):
-        self.duration = duration
-        self.real_time = real_time
-        self.debug = debug
-        self.log_file = log_file
+    duration: Optional[float] = None
+    max_iterations: Optional[int] = None
+    real_time: bool = False
+    debug: bool = False
+    log_file: Optional[Path] = None
 
 
 class Simulator:
@@ -64,25 +62,31 @@ class Simulator:
         self._logger.info("[--------- Simulation started ---------]")
         start_time = time.time()
         for node in self._nodes.values():
+            self._formatter.scope_event(0, 0, f"Node {node.id} Initialization")
             node.protocol_encapsulator.initialize(1)
 
+        last_timestamp = 0
+        event_duration = 0
         while not self._is_simulation_done():
             event = self._event_loop.pop_event()
 
+            if self._configuration.real_time:
+                sleep_duration = event.timestamp - (last_timestamp + event_duration)
+                if sleep_duration > 0:
+                    time.sleep(sleep_duration)
+
             self._formatter.scope_event(self._iteration, event.timestamp, event.handler)
 
+            event_start = time.time()
             event.callback()
+            event_duration = time.time() - event_start
 
             self._iteration += 1
+            last_timestamp = event.timestamp
 
         self._formatter.clear_iteration()
         self._logger.info("[--------- Simulation finished ---------]")
         total_time = time.time() - start_time
-
-        try:
-            last_timestamp = event.timestamp
-        except NameError:
-            last_timestamp = 0
 
         self._logger.info(f"Real time elapsed: {timedelta(seconds=total_time)}\t"
                           f"Total iterations: {self._iteration}\t"
@@ -92,7 +96,10 @@ class Simulator:
         if len(self._event_loop) == 0:
             return True
 
-        if self._event_loop.current_time > self._configuration.duration:
+        if self._configuration.duration is not None and self._event_loop.current_time >= self._configuration.duration:
+            return True
+
+        if self._configuration.max_iterations is not None and self._iteration >= self._configuration.max_iterations:
             return True
 
         return False
@@ -111,7 +118,8 @@ class PositionScheme:
 
 
 class SimulationBuilder:
-    def __init__(self, configuration: SimulationConfiguration):
+    def __init__(self,
+                 configuration: SimulationConfiguration):
         self._configuration = configuration
         self._handlers: Dict[str, INodeHandler] = {}
         self._nodes_to_add: list[Tuple[Position, Type[IProtocol]]] = []
