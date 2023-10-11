@@ -16,7 +16,7 @@ class RandomMobilityConfig:
     x_range: Tuple[float, float] = (-50, 50)
     y_range: Tuple[float, float] = (-50, 50)
     z_range: Tuple[float, float] = (0, 50)
-    tolerance: float = 0.5
+    tolerance: float = 1
 
 
 class RandomMobilityAddon:
@@ -68,7 +68,7 @@ class RandomMobilityAddon:
         def patched_handle_telemetry(instance: IProtocol, telemetry: Telemetry):
             if squared_distance(telemetry.current_position, self._current_target) <= \
                     (self._config.tolerance * self._config.tolerance):
-                self.travel_to_random_waypoint()
+                self._current_target = self.travel_to_random_waypoint()
 
             self._instance_handle_telemetry(telemetry)
 
