@@ -14,6 +14,9 @@ class INodeHandler(ABC):
     def inject(self, event_loop: EventLoop) -> None:
         pass
 
+    def on_simulation_step(self, iteration: int, timestamp: float):
+        pass
+
     @abstractmethod
     def register_node(self, node: Node) -> None:
         pass
