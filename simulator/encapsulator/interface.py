@@ -1,15 +1,17 @@
 from abc import ABC, abstractmethod
-from typing import Type
+from typing import Type, Generic, TypeVar
 
 from simulator.messages.telemetry import Telemetry
 from simulator.protocols.interface import IProtocol
 
+T = TypeVar("T", bound=IProtocol)
 
-class IEncapsulator(ABC):
-    protocol: IProtocol
+
+class IEncapsulator(ABC, Generic[T]):
+    protocol: T
 
     @abstractmethod
-    def encapsulate(self, protocol: Type[IProtocol]):
+    def encapsulate(self, protocol: Type[T]):
         pass
 
     @abstractmethod
