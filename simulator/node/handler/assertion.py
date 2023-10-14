@@ -24,88 +24,100 @@ class SimulationTestCase:
 P = TypeVar("P", bound=IProtocol)
 
 
-def assert_always_true_for_protocol(func: Callable[[Node[P]], bool],
-                                    protocol_type: Type[P],
-                                    name: str = None,
-                                    description: str = "") -> Type[SimulationTestCase]:
-    if name is None:
-        name = func.__name__
+def assert_always_true_for_protocol(protocol_type: Type[P],
+                                    name: str,
+                                    description: str = "") -> Callable[[], Type[SimulationTestCase]]:
+    def decorator(func: Callable[[Node[P]], bool]) -> Type[SimulationTestCase]:
+        nonlocal name
+        if name is None:
+            name = func.__name__
 
-    class TestCase(SimulationTestCase):
-        def test_iteration(self, nodes: List[Node[P]], iteration: int, timestamp: float):
-            for node in nodes:
-                if isinstance(node.protocol_encapsulator.protocol, protocol_type):
-                    if not func(node):
-                        raise FailedAssertionException(f"Assertion \"{name}\" {'(' + description + ') '}failed "
-                                                       f"[iteration={iteration} | timestamp={timestamp}]")
+        class TestCase(SimulationTestCase):
+            def test_iteration(self, nodes: List[Node[P]], iteration: int, timestamp: float):
+                for node in nodes:
+                    if isinstance(node.protocol_encapsulator.protocol, protocol_type):
+                        if not func(node):
+                            raise FailedAssertionException(f"Assertion \"{name}\" {'(' + description + ') '}failed "
+                                                           f"[iteration={iteration} | timestamp={timestamp}]")
 
-        def finalize(self):
-            pass
+            def finalize(self):
+                pass
 
-    return TestCase
+        return TestCase
 
-
-def assert_eventually_true_for_protocol(func: Callable[[Node], bool],
-                                        protocol_type: Type[IProtocol],
-                                        name: str = None,
-                                        description: str = "") -> Type[SimulationTestCase]:
-    if name is None:
-        name = func.__name__
-
-    class TestCase(SimulationTestCase):
-        has_been_true = False
-
-        def test_iteration(self, nodes: List[Node], iteration: int, timestamp: float):
-            for node in nodes:
-                if isinstance(node.protocol_encapsulator.protocol, protocol_type):
-                    if func(node):
-                        self.has_been_true = True
-
-        def finalize(self):
-            if not self.has_been_true:
-                raise FailedAssertionException(f"Assertion \"{name}\" {'(' + description + ') '}failed\n"
-                                               f"The condition was never met during the simulation")
-
-    return TestCase
+    return decorator
 
 
-def assert_always_true_for_simulation(func: Callable[[List[Node]], bool],
-                                      name: str = None,
-                                      description: str = "") -> Type[SimulationTestCase]:
-    if name is None:
-        name = func.__name__
+def assert_eventually_true_for_protocol(protocol_type: Type[IProtocol],
+                                        name: str,
+                                        description: str = "") -> Callable[[], Type[SimulationTestCase]]:
+    def decorator(func: Callable[[Node], bool]) -> Type[SimulationTestCase]:
+        nonlocal name
+        if name is None:
+            name = func.__name__
 
-    class TestCase(SimulationTestCase):
-        def test_iteration(self, nodes: List[Node], iteration: int, timestamp: float):
-            if not func(nodes):
-                raise FailedAssertionException(f"Assertion \"{name}\" {'(' + description + ') '}failed\n"
-                                               f"[iteration={iteration} | timestamp={timestamp}]\n")
+        class TestCase(SimulationTestCase):
+            has_been_true = False
 
-        def finalize(self):
-            pass
+            def test_iteration(self, nodes: List[Node], iteration: int, timestamp: float):
+                for node in nodes:
+                    if isinstance(node.protocol_encapsulator.protocol, protocol_type):
+                        if func(node):
+                            self.has_been_true = True
 
-    return TestCase
+            def finalize(self):
+                if not self.has_been_true:
+                    raise FailedAssertionException(f"Assertion \"{name}\" {'(' + description + ') '}failed\n"
+                                                   f"The condition was never met during the simulation")
+
+        return TestCase
+
+    return decorator
 
 
-def assert_eventually_true_for_simulation(func: Callable[[List[Node]], bool],
-                                          name: str = None,
-                                          description: str = "") -> Type[SimulationTestCase]:
-    if name is None:
-        name = func.__name__
+def assert_always_true_for_simulation(name: str,
+                                      description: str = "") -> Callable[[], Type[SimulationTestCase]]:
+    def decorator(func: Callable[[List[Node]], bool]) -> Type[SimulationTestCase]:
+        nonlocal name
+        if name is None:
+            name = func.__name__
 
-    class TestCase(SimulationTestCase):
-        has_been_true = False
+        class TestCase(SimulationTestCase):
+            def test_iteration(self, nodes: List[Node], iteration: int, timestamp: float):
+                if not func(nodes):
+                    raise FailedAssertionException(f"Assertion \"{name}\" {'(' + description + ') '}failed\n"
+                                                   f"[iteration={iteration} | timestamp={timestamp}]\n")
 
-        def test_iteration(self, nodes: List[Node], iteration: int, timestamp: float):
-            if func(nodes):
-                self.has_been_true = True
+            def finalize(self):
+                pass
 
-        def finalize(self):
-            if not self.has_been_true:
-                raise FailedAssertionException(f"Assertion \"{name}\" {'(' + description + ') '}failed\n"
-                                               f"The condition was never met during the simulation")
+        return TestCase
 
-    return TestCase
+    return decorator
+
+
+def assert_eventually_true_for_simulation(name: str,
+                                          description: str = "") -> Callable[[], Type[SimulationTestCase]]:
+    def decorator(func: Callable[[List[Node]], bool]) -> Type[SimulationTestCase]:
+        nonlocal name
+        if name is None:
+            name = func.__name__
+
+        class TestCase(SimulationTestCase):
+            has_been_true = False
+
+            def test_iteration(self, nodes: List[Node], iteration: int, timestamp: float):
+                if func(nodes):
+                    self.has_been_true = True
+
+            def finalize(self):
+                if not self.has_been_true:
+                    raise FailedAssertionException(f"Assertion \"{name}\" {'(' + description + ') '}failed\n"
+                                                   f"The condition was never met during the simulation")
+
+        return TestCase
+
+    return decorator
 
 
 class AssertionHandler(INodeHandler):
