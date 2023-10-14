@@ -70,9 +70,6 @@ class Simulator:
         while not self._is_simulation_done():
             event = self._event_loop.pop_event()
 
-            for handler in self._handlers.values():
-                handler.on_simulation_step(self._iteration, event.timestamp)
-
             if self._configuration.real_time:
                 sleep_duration = event.timestamp - (last_timestamp + event_duration)
                 if sleep_duration > 0:
@@ -83,6 +80,9 @@ class Simulator:
             event_start = time.time()
             event.callback()
             event_duration = time.time() - event_start
+
+            for handler in self._handlers.values():
+                handler.after_simulation_step(self._iteration, event.timestamp)
 
             self._iteration += 1
             last_timestamp = event.timestamp
