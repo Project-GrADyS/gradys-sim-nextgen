@@ -1,6 +1,6 @@
 import math
 from dataclasses import dataclass
-from typing import Dict, Tuple
+from typing import Dict
 
 from simulator.event import EventLoop
 from simulator.messages.mobility import MobilityCommand, MobilityCommandType
