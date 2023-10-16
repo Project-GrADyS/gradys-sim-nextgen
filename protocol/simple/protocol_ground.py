@@ -1,7 +1,7 @@
 from simulator.messages.communication import SendMessageCommand
 from simulator.messages.telemetry import Telemetry
-from simulator.protocols.interface import IProtocol
-from simulator.protocols.simple.message import SimpleMessage, SenderType
+from protocol.interface import IProtocol
+from protocol.simple.message import SimpleMessage, SenderType
 
 
 class SimpleProtocolGround(IProtocol):

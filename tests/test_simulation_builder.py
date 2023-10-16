@@ -1,7 +1,7 @@
 import unittest
 
+from protocol.interface import IProtocol
 from simulator.messages.telemetry import Telemetry
-from simulator.protocols.interface import IProtocol
 from simulator.provider.interface import IProvider
 from simulator.simulation import SimulationBuilder, SimulationConfiguration
 

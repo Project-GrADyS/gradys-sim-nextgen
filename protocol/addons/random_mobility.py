@@ -8,7 +8,7 @@ from simulator.log import SIMULATION_LOGGER
 from simulator.messages.mobility import MobilityCommand, MobilityCommandType
 from simulator.messages.telemetry import Telemetry
 from simulator.position import Position, squared_distance
-from simulator.protocols.interface import IProtocol
+from protocol.interface import IProtocol
 
 
 @dataclass
@@ -22,7 +22,7 @@ class RandomMobilityConfig:
 class RandomMobilityAddon:
     """
     Addon for random mobility. This addon will assist you in implementing random movement behaviour in your
-    protocols
+    protocol
     """
     def __init__(self, protocol: IProtocol, config: RandomMobilityConfig = RandomMobilityConfig()):
         self._instance = protocol

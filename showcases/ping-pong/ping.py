@@ -4,8 +4,8 @@ import random
 from simulator.log import SIMULATION_LOGGER
 from simulator.messages.communication import CommunicationCommand, CommunicationCommandType
 from simulator.messages.telemetry import Telemetry
-from simulator.protocols.addons.random_mobility import RandomMobilityAddon
-from simulator.protocols.interface import IProtocol
+from protocol.addons.random_mobility import RandomMobilityAddon
+from protocol import IProtocol
 
 
 class PingProtocol(IProtocol):

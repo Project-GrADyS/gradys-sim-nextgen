@@ -6,13 +6,13 @@ from datetime import timedelta
 from pathlib import Path
 from typing import Type, Optional, Dict, Tuple
 
+from protocol.interface import IProtocol
 from simulator.encapsulator.python import PythonEncapsulator
 from simulator.event import EventLoop
 from simulator.log import SIMULATION_LOGGER, setup_simulation_formatter
 from simulator.node.node import Node
 from simulator.position import Position
 from simulator.node.handler.interface import INodeHandler
-from simulator.protocols.interface import IProtocol
 
 
 @dataclass

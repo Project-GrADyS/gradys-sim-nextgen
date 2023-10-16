@@ -2,13 +2,13 @@ import math
 import unittest
 from typing import Type
 
+from protocol.interface import IProtocol
 from simulator.encapsulator.interface import IEncapsulator
 from simulator.event import EventLoop
 from simulator.messages.mobility import MobilityCommand, MobilityCommandType
 from simulator.messages.telemetry import Telemetry
 from simulator.node.handler.mobility import MobilityHandler, MobilityConfiguration, MobilityException
 from simulator.node.node import Node
-from simulator.protocols.interface import IProtocol
 from simulator.simulation import SimulationBuilder, SimulationConfiguration
 
 
