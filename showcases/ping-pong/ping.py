@@ -9,6 +9,9 @@ from simulator.protocols.interface import IProtocol
 
 
 class PingProtocol(IProtocol):
+    sent: int = 0
+    received: int = 0
+
     def __init__(self):
         self._logger = logging.getLogger(SIMULATION_LOGGER)
         self._movement = RandomMobilityAddon(self)
@@ -24,10 +27,12 @@ class PingProtocol(IProtocol):
         )
         self._logger.info("ping")
         self.provider.send_communication_command(command)
+        self.sent += 1
         self.provider.schedule_timer("", self.provider.current_time() + 2)
 
     def handle_packet(self, message: str):
         if message == "ping":
+            self.received += 1
             self._logger.info("pong")
 
     def handle_telemetry(self, telemetry: Telemetry):

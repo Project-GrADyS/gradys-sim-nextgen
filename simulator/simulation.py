@@ -81,6 +81,9 @@ class Simulator:
             event.callback()
             event_duration = time.time() - event_start
 
+            for handler in self._handlers.values():
+                handler.after_simulation_step(self._iteration, event.timestamp)
+
             self._iteration += 1
             last_timestamp = event.timestamp
 
