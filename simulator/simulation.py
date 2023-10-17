@@ -91,6 +91,12 @@ class Simulator:
         self._logger.info("[--------- Simulation finished ---------]")
         total_time = time.time() - start_time
 
+        for node in self._nodes.values():
+            self._formatter.scope_event(0, 0, f"Node {node.id} Finalization")
+            node.protocol_encapsulator.finish()
+
+        self._formatter.clear_iteration()
+
         self._logger.info(f"Real time elapsed: {timedelta(seconds=total_time)}\t"
                           f"Total iterations: {self._iteration}\t"
                           f"Simulation time: {timedelta(seconds=last_timestamp)}")

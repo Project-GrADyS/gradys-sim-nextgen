@@ -35,4 +35,4 @@ class PythonEncapsulator(IEncapsulator):
         self.protocol.handle_telemetry(telemetry)
 
     def finish(self):
-        pass
+        self.protocol.finish()
