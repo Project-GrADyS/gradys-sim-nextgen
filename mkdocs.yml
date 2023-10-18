@@ -27,3 +27,12 @@ markdown_extensions:
   - pymdownx.snippets
   - pymdownx.superfences
   - attr_list
+
+nav:
+  - 'index.md'
+  - Getting Started:
+      - 'guide/setup.md'
+      - 'guide/usage.md'
+      - 'guide/execution.md'
+  - Modules:
+      - 'modules/simulation.md'

@@ -16,7 +16,7 @@ that allows you to validate the protocol you implemented.
 Although simple don't underestimate how useful this execution mode is. The tools 
 provided can help validate your protocol under a surprising amount of conditions. 
 The instructions on how to use this mode and the full list of features are available
-in the documentation for the simulation module [here](modules/simulation.md).
+in the documentation for the simulation module [here](../modules/simulation.md).
 
 ## Integrated mode
 Write
