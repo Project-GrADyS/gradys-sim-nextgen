@@ -3,6 +3,7 @@ theme:
   name: material
   features:
     - content.code.copy
+    - navigation.footer
   palette:
     # Palette toggle for light mode
     - scheme: default
