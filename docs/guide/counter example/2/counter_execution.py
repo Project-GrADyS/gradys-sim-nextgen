@@ -1,6 +1,7 @@
-from simulator.node.handler.timer import TimerHandler
-from simulator.simulation import SimulationBuilder, SimulationConfiguration
 from counter_protocol import CounterProtocol
+from simulator.node.handler.communication import CommunicationHandler
+from simulator.node.handler.timer import TimerHandler
+from simulator.simulation import SimulationBuilder, SimulationConfiguration, PositionScheme
 
 # Configuring the simulation. The only option that interests us
 # is limiting the simulation to 10 real-world seconds.
@@ -11,12 +12,15 @@ config = SimulationConfiguration(
 builder = SimulationBuilder(config)
 
 # Calling the add_node function we create a network node that
-# will run the CounterProtocol we created. 
-builder.add_node(CounterProtocol, (0, 0, 0))
+# will run the CounterProtocol we created.
+for _ in range(10):
+    position = PositionScheme.random((-10, 10), (-10, 10), (-10, 10))
+    builder.add_node(CounterProtocol, position)
 
 # Handlers enable certain simulation features. In the case of our
 # simulation all we really need is a timer.
 builder.add_handler(TimerHandler())
+builder.add_handler(CommunicationHandler())
 
 # Calling the build functions creates a simulation from the previously
 # specified options.

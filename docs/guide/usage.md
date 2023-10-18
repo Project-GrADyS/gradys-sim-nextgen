@@ -22,12 +22,17 @@ interfaces are build, they lay idle and react to user inputs.
 Protocols have to inherit from the `IProtocol` class and implement the protocol
 interface this base class defines. These methods are called to react to some
 event relevant to the network node hosting your protocol. The logic of your
-protocol is implemented in these reactions. 
+protocol is implemented in these reactions.
 
-Protocols have use to a set of methods accessible through a `IProvider` instance
-which is available through `self.provider` defined in the base protocol class. 
-These methods are how the protocol interacts with its environment. Methods are 
-available to send messages, move to specific places, schedule timers and more.
+The protocol class itself does not handle communication or mobility, these are
+handled externally. Think of the protocol as the brains of the operation, issuing
+commands to these external modules that actually perform the actions.
+
+In order to issue these commands they have use to a set of methods accessible 
+through a `IProvider` instance which is available through `self.provider` 
+defined in the protocol base class. These methods are how the protocol interacts 
+with its environment. Methods are available to send messages, move to specific 
+places, schedule timers and more.
 
 ## Building our first protocol
 
@@ -72,4 +77,9 @@ to share information between nodes.
 
 GrADyS-SIM TNG will help you build these kinds of systems by providing support
 for communication between network nodes. Nodes share messages with each other by
-using communication commands. 
+using communication commands that instruct their mobility modules to perform actions
+like broadcasting a message, sending one to a specific node or others.
+
+``` py title="counter_execution.py"
+--8<-- "docs/guide/counter example/2/counter_protocol.py"
+```
