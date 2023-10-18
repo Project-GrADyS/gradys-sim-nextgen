@@ -1,9 +1,9 @@
 from typing import List, Type
 
+from protocol.interface import IProtocol
 from simulator.encapsulator.interface import IEncapsulator
 
 from simulator.messages.telemetry import Telemetry
-from protocol import IProtocol
 from simulator.provider.interop import InteropProvider, Consequence
 
 
