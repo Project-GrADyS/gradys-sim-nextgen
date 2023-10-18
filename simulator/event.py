@@ -1,5 +1,5 @@
 import heapq
-from typing import Callable, List
+from typing import Callable, List, Optional
 
 
 class Event:
@@ -38,6 +38,11 @@ class EventLoop:
         event = heapq.heappop(self._event_queue)
         self._current_time = event.timestamp
         return event
+
+    def peek_event(self) -> Optional[Event]:
+        if len(self._event_queue) == 0:
+            return None
+        return self._event_queue[0]
 
     def clear(self):
         self._event_queue.clear()
