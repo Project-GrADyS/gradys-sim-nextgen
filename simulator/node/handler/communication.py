@@ -1,4 +1,5 @@
 import logging
+import random
 from dataclasses import dataclass
 
 from simulator.event import EventLoop
@@ -50,13 +51,19 @@ class CommunicationException(Exception):
 class CommunicationMedium:
     transmission_range: float = 60
     delay: float = 0
+    failure_rate: float = 0
 
 
 def can_transmit(source_position: Position, destination_position: Position, communication_medium: CommunicationMedium):
     squared_distance = (destination_position[0] - source_position[0]) ** 2 + \
                        (destination_position[1] - source_position[1]) ** 2 + \
                        (destination_position[2] - source_position[2]) ** 2
-    return squared_distance <= (communication_medium.transmission_range * communication_medium.transmission_range)
+    in_range = squared_distance <= (communication_medium.transmission_range * communication_medium.transmission_range)
+
+    rng = True
+    if communication_medium.failure_rate > 0:
+        rng = random.random() > communication_medium.failure_rate
+    return rng & in_range
 
 
 class CommunicationHandler(INodeHandler):

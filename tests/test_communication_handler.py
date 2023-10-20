@@ -152,3 +152,10 @@ class TestCommunication(unittest.TestCase):
         # Assert that message is received
         event.callback()
         self.assertEqual(received, 1)
+
+    def test_failure(self):
+        medium = CommunicationMedium(failure_rate=0)
+        self.assertTrue(can_transmit((0, 0, 0), (0, 0, 0), medium))
+
+        medium = CommunicationMedium(failure_rate=1)
+        self.assertFalse(can_transmit((0, 0, 0), (0, 0, 0), medium))
