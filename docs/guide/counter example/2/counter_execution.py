@@ -14,8 +14,7 @@ builder = SimulationBuilder(config)
 # Calling the add_node function we create a network node that
 # will run the CounterProtocol we created.
 for _ in range(10):
-    position = PositionScheme.random((-10, 10), (-10, 10), (-10, 10))
-    builder.add_node(CounterProtocol, position)
+    builder.add_node(CounterProtocol, (0, 0, 0))
 
 # Handlers enable certain simulation features. In the case of our
 # simulation all we really need is a timer.

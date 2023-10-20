@@ -2,14 +2,17 @@
 
 ## What is GrADyS-SIM TNG?
 
-GrADyS-SIM TNG is a network simulation framework whose primary focus are
-usability and flexibility. Usability is achieved by opting for a simple to
-use python simulation API that allows you to quickly build and prototype
-decentralized algorithms in a network simulation environment. Flexibility
-is achieved by enabling the user to reuse his algorithm implementations
-on a more realistic network simulation scenario by integrating with OMNeT++
-and, in the future, even reuse his algorithms in the real world through a
-MAVLINK integration.
+GrADyS-SIM TNG is a network simulation framework. You can use this software
+to create simulations capable of representing scenarios populated by network
+nodes that coexist in a simulated environment and can send messages to each 
+other. The primary focuses of the simulator are usability and flexibility.  
+
+Usability is achieved by opting for a simple-to-use python simulation API 
+that allows you to quickly build and prototype decentralized algorithms in 
+a network simulation environment. Flexibility is achieved by enabling the 
+user to reuse his algorithm implementations on a more realistic network 
+simulation scenario by integrating with OMNeT++ and, in the future, even 
+reuse his algorithms in the real world through a MAVLINK integration.
 
 The framework was created to be used in three main ways: **prototype mode**,
 **integrated mode** and **experiment mode**. As mentioned one of the main
