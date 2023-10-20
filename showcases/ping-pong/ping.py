@@ -1,11 +1,11 @@
 import logging
 import random
 
+from protocol.interface import IProtocol
 from simulator.log import SIMULATION_LOGGER
 from simulator.messages.communication import CommunicationCommand, CommunicationCommandType
 from simulator.messages.telemetry import Telemetry
 from protocol.addons.random_mobility import RandomMobilityAddon
-from protocol import IProtocol
 
 
 class PingProtocol(IProtocol):
