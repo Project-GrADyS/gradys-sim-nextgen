@@ -24,7 +24,7 @@ if __name__ == '__main__':
     builder = SimulationBuilder(SimulationConfiguration(duration=30, debug=True, real_time=True))
     builder.add_handler(CommunicationHandler())
     builder.add_handler(TimerHandler())
-    builder.add_handler(MobilityHandler(MobilityConfiguration()))
+    builder.add_handler(MobilityHandler())
     builder.add_handler(VisualizationHandler())
     builder.add_handler(AssertionHandler([assert_received_equals_sent]))
 

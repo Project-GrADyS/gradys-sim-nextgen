@@ -10,7 +10,7 @@ from simulator.node.node import Node
 
 @dataclass
 class VisualizationConfiguration:
-    update_rate: float = 0.1
+    update_rate: float = 0.5
     x_range: Tuple[float, float] = (-50, 50)
     y_range: Tuple[float, float] = (-50, 50)
     z_range: Tuple[float, float] = (0, 50)
