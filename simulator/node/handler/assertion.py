@@ -1,10 +1,10 @@
 from abc import abstractmethod
 from typing import Type, List, Callable, TypeVar
 
+from protocol.interface import IProtocol
 from simulator.event import EventLoop
 from simulator.node.handler.interface import INodeHandler
 from simulator.node.node import Node
-from simulator.protocols.interface import IProtocol
 
 
 class FailedAssertionException(Exception):

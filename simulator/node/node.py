@@ -1,8 +1,8 @@
 from typing import Generic, TypeVar
 
+from protocol.interface import IProtocol
 from simulator.encapsulator.interface import IEncapsulator
 from simulator.position import Position
-from simulator.protocols.interface import IProtocol
 
 T = TypeVar("T", bound=IProtocol)
 
