@@ -10,7 +10,7 @@ from simulator.node.node import Node
 from simulator.simulation import SimulationBuilder, SimulationConfiguration
 
 
-@assert_always_true_for_simulation
+@assert_always_true_for_simulation(name="received_equals_sent")
 def assert_received_equals_sent(nodes: List[Node[PingProtocol]]):
     received = 0
     sent = 0
