@@ -1,7 +1,7 @@
 from counter_protocol import CounterProtocol
 from simulator.node.handler.communication import CommunicationHandler, CommunicationMedium
 from simulator.node.handler.timer import TimerHandler
-from simulator.simulation import SimulationBuilder, SimulationConfiguration, PositionScheme
+from simulator.simulation import SimulationBuilder, SimulationConfiguration
 
 # This time we will be running the simulation for a longer time
 # to help us visualize the effect of the medium configurations.

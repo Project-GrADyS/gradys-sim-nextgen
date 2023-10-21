@@ -21,11 +21,6 @@ for _ in range(10):
 builder.add_handler(TimerHandler())
 builder.add_handler(CommunicationHandler())
 
-# Calling the build functions creates a simulation from the previously
-# specified options.
 simulation = builder.build()
-
-# The start_simulation() method will run the simulation until our 10-second
-# limit is reached.
 simulation.start_simulation()
 
