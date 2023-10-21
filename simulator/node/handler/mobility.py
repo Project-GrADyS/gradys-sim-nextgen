@@ -25,7 +25,7 @@ class MobilityHandler(INodeHandler):
     def get_label() -> str:
         return "mobility"
 
-    event_loop: EventLoop
+    _event_loop: EventLoop
 
     _nodes: Dict[int, Node]
     _targets: Dict[int, Position]
@@ -40,7 +40,7 @@ class MobilityHandler(INodeHandler):
 
     def inject(self, event_loop: EventLoop):
         self._injected = True
-        self.event_loop = event_loop
+        self._event_loop = event_loop
 
         event_loop.schedule_event(event_loop.current_time + self._configuration.update_rate,
                                   self._update_movement,
@@ -86,8 +86,8 @@ class MobilityHandler(INodeHandler):
             telemetry = Telemetry(current_position=node.position)
             node.protocol_encapsulator.handle_telemetry(telemetry)
 
-        self.event_loop.schedule_event(self.event_loop.current_time + self._configuration.update_rate,
-                                       self._update_movement,
+        self._event_loop.schedule_event(self._event_loop.current_time + self._configuration.update_rate,
+                                        self._update_movement,
                                        "Mobility")
 
     def handle_command(self, command: MobilityCommand, node: Node):
