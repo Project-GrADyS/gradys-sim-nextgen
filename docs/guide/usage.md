@@ -242,3 +242,28 @@ For this use case the `AssertionHandler` is perfect as it enables the user to
 write assertions (basically functions that return a boolean) that get validated
 at runtime. Assertions can be evaluated on a individual level or simulation-wide.
 
+``` py title="counter_execution.py"
+--8<-- "docs/guide/counter example/6/counter_execution.py"
+```
+
+``` title="Console output"
+INFO     [--------- Simulation started ---------]
+INFO     [--------- Simulation finished ---------]
+INFO     [it=0 time=0:00:00 | Node 0 Finalization] Final counter values: sent=10000 ; received=75026
+INFO     [it=0 time=0:00:00 | Node 1 Finalization] Final counter values: sent=10000 ; received=75171
+INFO     [it=0 time=0:00:00 | Node 2 Finalization] Final counter values: sent=10000 ; received=74901
+INFO     [it=0 time=0:00:00 | Node 3 Finalization] Final counter values: sent=10000 ; received=75065
+INFO     [it=0 time=0:00:00 | Node 4 Finalization] Final counter values: sent=10000 ; received=75262
+INFO     [it=0 time=0:00:00 | Node 5 Finalization] Final counter values: sent=10000 ; received=75176
+INFO     [it=0 time=0:00:00 | Node 6 Finalization] Final counter values: sent=10000 ; received=74931
+INFO     [it=0 time=0:00:00 | Node 7 Finalization] Final counter values: sent=10000 ; received=74595
+INFO     [it=0 time=0:00:00 | Node 8 Finalization] Final counter values: sent=10000 ; received=75302
+INFO     [it=0 time=0:00:00 | Node 9 Finalization] Final counter values: sent=10000 ; received=75165
+INFO     Real time elapsed: 0:00:23.687526	Total iterations: 1870593	Simulation time: 2:46:40
+```
+
+If an assertion error happened the simulation would be interrupted and 
+information about the failure location and time would be displayed. Accurately 
+naming and adding descriptions to your assertions can enhance the interpretation
+of the generated errors. Since no assertion error happens we can be sure that 
+the simulation is working properly.
