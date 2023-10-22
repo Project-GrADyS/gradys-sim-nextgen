@@ -2,7 +2,7 @@ from counter_protocol import CounterProtocol
 from simulator.node.handler.communication import CommunicationHandler, CommunicationMedium
 from simulator.node.handler.mobility import MobilityHandler
 from simulator.node.handler.timer import TimerHandler
-from simulator.node.handler.visualization import VisualizationHandler, VisualizationConfiguration
+from simulator.node.handler.visualization import VisualizationHandler
 from simulator.simulation import SimulationBuilder, SimulationConfiguration
 
 # To enhance our viewing experience we are setting the simulation

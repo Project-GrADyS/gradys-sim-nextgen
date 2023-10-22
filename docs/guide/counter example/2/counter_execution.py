@@ -1,7 +1,7 @@
 from counter_protocol import CounterProtocol
 from simulator.node.handler.communication import CommunicationHandler
 from simulator.node.handler.timer import TimerHandler
-from simulator.simulation import SimulationBuilder, SimulationConfiguration, PositionScheme
+from simulator.simulation import SimulationBuilder, SimulationConfiguration
 
 # Configuring the simulation. The only option that interests us
 # is limiting the simulation to 10 real-world seconds.

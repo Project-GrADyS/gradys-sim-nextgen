@@ -4,9 +4,8 @@ import random
 from protocol.interface import IProtocol
 from simulator.log import SIMULATION_LOGGER
 from simulator.messages.communication import CommunicationCommand, CommunicationCommandType
-from simulator.messages.mobility import MobilityCommand, MobilityCommandType, GotoCoordsMobilityCommand
+from simulator.messages.mobility import GotoCoordsMobilityCommand
 from simulator.messages.telemetry import Telemetry
-from simulator.simulation import PositionScheme
 
 
 class CounterProtocol(IProtocol):
