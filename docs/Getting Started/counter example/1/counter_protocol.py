@@ -37,6 +37,6 @@ class CounterProtocol(IProtocol):
         pass
 
     def finish(self):
-        # We print our final counter value at the end of the simulation
+        # We print our final counter value at the end of the simulator
         logger = logging.getLogger(SIMULATION_LOGGER)
         logger.info(f"Final counter value: {self.counter}")

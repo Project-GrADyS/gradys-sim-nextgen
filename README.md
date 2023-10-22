@@ -23,5 +23,5 @@ make
 
 Run the project
 ```shell
-./simulation
+./simulator
 ```

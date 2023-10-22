@@ -8,7 +8,7 @@ from simulator.node.handler.timer import TimerHandler
 from simulator.node.node import Node
 from simulator.simulation import SimulationBuilder, SimulationConfiguration
 
-# Trying a much larger simulation to illustrate a scenario
+# Trying a much larger simulator to illustrate a scenario
 # where visual evaluation would be hard
 config = SimulationConfiguration(
     duration=10000

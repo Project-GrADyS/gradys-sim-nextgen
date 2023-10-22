@@ -3,7 +3,7 @@ from simulator.node.handler.communication import CommunicationHandler, Communica
 from simulator.node.handler.timer import TimerHandler
 from simulator.simulation import SimulationBuilder, SimulationConfiguration
 
-# This time we will be running the simulation for a longer time
+# This time we will be running the simulator for a longer time
 # to help us visualize the effect of the medium configurations.
 config = SimulationConfiguration(
     duration=100
@@ -30,11 +30,11 @@ medium = CommunicationMedium(
 )
 builder.add_handler(CommunicationHandler(medium))
 
-# Calling the build functions creates a simulation from the previously
+# Calling the build functions creates a simulator from the previously
 # specified options.
 simulation = builder.build()
 
-# The start_simulation() method will run the simulation until our 10-second
+# The start_simulation() method will run the simulator until our 10-second
 # limit is reached.
 simulation.start_simulation()
 

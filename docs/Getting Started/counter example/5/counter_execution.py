@@ -5,11 +5,11 @@ from simulator.node.handler.timer import TimerHandler
 from simulator.node.handler.visualization import VisualizationHandler
 from simulator.simulation import SimulationBuilder, SimulationConfiguration
 
-# To enhance our viewing experience we are setting the simulation
-# to real-time mode. This means that the simulation will run
+# To enhance our viewing experience we are setting the simulator
+# to real-time mode. This means that the simulator will run
 # approximately synchronized with real-time, enabling us to see
 # the nodes moving properly. We are also decreasing the total
-# simulation time, so we don't have to wait for that long
+# simulator time, so we don't have to wait for that long
 config = SimulationConfiguration(
     duration=30,
     real_time=True
@@ -28,7 +28,7 @@ builder.add_handler(CommunicationHandler())
 
 builder.add_handler(MobilityHandler())
 
-# Adding visualization handler to the simulation
+# Adding visualization handler to the simulator
 builder.add_handler(VisualizationHandler())
 
 simulation = builder.build()

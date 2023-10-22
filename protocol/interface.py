@@ -14,7 +14,7 @@ class IProtocol(ABC):
     @classmethod
     def instantiate(cls, provider: IProvider) -> 'IProtocol':
         """
-        Called when the protocol is instantiated before the simulation starts.
+        Called when the protocol is instantiated before the simulator starts.
         This function is important because it is where the IProvider instance
         is injected into the protocol.
         """
@@ -25,7 +25,7 @@ class IProtocol(ABC):
     @abstractmethod
     def initialize(self, stage: int) -> None:
         """
-        This is the first function called when the simulation begins. The initialize()
+        This is the first function called when the simulator begins. The initialize()
         methods for each network node are called in arbitrary order so don't rely on other
         protocols having already been initialized.
         """
@@ -57,8 +57,8 @@ class IProtocol(ABC):
     @abstractmethod
     def finish(self) -> None:
         """
-        Called when the simulation finishes. The finish() method
-        of every node in the simulation is called in arbitrary
+        Called when the simulator finishes. The finish() method
+        of every node in the simulator is called in arbitrary
         order.
         """
         pass

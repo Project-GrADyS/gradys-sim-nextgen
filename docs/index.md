@@ -18,7 +18,7 @@ The framework was created to be used in three main ways: **prototype mode**,
 **integrated mode** and **experiment mode**. As mentioned one of the main
 features of this framework is that you can use the exact same implemented
 logic on all three modes, without changing a line of code. You can understand
-more about these modes in the execution mode documentation [here](guide/execution.md).
+more about these modes in the execution mode documentation [here](Getting Started/execution.md).
 
 What's being executed in these three modes is a central piece of code called
 **protocols**. Protocols are user-defined classes that implement some kind of

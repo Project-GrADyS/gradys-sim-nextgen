@@ -30,7 +30,7 @@ class IProvider(ABC):
     @abstractmethod
     def current_time(self) -> float:
         """
-        Returns the current simulation time
+        Returns the current simulator time
         """
         pass
 

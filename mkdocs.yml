@@ -19,11 +19,7 @@ markdown_extensions:
   - pymdownx.superfences
   - attr_list
 
-nav:
-  - 'index.md'
-  - Getting Started:
-      - 'guide/setup.md'
-      - 'guide/usage.md'
-      - 'guide/execution.md'
-  - Modules:
-      - 'modules/simulation.md'
+
+plugins:
+  - search
+  - mkdocstrings
