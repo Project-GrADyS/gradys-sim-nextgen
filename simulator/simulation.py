@@ -10,22 +10,64 @@ from protocol.interface import IProtocol
 from simulator.encapsulator.python import PythonEncapsulator
 from simulator.event import EventLoop
 from simulator.log import SIMULATION_LOGGER, setup_simulation_formatter
+from simulator.node.handler.interface import INodeHandler
 from simulator.node.node import Node
 from simulator.position import Position
-from simulator.node.handler.interface import INodeHandler
 
 
 @dataclass
 class SimulationConfiguration:
+    """
+    Simulation-level configurations. These will change how the simulation will be run.
+    """
     duration: Optional[float] = None
+    """
+    Maximum duration of the simulation in seconds. The simulation will end when no more events scheduled before 
+    `duration` are left. If `None`, no limit is set.
+    """
+
     max_iterations: Optional[int] = None
+    """
+    Maximum number of simulation iterations. An iteration is counted every time an event is popped from the event-loop.
+    If `None`, no limit is set.
+    """
+
     real_time: bool = False
+    """
+    Setting this to true will put the simulation in real-time mode. This means that the simulation will run synchronized
+    with real-world time. One simulation second will approximately equal to one real-world second.
+    """
+
     debug: bool = False
+    """
+    Setting this flag to true will enable additional logging. Helpful if you are having issues with the simulation.
+    """
+
     log_file: Optional[Path] = None
+    """
+    Simulation logs will be saved in this path.
+    """
 
 
 class Simulator:
+    """
+    Executes the python simulation by managing the event loop. This class is responsible for making sure handlers'
+    get the event loop instance they need to function, implementing simulation-level configurations like termination
+    conditions and configuring logging.
+
+    You shouldn't instantiate this class directly, prefer to build it through
+    [SimulationBuilder][simulator.simulation.SimulationBuilder].
+    """
+
     def __init__(self, handlers: Dict[str, INodeHandler], configuration: SimulationConfiguration):
+        """
+        Instantiates the simulation class. This constructor should not be called directly, prefer to use the
+        [SimulationBuilder][simulator.simulation.SimulationBuilder] API to get a simulator instance.
+
+        Args:
+            handlers: Dictionary of handlers indexed by their labels
+            configuration: Simulation configuration
+        """
         self._event_loop = EventLoop()
         self._nodes: Dict[int, Node] = {}
         self._handlers: Dict[str, INodeHandler] = handlers
@@ -42,6 +84,17 @@ class Simulator:
         self._logger = logging.getLogger(SIMULATION_LOGGER)
 
     def create_node(self, position: Position, protocol: Type[IProtocol]) -> Node:
+        """
+        Creates a new simulation node, encapsulating it. You shouldn't call this method directly, prefer to use the
+        [SimulationBuilder][simulator.simulation.SimulationBuilder] API.
+
+        Args:
+            position: Position where the node should be placed
+            protocol: Type of protocol this node will run
+
+        Returns:
+            The encapsulated node
+        """
         new_node = Node()
         new_node.id = self._free_id
         new_node.position = position
@@ -58,7 +111,12 @@ class Simulator:
         self._nodes[new_node.id] = new_node
         return new_node
 
-    def start_simulation(self):
+    def start_simulation(self) -> None:
+        """
+        Call this method to start the simulation. It is a blocking call and runs until either no event is left in the
+        event loop or a termination condition is met. If not termination condition is set and events are generated
+        infinitely this simulation will run forever.
+        """
         self._logger.info("[--------- Simulation started ---------]")
         start_time = time.time()
         for node in self._nodes.values():
@@ -75,7 +133,7 @@ class Simulator:
                 if sleep_duration > 0:
                     time.sleep(sleep_duration)
 
-            self._formatter.scope_event(self._iteration, event.timestamp, event.handler)
+            self._formatter.scope_event(self._iteration, event.timestamp, event.context)
 
             event_start = time.time()
             event.callback()
@@ -120,10 +178,24 @@ class Simulator:
 
 
 class PositionScheme:
+    """
+    Collection of helpers for positioning your nodes within the simulation.
+    """
+
     @staticmethod
     def random(x_range: Tuple[float, float] = (-10, 10),
                y_range: Tuple[float, float] = (-10, 10),
                z_range: Tuple[float, float] = (0, 10)) -> Position:
+        """
+        Generates a random position
+        Args:
+            x_range: Range of possible positions in the x axis
+            y_range: Range of possible positions in the y axis
+            z_range: Range of possible positions in the z axis
+
+        Returns:
+            A random position within the specified ranges
+        """
         return (
             random.uniform(*x_range),
             random.uniform(*y_range),
@@ -132,19 +204,64 @@ class PositionScheme:
 
 
 class SimulationBuilder:
+    """
+    Helper class to build python simulations. Use the `add_handler` and `add_node` methods to build your simulation
+    scenario them call `build()` to get a simulation instance. Use this class instead of directly trying to instantiate
+    a `Simulator` instance.
+
+    A simulation is build through a fluent interface. This means that you after instantiating this builder class you
+    will set up your simulation by calling methods on that instance gradually building up your simulation.
+
+    All methods return the [SimulationBuilder][simulator.simulation.SimulationBuilder] instance to help you with method chaining.
+    """
+
     def __init__(self,
-                 configuration: SimulationConfiguration):
+                 configuration: SimulationConfiguration = SimulationConfiguration()):
+        """
+        Initializes the simulation builder
+
+        Args:
+            configuration: Configuration used for the simulation. The default values uses all default values from the `SimulationConfiguration` class
+        """
         self._configuration = configuration
         self._handlers: Dict[str, INodeHandler] = {}
         self._nodes_to_add: list[Tuple[Position, Type[IProtocol]]] = []
 
-    def add_handler(self, handler: INodeHandler):
-        self._handlers[handler.get_label()] = handler
+    def add_handler(self, handler: INodeHandler) -> 'SimulationBuilder':
+        """
+        Adds a new handler to the simulation
 
-    def add_node(self, protocol: Type[IProtocol], position: Position):
+        Args:
+            handler: A handler instance
+
+        Returns:
+            The simulator builder instance. This is useful for method chaining
+        """
+        self._handlers[handler.get_label()] = handler
+        return self
+
+    def add_node(self, protocol: Type[IProtocol], position: Position) -> 'SimulationBuilder':
+        """
+        Adds a new node to the simulation
+
+        Args:
+            protocol: Type of protocol this node will run
+            position: Position of the node inside the simulation
+
+        Returns:
+            The simulator builder instance. This is useful for method chaining
+        """
         self._nodes_to_add.append((position, protocol))
+        return self
 
     def build(self) -> Simulator:
+        """
+        Builds the simulation. Should only be called after you have already added all nodes and handlers. Nodes
+        and handlers added after this call will not affect the instance returned by this method.
+
+        Returns:
+            Simulator instance configured using the previously called methods
+        """
         simulator = Simulator(
             self._handlers,
             self._configuration
