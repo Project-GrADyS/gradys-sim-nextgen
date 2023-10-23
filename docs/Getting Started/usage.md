@@ -39,7 +39,7 @@ places, schedule timers and more.
 ## Building our first protocol
 
 ``` py title="counter_protocol.py"
---8<-- "docs/guide/counter example/1/counter_protocol.py"
+--8<-- "docs/Getting Started/counter example/1/counter_protocol.py"
 ```
 
 The protocol above is very simple. All it does is use the _provider_ methods
@@ -48,11 +48,11 @@ timer fires the protocol increments a counter and sets the timer again.
 
 Now that we have created a protocol, we just have to execute it. As mentioned we
 will be using [prototype mode](execution.md#prototype-mode) for this example. Creating a simulation is 
-preferably done through the [SimulationBuilder](modules/simulation.md#Simulation Builder)class. This class presents 
-a simple API for instantiating python simulations.
+preferably done through the [SimulationBuilder][simulator.simulation.SimulationBuilder] 
+class. This class presents a simple API for instantiating python simulations.
 
 ``` py title="counter_execution.py"
---8<-- "docs/guide/counter example/1/counter_execution.py"
+--8<-- "docs/Getting Started/counter example/1/counter_execution.py"
 ```
 
 Running the file above we will notice the following output on our terminal:
@@ -68,9 +68,7 @@ We can see that the simulation ran for 10 simulation seconds which took 0.000195
 real-world seconds to execute. In that time we ran 10 simulation iterations. 
 Remember that our CounterProtocol sets a timer for every second, so the number 
 of iterations is expected. What is also expected is the "Final counter value" 
-logged, which is
-
-10.
+logged, which is 10.
 
 ## Adding Communication
 
@@ -87,7 +85,7 @@ actions
 like broadcasting a message, sending one to a specific node or others.
 
 ``` py title="counter_protocol.py"
---8<-- "docs/guide/counter example/2/counter_protocol.py"
+--8<-- "docs/Getting Started/counter example/2/counter_protocol.py"
 ```
 
 To demonstrate communication we are now creating a simulation populated by 
@@ -96,7 +94,7 @@ all the other ones. Each node keeps track of how many messages it has received
 and sent. The result of executing this protocol is the following:
 
 ``` py title="counter_execution.py"
---8<-- "docs/guide/counter example/2/counter_execution.py"
+--8<-- "docs/Getting Started/counter example/2/counter_execution.py"
 ```
 
 ``` title="Console output"
@@ -131,7 +129,7 @@ communication, like adding delay, limiting the range of communication and adding
 failures.
 
 ``` py title="counter_execution.py"
---8<-- "docs/guide/counter example/3/counter_execution.py"
+--8<-- "docs/Getting Started/counter example/3/counter_execution.py"
 ```
 
 ``` title="Console output"
@@ -179,7 +177,7 @@ by sending mobility commands using their`IProvider` instance. If a mobility
 handler is present these commands will be translated to movement.
 
 ``` py title="counter_protocol.py"
---8<-- "docs/guide/counter example/4/counter_protocol.py"
+--8<-- "docs/Getting Started/counter example/4/counter_protocol.py"
 ```
 
 As you can see we have modified our protocol to add a second timer. Since we
@@ -189,7 +187,7 @@ location every 5 seconds. When a new command is issued the previous target
 gets overriden.
 
 ``` py title="counter_execution.py"
---8<-- "docs/guide/counter example/4/counter_execution.py"
+--8<-- "docs/Getting Started/counter example/4/counter_execution.py"
 ```
 
 We configured the `MobilityHandler` and set our communication medium to a short
@@ -224,7 +222,7 @@ The `VisualizationHandler` was created for this purpose. All we need to do to
 use it is add this handler to our execution. 
 
 ``` py title="counter_execution.py"
---8<-- "docs/guide/counter example/5/counter_execution.py"
+--8<-- "docs/Getting Started/counter example/5/counter_execution.py"
 ```
 
 When we execute this example a window will open showing the node's position in
@@ -243,7 +241,7 @@ write assertions (basically functions that return a boolean) that get validated
 at runtime. Assertions can be evaluated on a individual level or simulation-wide.
 
 ``` py title="counter_execution.py"
---8<-- "docs/guide/counter example/6/counter_execution.py"
+--8<-- "docs/Getting Started/counter example/6/counter_execution.py"
 ```
 
 ``` title="Console output"
