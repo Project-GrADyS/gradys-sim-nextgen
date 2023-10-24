@@ -13,9 +13,20 @@ from typing import Dict
 
 
 class CommunicationDestination:
+    """
+    Represents the receiver for incoming communications for a specific node. Mostly
+    used for logging.
+    """
     node: Node
 
     def __init__(self, node: Node):
+        """
+        Creates a communication destination for a specific node. Doesn't need to be
+        constructed directly, is used internally in the CommunicationHandler
+
+        Args:
+            node: Node owning the destination
+        """
         self.node = node
         self._logger = logging.getLogger(SIMULATION_LOGGER)
 
@@ -29,9 +40,19 @@ class CommunicationDestination:
 
 
 class CommunicationSource:
+    """
+    Represents the outwards facing communication interface of a node. Moslty used for logging. Doesn't need to be
+    constructed directly, is used internally in the CommunicationHandler
+    """
     node: Node
 
     def __init__(self, node: Node):
+        """
+        Creates a communication source for a specific node
+
+        Args:
+            node: Node owning the source
+        """
         self.node = node
         self._logger = logging.getLogger(SIMULATION_LOGGER)
 
@@ -39,6 +60,10 @@ class CommunicationSource:
         """
         Function called immediately before the communication handler sends a message. Doesn't deliver the actual
         message
+
+        Args:
+            message: Message being delivered
+            endpoint: Destination of the message being delivered
         """
         self._logger.debug(f"Node {self.node.id} sending message to {endpoint.node.id}")
 
@@ -49,9 +74,17 @@ class CommunicationException(Exception):
 
 @dataclass
 class CommunicationMedium:
+    """
+    Conditions through which the messages are delivered. Can influence how and when messages can be delivered.
+    """
     transmission_range: float = 60
+    """Maximum range in meters for message delivery. Messages destined to nodes outside this range will not be delivered"""
+
     delay: float = 0
+    """Sets a delay in seconds for message delivery, representing network delay. Range is evaluated before the delay is applied"""
+
     failure_rate: float = 0
+    """Failure chance between 0 and 1 for message delivery. 0 represents messages never failing and 1 always fails."""
 
 
 def can_transmit(source_position: Position, destination_position: Position, communication_medium: CommunicationMedium):
@@ -67,6 +100,15 @@ def can_transmit(source_position: Position, destination_position: Position, comm
 
 
 class CommunicationHandler(INodeHandler):
+    """
+    Adds communication to the simulation. Nodes, through their providers, can
+    send this handler communication commands that dictate how a message should
+    be sent. This message will be delivered to the destination node.
+
+    Messages are transmited through a [medium][simulator.node.handler.communication.CommunicationMedium] that
+    determines conditions like communication range and failure rate. Messages can fail to be delivered or 
+    be delivered late.
+    """
     @staticmethod
     def get_label() -> str:
         return "communication"
@@ -76,6 +118,12 @@ class CommunicationHandler(INodeHandler):
     _event_loop: EventLoop
 
     def __init__(self, communication_medium: CommunicationMedium = CommunicationMedium()):
+        """
+        Initializes the communication handler.
+
+        Args:
+            communication_medium: Configuration of the network conditions. If not set all default values will be used.
+        """
         self._injected = False
 
         self._sources = {}
@@ -95,9 +143,12 @@ class CommunicationHandler(INodeHandler):
 
     def handle_command(self, command: CommunicationCommand, sender: Node):
         """
-        Performs a communication command
-        :param command: Command being issued
-        :param sender: Node issuing the command
+        Performs a communication command. This method should be called by the node's
+        provider to transmit a communication command to the communication handler.
+
+        Args:
+            command: Command being issued
+            sender: Node issuing the command
         """
         if sender.id == command.destination:
             raise CommunicationException("Error transmitting message: message destination is equal to sender. Try "

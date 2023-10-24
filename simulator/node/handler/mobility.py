@@ -16,11 +16,26 @@ class MobilityException(Exception):
 
 @dataclass
 class MobilityConfiguration:
+    """
+    Configuration class for the mobility handler
+    """
+
     update_rate: float = 0.01
+    """Interval in simulation seconds between mobility updates"""
+
     default_speed: float = 10
+    """This is the default speed of a node in m/s"""
 
 
 class MobilityHandler(INodeHandler):
+    """
+    Introduces mobility into the simulatuon. Works by registering a regular event that
+    updates every node's position based on it's target and speed. A node, through it's provider,
+    can sent this handler communication commands to alter it's behaviour including it's speed 
+    and current target. Nodes also recieve telemetry updates containing information pertaining
+    a node's current mobility status.
+    """
+
     @staticmethod
     def get_label() -> str:
         return "mobility"
@@ -32,6 +47,12 @@ class MobilityHandler(INodeHandler):
     _speeds: Dict[int, float]
 
     def __init__(self, configuration: MobilityConfiguration = MobilityConfiguration()):
+        """
+        Constructor for the mobility handler
+
+        Args:
+            configuration: Configuration for the mobility handler. If not set all default values will be used.
+        """
         self._configuration = configuration
         self._nodes = {}
         self._targets = {}
@@ -92,9 +113,12 @@ class MobilityHandler(INodeHandler):
 
     def handle_command(self, command: MobilityCommand, node: Node):
         """
-        Performs a mobility command
-        :param command: Command being issued
-        :param node: Node that issued the command
+        Performs a mobility command. This method is called by the node's 
+        provider to transmit it's mobility command to the mobility handler.
+
+        Args:
+            command: Command being issued
+            node: Node that issued the command
         """
         if node.id not in self._nodes:
             raise MobilityException("Error handling commands: Cannot handle command from unregistered node")

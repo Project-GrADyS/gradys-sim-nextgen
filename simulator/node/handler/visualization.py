@@ -10,17 +10,39 @@ from simulator.node.node import Node
 
 @dataclass
 class VisualizationConfiguration:
+    """
+    Configuration for the VisualizationHandler
+    """
+
     update_rate: float = 0.5
+    """Interval in simulation seconds between visualization updates"""
+
     x_range: Tuple[float, float] = (-50, 50)
+    """Range of the X axis of the visualization in meters"""
+
     y_range: Tuple[float, float] = (-50, 50)
+    """Range of the Y axis of the visualization in meters"""
+
     z_range: Tuple[float, float] = (0, 50)
+    """Range of the Z axis of the visualization in meters"""
 
 
 class VisualizationHandler(INodeHandler):
+    """
+    Adds visualization to the simulation. Shows regularly updated node position in a graphical
+    representation of the simulation. Providers don't interact with this assertion handler,
+    it only consults every nodes' position to update the visualization.
+    """
     _event_loop: EventLoop
     _nodes: List[Node]
 
     def __init__(self, configuration: VisualizationConfiguration = VisualizationConfiguration()):
+        """
+        Constructs the visualization handler.
+
+        Args:
+            configuration: Configuration for the visualization handler. If not set all default values will be used.
+        """
         self._nodes = []
         self._configuration = configuration
 
