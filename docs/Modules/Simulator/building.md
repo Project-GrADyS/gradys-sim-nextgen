@@ -33,7 +33,7 @@ To help you with positioning your nodes some utility methods are also provided.
 
 After calling the 
 [SimulationBuilder.build()][simulator.simulation.SimulationBuilder.build] method 
-you will get a Simulator instance. This instance has alreday been pre-baked with 
+you will get a Simulator instance. This instance has already been pre-baked with 
 all the nodes and handlers you configured using your builder. This class will 
 manage your simulation which can be started by calling the 
 [start_simulation()][simulator.simulation.Simulator.start_simulation]
@@ -46,7 +46,7 @@ if you want to take a closer look):
 ![Simulator architecture](../../assets/simulator_architecture.svg)
 
 As an event-based simulator one of the main components in the simulation is an
-event loop. Events are compact classes containing a timestamp and a callback. 
+[event loop][simulator.event.EventLoop]. Events are compact classes containing a timestamp and a callback. 
 Events are inserted into the event loop which is organized as a heap to keep the
 events with the smallest timestamps on top. At every simulation iteration the 
 simulator class grabs the event with the smallest timestamp and executes its
@@ -58,7 +58,8 @@ effects on the network nodes, mainly observed through calls to the protocol
 interface methods like `handle_timer`. 
 
 The simulation will run until either no more events exist or one of the 
-termination conditions set in `SimulationConfiguration` are fired.
+termination conditions set in [SimulationConfiguration][simulator.simulation.SimulationConfiguration] 
+are fired.
 
 ::: simulator.simulation.Simulator
     options:
