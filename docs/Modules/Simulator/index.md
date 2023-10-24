@@ -5,3 +5,5 @@ implement simulations that run in [prototype-mode](../../Getting%20Started/execu
 completely in python, easy to run and setup. The disadvantages of using this
 module is that you miss out on the realistic simulation that can be set up using
 [integrated-mode](../../Getting%20Started/execution.md#integrated-mode).
+
+This module's documentation is organized by features and it's presented in an intuitive order. 
