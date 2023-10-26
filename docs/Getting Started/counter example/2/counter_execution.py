@@ -1,6 +1,6 @@
 from counter_protocol import CounterProtocol
-from simulator.node.handler.communication import CommunicationHandler
-from simulator.node.handler.timer import TimerHandler
+from simulator.handler.communication import CommunicationHandler
+from simulator.handler import TimerHandler
 from simulator.simulation import SimulationBuilder, SimulationConfiguration
 
 # Configuring the simulator. The only option that interests us

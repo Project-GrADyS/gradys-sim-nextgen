@@ -7,7 +7,7 @@ from simulator.messages.mobility import MobilityCommand, MobilityCommandType
 from simulator.messages.telemetry import Telemetry
 from simulator.node.node import Node
 from simulator.position import Position
-from simulator.node.handler.interface import INodeHandler
+from simulator.handler.interface import INodeHandler
 
 
 class MobilityException(Exception):

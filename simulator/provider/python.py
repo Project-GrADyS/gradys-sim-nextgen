@@ -3,10 +3,10 @@ import logging
 from simulator.log import SIMULATION_LOGGER
 from simulator.messages.communication import CommunicationCommand
 from simulator.messages.mobility import MobilityCommand
-from simulator.node.handler.mobility import MobilityHandler
+from simulator.handler.mobility import MobilityHandler
 from simulator.node.node import Node
-from simulator.node.handler.communication import CommunicationHandler
-from simulator.node.handler.timer import TimerHandler
+from simulator.handler.communication import CommunicationHandler
+from simulator.handler import TimerHandler
 from simulator.provider.interface import IProvider
 
 

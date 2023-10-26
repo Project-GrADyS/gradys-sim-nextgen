@@ -7,7 +7,7 @@ from simulator.log import SIMULATION_LOGGER
 from simulator.messages.communication import CommunicationCommand, CommunicationCommandType
 from simulator.node.node import Node
 from simulator.position import Position
-from simulator.node.handler.interface import INodeHandler
+from simulator.handler.interface import INodeHandler
 
 from typing import Dict
 
@@ -105,7 +105,7 @@ class CommunicationHandler(INodeHandler):
     send this handler communication commands that dictate how a message should
     be sent. This message will be delivered to the destination node.
 
-    Messages are transmited through a [medium][simulator.node.handler.communication.CommunicationMedium] that
+    Messages are transmited through a [medium][simulator.handler.communication.CommunicationMedium] that
     determines conditions like communication range and failure rate. Messages can fail to be delivered or 
     be delivered late.
     """

@@ -1,11 +1,11 @@
 from typing import List
 
 from ping import PingProtocol
-from simulator.node.handler.assertion import assert_always_true_for_simulation, AssertionHandler
-from simulator.node.handler.communication import CommunicationHandler
-from simulator.node.handler.mobility import MobilityHandler
-from simulator.node.handler.timer import TimerHandler
-from simulator.node.handler.visualization import VisualizationHandler
+from simulator.handler.assertion import assert_always_true_for_simulation, AssertionHandler
+from simulator.handler.communication import CommunicationHandler
+from simulator.handler.mobility import MobilityHandler
+from simulator.handler import TimerHandler
+from simulator.handler import VisualizationHandler
 from simulator.node.node import Node
 from simulator.simulation import SimulationBuilder, SimulationConfiguration
 

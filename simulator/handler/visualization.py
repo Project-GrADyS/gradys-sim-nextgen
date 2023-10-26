@@ -4,7 +4,7 @@ from typing import List, Tuple
 from matplotlib import pyplot as plt
 
 from simulator.event import EventLoop
-from simulator.node.handler.interface import INodeHandler
+from simulator.handler.interface import INodeHandler
 from simulator.node.node import Node
 
 

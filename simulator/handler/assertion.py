@@ -3,7 +3,7 @@ from typing import Type, List, Callable, TypeVar
 
 from protocol.interface import IProtocol
 from simulator.event import EventLoop
-from simulator.node.handler.interface import INodeHandler
+from simulator.handler.interface import INodeHandler
 from simulator.node.node import Node
 
 

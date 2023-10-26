@@ -1,3 +1,14 @@
+"""
+As an event-based simulator one of the main components in the simulation is an event loop, that's the focus of this
+module. Events are compact classes containing a timestamp and a callback. Events are inserted into the event loop which
+is organized as a heap to keep the events with the smallest timestamps on top. At every simulation iteration the
+simulator class grabs the event with the smallest timestamp and executes its callback.
+
+Events are created by handlers. Protocols indirectly interact with them through the provider interface they have access
+to. These events, when executed, cause effects on the network nodes, mainly observed through calls to the protocol
+interface methods like handle_timer.
+"""
+
 import heapq
 from dataclasses import dataclass
 from typing import Callable, List, Optional

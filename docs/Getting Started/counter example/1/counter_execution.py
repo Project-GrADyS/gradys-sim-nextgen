@@ -1,4 +1,4 @@
-from simulator.node.handler.timer import TimerHandler
+from simulator.handler import TimerHandler
 from simulator.simulation import SimulationBuilder, SimulationConfiguration
 from counter_protocol import CounterProtocol
 
