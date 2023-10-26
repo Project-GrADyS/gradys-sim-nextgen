@@ -8,7 +8,7 @@ from simulator.event import EventLoop
 from simulator.messages.mobility import MobilityCommand, MobilityCommandType
 from simulator.messages.telemetry import Telemetry
 from simulator.handler.mobility import MobilityHandler, MobilityConfiguration, MobilityException
-from simulator.node.node import Node
+from simulator.node import Node
 from simulator.simulation import SimulationBuilder, SimulationConfiguration
 
 

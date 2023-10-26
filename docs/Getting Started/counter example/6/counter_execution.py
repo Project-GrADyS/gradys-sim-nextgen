@@ -5,7 +5,7 @@ from simulator.handler.assertion import assert_always_true_for_protocol, Asserti
 from simulator.handler.communication import CommunicationHandler
 from simulator.handler.mobility import MobilityHandler
 from simulator.handler import TimerHandler
-from simulator.node.node import Node
+from simulator.node import Node
 from simulator.simulation import SimulationBuilder, SimulationConfiguration
 
 # Trying a much larger simulator to illustrate a scenario

@@ -5,7 +5,7 @@ from typing import Dict
 from simulator.event import EventLoop
 from simulator.messages.mobility import MobilityCommand, MobilityCommandType
 from simulator.messages.telemetry import Telemetry
-from simulator.node.node import Node
+from simulator.node import Node
 from simulator.position import Position
 from simulator.handler.interface import INodeHandler
 

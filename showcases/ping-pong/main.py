@@ -6,7 +6,7 @@ from simulator.handler.communication import CommunicationHandler
 from simulator.handler.mobility import MobilityHandler
 from simulator.handler import TimerHandler
 from simulator.handler import VisualizationHandler
-from simulator.node.node import Node
+from simulator.node import Node
 from simulator.simulation import SimulationBuilder, SimulationConfiguration
 
 

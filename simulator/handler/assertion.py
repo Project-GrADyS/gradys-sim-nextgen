@@ -4,7 +4,7 @@ from typing import Type, List, Callable, TypeVar
 from protocol.interface import IProtocol
 from simulator.event import EventLoop
 from simulator.handler.interface import INodeHandler
-from simulator.node.node import Node
+from simulator.node import Node
 
 
 class FailedAssertionException(Exception):

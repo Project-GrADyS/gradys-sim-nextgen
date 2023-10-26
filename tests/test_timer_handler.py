@@ -1,7 +1,7 @@
 import unittest
 
 from simulator.event import EventLoop
-from simulator.node.node import Node
+from simulator.node import Node
 from simulator.handler import TimerHandler, TimerException
 
 

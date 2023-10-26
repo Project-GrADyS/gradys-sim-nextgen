@@ -34,7 +34,7 @@ class SimulationFormatter(logging.Formatter):
     def scope_event(self, iteration: int, timestamp: float, context: str):
         """
         Call this method to update the formatter's annotation with current information. This module is called by
-        the [Simulator][simulator.simulation.Simulation].
+        the [Simulator][simulator.simulation.Simulator].
 
         Args:
             iteration: Current iteration the simulation is at

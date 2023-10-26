@@ -11,7 +11,7 @@ from simulator.encapsulator.python import PythonEncapsulator
 from simulator.event import EventLoop
 from simulator.log import SIMULATION_LOGGER, setup_simulation_formatter
 from simulator.handler.interface import INodeHandler
-from simulator.node.node import Node
+from simulator.node import Node
 from simulator.position import Position
 
 
