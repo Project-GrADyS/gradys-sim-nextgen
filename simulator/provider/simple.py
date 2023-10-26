@@ -1,5 +1,5 @@
-from simulator.messages.communication import CommunicationCommand
-from simulator.messages.mobility import MobilityCommand
+from protocol.messages.communication import CommunicationCommand
+from protocol.messages.mobility import MobilityCommand
 from simulator.provider.interface import IProvider
 
 

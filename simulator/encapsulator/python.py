@@ -2,11 +2,11 @@ from typing import Type
 
 from protocol.interface import IProtocol
 from simulator.encapsulator.interface import IEncapsulator
-from simulator.messages.telemetry import Telemetry
+from simulator.handler.timer import TimerHandler
+from protocol.messages.telemetry import Telemetry
 from simulator.handler.mobility import MobilityHandler
 from simulator.node import Node
 from simulator.handler.communication import CommunicationHandler
-from simulator.handler import TimerHandler
 from simulator.provider.python import PythonProvider
 
 

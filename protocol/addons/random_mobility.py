@@ -5,8 +5,8 @@ from dataclasses import dataclass
 from typing import Tuple, Type
 
 from simulator.log import SIMULATION_LOGGER
-from simulator.messages.mobility import MobilityCommand, MobilityCommandType
-from simulator.messages.telemetry import Telemetry
+from protocol.messages.mobility import MobilityCommand, MobilityCommandType
+from protocol.messages.telemetry import Telemetry
 from simulator.position import Position, squared_distance
 from protocol.interface import IProtocol
 

@@ -4,7 +4,7 @@ from dataclasses import dataclass
 
 from simulator.event import EventLoop
 from simulator.log import SIMULATION_LOGGER
-from simulator.messages.communication import CommunicationCommand, CommunicationCommandType
+from protocol.messages.communication import CommunicationCommand, CommunicationCommandType
 from simulator.node import Node
 from simulator.position import Position
 from simulator.handler.interface import INodeHandler

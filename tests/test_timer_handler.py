@@ -1,8 +1,8 @@
 import unittest
 
 from simulator.event import EventLoop
+from simulator.handler.timer import TimerHandler, TimerException
 from simulator.node import Node
-from simulator.handler import TimerHandler, TimerException
 
 
 def create_timer_handler():

@@ -1,11 +1,11 @@
 import random
-from simulator.messages.communication import SendMessageCommand
-from simulator.messages.mobility import (
+from protocol.messages.communication import SendMessageCommand
+from protocol.messages.mobility import (
     SetModeCommand,
     MobilityMode,
     ReverseCommand
 )
-from simulator.messages.telemetry import Telemetry
+from protocol.messages.telemetry import Telemetry
 from protocol.interface import IProtocol
 from protocol.simple.message import SimpleMessage, SenderType
 

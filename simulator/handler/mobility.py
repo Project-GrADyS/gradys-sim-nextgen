@@ -3,8 +3,8 @@ from dataclasses import dataclass
 from typing import Dict
 
 from simulator.event import EventLoop
-from simulator.messages.mobility import MobilityCommand, MobilityCommandType
-from simulator.messages.telemetry import Telemetry
+from protocol.messages.mobility import MobilityCommand, MobilityCommandType
+from protocol.messages.telemetry import Telemetry
 from simulator.node import Node
 from simulator.position import Position
 from simulator.handler.interface import INodeHandler

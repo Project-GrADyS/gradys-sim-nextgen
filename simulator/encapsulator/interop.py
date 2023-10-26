@@ -3,7 +3,7 @@ from typing import List, Type
 from protocol.interface import IProtocol
 from simulator.encapsulator.interface import IEncapsulator
 
-from simulator.messages.telemetry import Telemetry
+from protocol.messages.telemetry import Telemetry
 from simulator.provider.interop import InteropProvider, Consequence
 
 

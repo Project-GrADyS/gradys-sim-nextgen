@@ -2,7 +2,7 @@ import unittest
 from typing import List
 
 from protocol.interface import IProtocol
-from simulator.messages.telemetry import Telemetry
+from protocol.messages.telemetry import Telemetry
 from simulator.handler.assertion import AssertionHandler, assert_always_true_for_simulation, \
     FailedAssertionException, assert_always_true_for_protocol
 from simulator.handler.mobility import MobilityHandler

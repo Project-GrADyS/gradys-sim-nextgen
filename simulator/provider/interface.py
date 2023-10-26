@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 from typing import Any, Dict
 
-from simulator.messages.communication import CommunicationCommand
-from simulator.messages.mobility import MobilityCommand
+from protocol.messages.communication import CommunicationCommand
+from protocol.messages.mobility import MobilityCommand
 
 
 class IProvider(ABC):

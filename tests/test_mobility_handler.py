@@ -5,8 +5,8 @@ from typing import Type
 from protocol.interface import IProtocol
 from simulator.encapsulator.interface import IEncapsulator
 from simulator.event import EventLoop
-from simulator.messages.mobility import MobilityCommand, MobilityCommandType
-from simulator.messages.telemetry import Telemetry
+from protocol.messages.mobility import MobilityCommand, MobilityCommandType
+from protocol.messages.telemetry import Telemetry
 from simulator.handler.mobility import MobilityHandler, MobilityConfiguration, MobilityException
 from simulator.node import Node
 from simulator.simulation import SimulationBuilder, SimulationConfiguration
