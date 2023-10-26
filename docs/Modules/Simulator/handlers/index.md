@@ -1,5 +1,7 @@
 # Introduction
 
+![Simulator architecture](../../assets/simulator_architecture.svg)
+
 The [Simulator][simulator.simulation.Simulator] and 
 [EventLoop][simulator.event.EventLoop] provide the backbone upon which handlers
 implement functionalities into the simulation. In principle handlers are 
@@ -13,4 +15,4 @@ they have access to the encapsulated network node.
 
 Every handler implements the `IHandler` interface.
 
-:::simulator.node.handler.interface.INodeHandler
+:::simulator.handler.interface.INodeHandler

@@ -1,3 +1,3 @@
-:::simulator.node.handler.mobility.MobilityHandler
+:::simulator.handler.mobility.MobilityHandler
 
-:::simulator.node.handler.mobility.MobilityConfiguration
+:::simulator.handler.mobility.MobilityConfiguration

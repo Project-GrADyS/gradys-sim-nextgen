@@ -8,6 +8,9 @@ T = TypeVar("T", bound=IProtocol)
 
 
 class Node(Generic[T]):
+    """
+    Represents a node inside the python simulation,
+    """
     id: int
     protocol_encapsulator: IEncapsulator[T]
 

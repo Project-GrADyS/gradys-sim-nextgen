@@ -1,4 +1,4 @@
-:::simulator.node.handler.assertion.AssertionHandler
+:::simulator.handler.assertion.AssertionHandler
 
 ## Creating assertions
 Assertions can be created using one of the provided assertion decorators. They should be
@@ -22,7 +22,7 @@ def assert_received_equals_sent(nodes: List[Node[PingProtocol]]) -> bool:
     return received == sent
 ```
 
-:::simulator.node.handler.assertion.assert_always_true_for_protocol
-:::simulator.node.handler.assertion.assert_eventually_true_for_protocol
-:::simulator.node.handler.assertion.assert_always_true_for_simulation
-:::simulator.node.handler.assertion.assert_eventually_true_for_simulation
+:::simulator.handler.assertion.assert_always_true_for_protocol
+:::simulator.handler.assertion.assert_eventually_true_for_protocol
+:::simulator.handler.assertion.assert_always_true_for_simulation
+:::simulator.handler.assertion.assert_eventually_true_for_simulation

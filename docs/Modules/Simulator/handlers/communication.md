@@ -1,3 +1,3 @@
-:::simulator.node.handler.communication.CommunicationHandler
+:::simulator.handler.communication.CommunicationHandler
 
-:::simulator.node.handler.communication.CommunicationMedium
+:::simulator.handler.communication.CommunicationMedium

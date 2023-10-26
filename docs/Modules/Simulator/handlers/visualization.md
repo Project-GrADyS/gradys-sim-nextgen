@@ -1,3 +1,3 @@
-:::simulator.node.handler.visualization.VisualizationHandler
+:::simulator.handler.visualization.VisualizationHandler
 
-:::simulator.node.handler.visualization.VisualizationConfiguration
+:::simulator.handler.visualization.VisualizationConfiguration
