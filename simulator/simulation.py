@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Type, Optional, Dict, Tuple
 
 from protocol.interface import IProtocol
-from simulator.encapsulator.python import PythonEncapsulator
+from encapsulator.python import PythonEncapsulator
 from simulator.event import EventLoop
 from simulator.log import SIMULATION_LOGGER, setup_simulation_formatter
 from simulator.handler.interface import INodeHandler

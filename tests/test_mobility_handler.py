@@ -3,7 +3,7 @@ import unittest
 from typing import Type
 
 from protocol.interface import IProtocol
-from simulator.encapsulator.interface import IEncapsulator
+from encapsulator.interface import IEncapsulator
 from simulator.event import EventLoop
 from protocol.messages.mobility import MobilityCommand, MobilityCommandType
 from protocol.messages.telemetry import Telemetry

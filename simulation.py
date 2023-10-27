@@ -1,4 +1,4 @@
-from simulator.encapsulator.interop import InteropEncapsulator
+from encapsulator.interop import InteropEncapsulator
 from protocol.simple.protocol_mobile import SimpleProtocolMobile
 
 

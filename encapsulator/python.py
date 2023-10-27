@@ -1,7 +1,7 @@
 from typing import Type
 
 from protocol.interface import IProtocol
-from simulator.encapsulator.interface import IEncapsulator
+from encapsulator.interface import IEncapsulator
 from simulator.handler.timer import TimerHandler
 from protocol.messages.telemetry import Telemetry
 from simulator.handler.mobility import MobilityHandler
