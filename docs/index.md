@@ -37,7 +37,7 @@ are the previously mentioned modes.
 
 ## Why does GrADyS-SIM TNG exist?
 
-![GrADyS and LAC](./assets/gradys-and-lac.png){ align=center }
+![GrADyS and LAC](./assets/gradys_and_lac.png){ align=center }
 
 [GrADyS](https://www.lac.inf.puc-rio.br/index.php/gradys/) is a project member of 
 a laboratory called [LAC](https://www.lac.inf.puc-rio.br/) from PUC-Rio university. 
