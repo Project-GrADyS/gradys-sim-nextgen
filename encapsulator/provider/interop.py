@@ -3,7 +3,7 @@ from typing import Tuple, Any, Union, Callable, List
 
 from protocol.messages.communication import CommunicationCommand
 from protocol.messages.mobility import MobilityCommand
-from simulator.provider.interface import IProvider
+from protocol.provider import IProvider
 
 
 class ConsequenceType(int, Enum):

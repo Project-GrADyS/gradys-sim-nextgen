@@ -4,7 +4,7 @@ from protocol.interface import IProtocol
 from encapsulator.interface import IEncapsulator
 
 from protocol.messages.telemetry import Telemetry
-from simulator.provider.interop import InteropProvider, Consequence
+from encapsulator.provider import InteropProvider, Consequence
 
 
 class InteropEncapsulator(IEncapsulator):

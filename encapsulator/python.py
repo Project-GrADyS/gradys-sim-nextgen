@@ -7,7 +7,7 @@ from protocol.messages.telemetry import Telemetry
 from simulator.handler.mobility import MobilityHandler
 from simulator.node import Node
 from simulator.handler.communication import CommunicationHandler
-from simulator.provider.python import PythonProvider
+from encapsulator.provider import PythonProvider
 
 
 class PythonEncapsulator(IEncapsulator):

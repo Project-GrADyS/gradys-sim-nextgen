@@ -7,7 +7,7 @@ from protocol.messages.mobility import MobilityCommand
 from simulator.handler.mobility import MobilityHandler
 from simulator.node import Node
 from simulator.handler.communication import CommunicationHandler
-from simulator.provider.interface import IProvider
+from protocol.provider import IProvider
 
 
 class PythonProvider(IProvider):

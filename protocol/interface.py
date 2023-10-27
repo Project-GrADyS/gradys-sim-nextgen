@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
 from protocol.messages.telemetry import Telemetry
-from simulator.provider.interface import IProvider
+from protocol.provider import IProvider
 
 
 class IProtocol(ABC):
