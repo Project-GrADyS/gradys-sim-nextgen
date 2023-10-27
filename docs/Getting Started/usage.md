@@ -7,7 +7,7 @@ called protocol because it defines the behaviour protocol of the node. If you
 are satisfied with the simulation environment provided ready to use by
 **GrADyS-SIM TNG**, this is the only class you need to code. You can use your
 protocol on any simulation environment. We will be
-using [prototype mode](execution.md#prototype-mode)
+using [prototype mode][prototype-mode]
 to run a protocol within a python environment.
 
 Before building a protocol it is important to have a basic idea of what you are
