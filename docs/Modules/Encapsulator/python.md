@@ -1,3 +1,3 @@
-# Python Encapsulator
+# Python
 
 :::encapsulator.python

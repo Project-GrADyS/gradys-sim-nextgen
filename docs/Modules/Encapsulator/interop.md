@@ -1,0 +1,3 @@
+# Interop
+
+:::encapsulator.interop
