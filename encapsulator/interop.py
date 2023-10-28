@@ -16,13 +16,12 @@ mode.
 from enum import Enum
 from typing import List, Type, Tuple, Union, Any, Callable
 
-from protocol.interface import IProtocol
+from protocol.interface import IProtocol, IProvider
 from encapsulator.interface import IEncapsulator
 from protocol.messages.communication import CommunicationCommand
 from protocol.messages.mobility import MobilityCommand
 
 from protocol.messages.telemetry import Telemetry
-from protocol.provider import IProvider
 
 
 class ConsequenceType(int, Enum):

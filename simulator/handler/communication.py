@@ -156,7 +156,7 @@ class CommunicationHandler(INodeHandler):
 
         source = self._sources[sender.id]
 
-        if command.type == CommunicationCommandType.BROADCAST:
+        if command.command_type == CommunicationCommandType.BROADCAST:
             for destination, endpoint in self._destinations.items():
                 if destination != sender.id:
                     self._transmit_message(command.message, source, endpoint)

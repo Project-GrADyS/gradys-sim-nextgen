@@ -7,11 +7,10 @@ into interactions with the python simulator.
 import logging
 from typing import Type, Optional
 
-from protocol.interface import IProtocol
+from protocol.interface import IProtocol, IProvider
 from encapsulator.interface import IEncapsulator
 from protocol.messages.communication import CommunicationCommand
 from protocol.messages.mobility import MobilityCommand
-from protocol.provider import IProvider
 from simulator.handler.timer import TimerHandler
 from protocol.messages.telemetry import Telemetry
 from simulator.handler.mobility import MobilityHandler
