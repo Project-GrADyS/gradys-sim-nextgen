@@ -1,33 +1,35 @@
+import random
 from protocol.messages.communication import SendMessageCommand
 from protocol.messages.telemetry import Telemetry
 from protocol.interface import IProtocol
-from protocol.simple.message import SimpleMessage, SenderType
+from showcases.simple.message import SimpleMessage, SenderType
 
 
-class SimpleProtocolGround(IProtocol):
+class SimpleProtocolSensor(IProtocol):
     packets: int
 
     def initialize(self, stage: int):
-        self.packets = 0
+        self.packets = 5
         self.provider.tracked_variables["packets"] = self.packets
+        self.provider.schedule_timer({}, self.provider.current_time() + random.random())
 
     def handle_timer(self, timer: dict):
-        pass
+        self.packets += 1
+        self.provider.tracked_variables["packets"] = self.packets
+        self.provider.schedule_timer({}, self.provider.current_time() + 2)
 
     def handle_packet(self, message: str):
         message: SimpleMessage = SimpleMessage.from_json(message)
-        print(f"SimpleProtocolGround received packet: {self.packets}, {message.sender}")
+        print(f"SimpleProtocolSensor received packet: {self.packets}, {message.sender}")
 
         if message.sender == SenderType.DRONE:
-            self.packets += message.content
-            self.provider.tracked_variables["packets"] = self.packets
-
-            response = SimpleMessage(
-                sender=SenderType.GROUND_STATION, content=self.packets
-            )
+            response = SimpleMessage(sender=SenderType.SENSOR, content=self.packets)
             self.provider.send_communication_command(
                 SendMessageCommand(response.to_json())
             )
+
+            self.packets = 0
+            self.provider.tracked_variables["packets"] = self.packets
 
     def handle_telemetry(self, telemetry: Telemetry):
         pass

@@ -7,7 +7,7 @@ from protocol.messages.mobility import (
 )
 from protocol.messages.telemetry import Telemetry
 from protocol.interface import IProtocol
-from protocol.simple.message import SimpleMessage, SenderType
+from showcases.simple.message import SimpleMessage, SenderType
 
 
 class SimpleProtocolMobile(IProtocol):
