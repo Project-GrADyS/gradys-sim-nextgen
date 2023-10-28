@@ -7,21 +7,21 @@ from protocol.messages.mobility import MobilityCommand
 
 class IProvider(ABC):
     @abstractmethod
-    def send_communication_command(self, command: CommunicationCommand):
+    def send_communication_command(self, command: CommunicationCommand) -> None:
         """
         Sends a communication command to the node's communication module
         """
         pass
 
     @abstractmethod
-    def send_mobility_command(self, command: MobilityCommand):
+    def send_mobility_command(self, command: MobilityCommand) -> None:
         """
         Sends a mobility command to the node's mobility module
         """
         pass
 
     @abstractmethod
-    def schedule_timer(self, timer: str, timestamp: float):
+    def schedule_timer(self, timer: str, timestamp: float) -> None:
         """
         Schedules a timer that should fire at a specified timestamp
         """
