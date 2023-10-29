@@ -2,4 +2,4 @@
 
 ![Simulator architecture](../../assets/simulator_architecture.svg)
 
-:::simulator.event
+:::gradys.simulator.event

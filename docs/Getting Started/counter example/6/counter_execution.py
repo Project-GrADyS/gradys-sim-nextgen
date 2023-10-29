@@ -1,12 +1,12 @@
 import math
 
 from counter_protocol import CounterProtocol
-from simulator.handler.assertion import assert_always_true_for_protocol, AssertionHandler
-from simulator.handler.communication import CommunicationHandler
-from simulator.handler.mobility import MobilityHandler
-from simulator.handler import TimerHandler
-from simulator.node import Node
-from simulator.simulation import SimulationBuilder, SimulationConfiguration
+from gradys.simulator.handler.assertion import assert_always_true_for_protocol, AssertionHandler
+from gradys.simulator import CommunicationHandler
+from gradys.simulator.handler.mobility import MobilityHandler
+from gradys.simulator import TimerHandler
+from gradys.simulator.node import Node
+from gradys.simulator.simulation import SimulationBuilder, SimulationConfiguration
 
 # Trying a much larger simulator to illustrate a scenario
 # where visual evaluation would be hard

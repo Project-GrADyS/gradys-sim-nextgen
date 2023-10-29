@@ -1,5 +1,5 @@
-from simulator.handler import TimerHandler
-from simulator.simulation import SimulationBuilder, SimulationConfiguration
+from gradys.simulator import TimerHandler
+from gradys.simulator.simulation import SimulationBuilder, SimulationConfiguration
 from counter_protocol import CounterProtocol
 
 # Configuring the simulator. The only option that interests us

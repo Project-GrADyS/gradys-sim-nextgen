@@ -1,8 +1,8 @@
 from counter_protocol import CounterProtocol
-from simulator.handler.communication import CommunicationHandler, CommunicationMedium
-from simulator.handler.mobility import MobilityHandler
-from simulator.handler import TimerHandler
-from simulator.simulation import SimulationBuilder, SimulationConfiguration
+from gradys.simulator import CommunicationHandler, CommunicationMedium
+from gradys.simulator.handler.mobility import MobilityHandler
+from gradys.simulator import TimerHandler
+from gradys.simulator.simulation import SimulationBuilder, SimulationConfiguration
 
 
 config = SimulationConfiguration(

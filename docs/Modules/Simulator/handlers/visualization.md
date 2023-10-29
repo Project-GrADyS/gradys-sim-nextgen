@@ -1,3 +1,3 @@
-:::simulator.handler.visualization.VisualizationHandler
+:::gradys.simulator.handler.visualization.VisualizationHandler
 
-:::simulator.handler.visualization.VisualizationConfiguration
+:::gradys.simulator.handler.visualization.VisualizationConfiguration

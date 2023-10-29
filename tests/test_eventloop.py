@@ -1,6 +1,6 @@
 import unittest
 
-from simulator.event import EventLoop, EventLoopException
+from gradys.simulator.event import EventLoop, EventLoopException
 
 
 class TestEventLoop(unittest.TestCase):

@@ -1,8 +1,8 @@
 import unittest
 
-from simulator.event import EventLoop
-from simulator.handler.timer import TimerHandler, TimerException
-from simulator.node import Node
+from gradys.simulator.event import EventLoop
+from gradys.simulator.handler.timer import TimerHandler, TimerException
+from gradys.simulator.node import Node
 
 
 def create_timer_handler():

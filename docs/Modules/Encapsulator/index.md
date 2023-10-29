@@ -1,5 +1,5 @@
 # Introduction
 
-:::encapsulator
+:::gradys.encapsulator
 
-:::encapsulator.interface.IEncapsulator
+:::gradys.encapsulator.interface.IEncapsulator

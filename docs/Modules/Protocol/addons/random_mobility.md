@@ -1,3 +1,3 @@
 # Random Mobility
 
-:::protocol.addons.random_mobility
+:::gradys.protocol.addons.random_mobility

@@ -42,7 +42,7 @@ class EventLoopException(Exception):
 class EventLoop:
     """
     Event loop central to the event-based simulation. Is implemented as a min-heap populated by `Event` instances ordered
-    by their timestamps. Generally only the [`Simulator`][simulator.simulation.Simulator] will call the `pop_event`
+    by their timestamps. Generally only the [`Simulator`][gradys.simulator.simulation.Simulator] will call the `pop_event`
     method, a handler should only need to use the `schedule_event` method.
     """
     _event_heap: List[Event]

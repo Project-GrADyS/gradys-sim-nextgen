@@ -7,16 +7,16 @@ into interactions with the python simulator.
 import logging
 from typing import Type, Optional
 
-from protocol.interface import IProtocol, IProvider
-from encapsulator.interface import IEncapsulator
-from protocol.messages.communication import CommunicationCommand
-from protocol.messages.mobility import MobilityCommand
-from simulator.handler.timer import TimerHandler
-from protocol.messages.telemetry import Telemetry
-from simulator.handler.mobility import MobilityHandler
-from simulator.log import SIMULATION_LOGGER
-from simulator.node import Node
-from simulator.handler.communication import CommunicationHandler
+from gradys.protocol.interface import IProtocol, IProvider
+from gradys.encapsulator.interface import IEncapsulator
+from gradys.protocol.messages.communication import CommunicationCommand
+from gradys.protocol.messages.mobility import MobilityCommand
+from gradys.simulator.handler.timer import TimerHandler
+from gradys.protocol.messages.telemetry import Telemetry
+from gradys.simulator.handler.mobility import MobilityHandler
+from gradys.simulator.log import SIMULATION_LOGGER
+from gradys.simulator.node import Node
+from gradys.simulator.handler.communication import CommunicationHandler
 
 
 class PythonProvider(IProvider):

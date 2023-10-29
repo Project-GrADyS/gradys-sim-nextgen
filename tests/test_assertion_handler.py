@@ -1,13 +1,13 @@
 import unittest
 from typing import List
 
-from protocol.interface import IProtocol
-from protocol.messages.telemetry import Telemetry
-from simulator.handler.assertion import AssertionHandler, assert_always_true_for_simulation, \
+from gradys.protocol.interface import IProtocol
+from gradys.protocol.messages.telemetry import Telemetry
+from gradys.simulator.handler.assertion import AssertionHandler, assert_always_true_for_simulation, \
     FailedAssertionException, assert_always_true_for_protocol
-from simulator.handler.mobility import MobilityHandler
-from simulator.node import Node
-from simulator.simulation import SimulationBuilder, SimulationConfiguration
+from gradys.simulator.handler.mobility import MobilityHandler
+from gradys.simulator.node import Node
+from gradys.simulator.simulation import SimulationBuilder, SimulationConfiguration
 
 
 class TestAssertionHandler(unittest.TestCase):

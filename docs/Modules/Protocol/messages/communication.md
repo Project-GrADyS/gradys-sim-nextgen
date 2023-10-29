@@ -1,3 +1,3 @@
 # Communication
 
-:::protocol.messages.communication
+:::gradys.protocol.messages.communication

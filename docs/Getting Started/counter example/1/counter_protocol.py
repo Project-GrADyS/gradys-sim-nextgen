@@ -1,8 +1,8 @@
 import logging
 
-from protocol.interface import IProtocol
-from simulator.log import SIMULATION_LOGGER
-from protocol.messages.telemetry import Telemetry
+from gradys.protocol import IProtocol
+from gradys.simulator import SIMULATION_LOGGER
+from gradys.protocol import Telemetry
 
 
 class CounterProtocol(IProtocol):

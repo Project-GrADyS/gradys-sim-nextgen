@@ -2,12 +2,12 @@ import math
 from dataclasses import dataclass
 from typing import Dict
 
-from simulator.event import EventLoop
-from protocol.messages.mobility import MobilityCommand, MobilityCommandType
-from protocol.messages.telemetry import Telemetry
-from simulator.node import Node
-from simulator.position import Position
-from simulator.handler.interface import INodeHandler
+from gradys.simulator.event import EventLoop
+from gradys.protocol.messages.mobility import MobilityCommand, MobilityCommandType
+from gradys.protocol.messages.telemetry import Telemetry
+from gradys.simulator.node import Node
+from gradys.simulator.position import Position
+from gradys.simulator.handler.interface import INodeHandler
 
 
 class MobilityException(Exception):

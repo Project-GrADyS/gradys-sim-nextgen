@@ -1,3 +1,3 @@
-:::simulator.handler.mobility.MobilityHandler
+:::gradys.simulator.handler.mobility.MobilityHandler
 
-:::simulator.handler.mobility.MobilityConfiguration
+:::gradys.simulator.handler.mobility.MobilityConfiguration

@@ -1,7 +1,7 @@
 from counter_protocol import CounterProtocol
-from simulator.handler.communication import CommunicationHandler
-from simulator.handler import TimerHandler
-from simulator.simulation import SimulationBuilder, SimulationConfiguration
+from gradys.simulator import CommunicationHandler
+from gradys.simulator import TimerHandler
+from gradys.simulator.simulation import SimulationBuilder, SimulationConfiguration
 
 # Configuring the simulator. The only option that interests us
 # is limiting the simulator to 10 real-world seconds.

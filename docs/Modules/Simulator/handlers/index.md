@@ -2,6 +2,6 @@
 
 ![Simulator architecture](../../../assets/simulator_architecture.svg)
 
-:::simulator.handler
+:::gradys.simulator.handler
 
-:::simulator.handler.interface.INodeHandler
+:::gradys.simulator.handler.interface.INodeHandler

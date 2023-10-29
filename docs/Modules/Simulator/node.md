@@ -1,3 +1,3 @@
 # Node
 
-:::simulator.node
+:::gradys.simulator.node

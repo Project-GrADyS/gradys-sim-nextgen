@@ -1,3 +1,3 @@
 # Python
 
-:::encapsulator.python
+:::gradys.encapsulator.python

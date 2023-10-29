@@ -1,4 +1,4 @@
-from simulator.position import Position
+from gradys.simulator.position import Position
 
 
 # TODO: Josef, I heavily simplified this class, this will probably change the calls from the OMNeT++

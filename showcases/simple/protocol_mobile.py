@@ -1,12 +1,12 @@
 import random
-from protocol.messages.communication import SendMessageCommand
-from protocol.messages.mobility import (
+from gradys.protocol import SendMessageCommand
+from gradys.protocol.messages.mobility import (
     SetModeCommand,
     MobilityMode,
     ReverseCommand
 )
-from protocol.messages.telemetry import Telemetry
-from protocol.interface import IProtocol
+from gradys.protocol import Telemetry
+from gradys.protocol import IProtocol
 from showcases.simple.message import SimpleMessage, SenderType
 
 

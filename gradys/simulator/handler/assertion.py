@@ -1,10 +1,10 @@
 from abc import abstractmethod
 from typing import Type, List, Callable, TypeVar
 
-from protocol.interface import IProtocol
-from simulator.event import EventLoop
-from simulator.handler.interface import INodeHandler
-from simulator.node import Node
+from gradys.protocol.interface import IProtocol
+from gradys.simulator.event import EventLoop
+from gradys.simulator.handler.interface import INodeHandler
+from gradys.simulator.node import Node
 
 
 class FailedAssertionException(Exception):

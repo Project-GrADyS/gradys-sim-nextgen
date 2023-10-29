@@ -2,12 +2,12 @@ import logging
 import random
 from dataclasses import dataclass
 
-from simulator.event import EventLoop
-from simulator.log import SIMULATION_LOGGER
-from protocol.messages.communication import CommunicationCommand, CommunicationCommandType
-from simulator.node import Node
-from simulator.position import Position
-from simulator.handler.interface import INodeHandler
+from gradys.simulator.event import EventLoop
+from gradys.simulator.log import SIMULATION_LOGGER
+from gradys.protocol.messages.communication import CommunicationCommand, CommunicationCommandType
+from gradys.simulator.node import Node
+from gradys.simulator.position import Position
+from gradys.simulator.handler.interface import INodeHandler
 
 from typing import Dict
 
@@ -105,7 +105,7 @@ class CommunicationHandler(INodeHandler):
     send this handler communication commands that dictate how a message should
     be sent. This message will be delivered to the destination node.
 
-    Messages are transmited through a [medium][simulator.handler.communication.CommunicationMedium] that
+    Messages are transmited through a [medium][gradys.simulator.handler.communication.CommunicationMedium] that
     determines conditions like communication range and failure rate. Messages can fail to be delivered or 
     be delivered late.
     """
