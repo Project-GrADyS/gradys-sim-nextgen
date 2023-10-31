@@ -1,9 +1,8 @@
 import unittest
 
-from simulator.messages.telemetry import Telemetry
-from simulator.protocols.interface import IProtocol
-from simulator.provider.interface import IProvider
-from simulator.simulation import SimulationBuilder, SimulationConfiguration
+from gradys.protocol.interface import IProtocol, IProvider
+from gradys.protocol.messages.telemetry import Telemetry
+from gradys.simulator.simulation import SimulationBuilder, SimulationConfiguration
 
 
 class TestSimulationBuilder(unittest.TestCase):

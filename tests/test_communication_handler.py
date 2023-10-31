@@ -1,9 +1,9 @@
 import unittest
 
-from simulator.event import EventLoop
-from simulator.messages.communication import CommunicationCommand, CommunicationCommandType
-from simulator.node.node import Node
-from simulator.node.handler.communication import CommunicationMedium, can_transmit, CommunicationHandler, \
+from gradys.simulator.event import EventLoop
+from gradys.protocol.messages.communication import CommunicationCommand, CommunicationCommandType
+from gradys.simulator.node import Node
+from gradys.simulator.handler.communication import CommunicationMedium, can_transmit, CommunicationHandler, \
     CommunicationException
 
 
@@ -152,3 +152,10 @@ class TestCommunication(unittest.TestCase):
         # Assert that message is received
         event.callback()
         self.assertEqual(received, 1)
+
+    def test_failure(self):
+        medium = CommunicationMedium(failure_rate=0)
+        self.assertTrue(can_transmit((0, 0, 0), (0, 0, 0), medium))
+
+        medium = CommunicationMedium(failure_rate=1)
+        self.assertFalse(can_transmit((0, 0, 0), (0, 0, 0), medium))

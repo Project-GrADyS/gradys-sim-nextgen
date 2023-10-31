@@ -1,11 +1,11 @@
 import logging
 import random
 
-from simulator.log import SIMULATION_LOGGER
-from simulator.messages.communication import CommunicationCommand, CommunicationCommandType
-from simulator.messages.telemetry import Telemetry
-from simulator.protocols.addons.random_mobility import RandomMobilityAddon
-from simulator.protocols.interface import IProtocol
+from gradys.protocol.interface import IProtocol
+from gradys.simulator.log import SIMULATION_LOGGER
+from gradys.protocol.messages.communication import CommunicationCommand, CommunicationCommandType
+from gradys.protocol.messages.telemetry import Telemetry
+from gradys.protocol.addons.random_mobility import RandomMobilityAddon
 
 
 class PingProtocol(IProtocol):

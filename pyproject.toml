@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["gradys*"]
+
+[project]
+name = "gradys_sim"
+version = "0.0.1"
+description = "A framework for implementing distributed algorithms in a simulated network environment"
+keywords = ["network", "distributed", "algorithm", "simulation", "gradys", "LAC", "PUC", "drone", "sensor"]
+authors = [
+    { name = "Thiago de Souza Lamenza", email = "thlamenza@hotmail.com" },
+#    TODO: Add Josef here
+]
+license = { file = "LICENSE.txt" }
+readme = "README.md"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+requires-python = ">=3.8"
+dependencies = [
+    "matplotlib>=3",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/Thlamz/GrADyS-SIM-TNG"
+"Documentation" = 'https://thlamz.github.io/gradys-sim-tng/'

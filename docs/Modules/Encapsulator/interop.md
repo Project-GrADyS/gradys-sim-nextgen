@@ -1,0 +1,3 @@
+# Interop
+
+:::gradys.encapsulator.interop

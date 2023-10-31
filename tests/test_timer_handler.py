@@ -1,8 +1,8 @@
 import unittest
 
-from simulator.event import EventLoop
-from simulator.node.node import Node
-from simulator.node.handler.timer import TimerHandler, TimerException
+from gradys.simulator.event import EventLoop
+from gradys.simulator.handler.timer import TimerHandler, TimerException
+from gradys.simulator.node import Node
 
 
 def create_timer_handler():
@@ -48,3 +48,23 @@ class TestTimerHandler(unittest.TestCase):
 
         with self.assertRaises(TimerException):
             timer_handler.set_timer("", 10, node)
+
+    def test_set_in_past(self):
+        event_loop, timer_handler = create_timer_handler()
+
+        received = 0
+        message = ""
+
+        class DummyEncapsulator:
+            def handle_timer(self, msg: str):
+                nonlocal received, message
+                received += 1
+                message = msg
+
+        node = Node()
+        node.id = 0
+        node.protocol_encapsulator = DummyEncapsulator()
+
+        timer_handler.register_node(node)
+        with self.assertRaises(TimerException):
+            timer_handler.set_timer("test", -1, node)
