@@ -6,8 +6,9 @@ import logging
 import random
 import types
 from dataclasses import dataclass
-from typing import Tuple, Type, Optional
+from typing import Tuple, Type, Optional, Callable
 
+from gradys.protocol.addons.dispatcher import DispatchReturn, create_dispatcher
 from gradys.simulator.log import SIMULATION_LOGGER
 from gradys.protocol.messages.mobility import MobilityCommand, MobilityCommandType
 from gradys.protocol.messages.telemetry import Telemetry
@@ -63,6 +64,8 @@ class RandomMobilityAddon:
         self._config = config
         self._logger = logging.getLogger(SIMULATION_LOGGER)
 
+        self._dispatcher = create_dispatcher(protocol)
+
     def travel_to_random_waypoint(self) -> Position:
         """
         Issues a mobility command that makes the node travel to a randomly drawn position within
@@ -88,7 +91,7 @@ class RandomMobilityAddon:
         return random_waypoint
 
     _current_target: Optional[Position]
-    _instance_handle_telemetry: Type[IProtocol.handle_telemetry]
+    _patched_handle_telemetry: Optional[Callable[[IProtocol, Telemetry], DispatchReturn]]
     _trip_ongoing: bool
 
     def initiate_random_trip(self) -> None:
@@ -99,17 +102,15 @@ class RandomMobilityAddon:
         self._logger.info("RandomMobilityAddon: Initiating a random trip")
         self._current_target = self.travel_to_random_waypoint()
 
-        self._instance_handle_telemetry = self._instance.handle_telemetry
-
         def patched_handle_telemetry(instance: IProtocol, telemetry: Telemetry):
             if squared_distance(telemetry.current_position, self._current_target) <= \
                     (self._config.tolerance * self._config.tolerance):
                 self._current_target = self.travel_to_random_waypoint()
 
-            self._instance_handle_telemetry(telemetry)
+            return DispatchReturn.CONTINUE
 
-        self._instance.handle_telemetry = types.MethodType(patched_handle_telemetry, self._instance)
-
+        self._patched_handle_telemetry = patched_handle_telemetry
+        self._dispatcher.register_handle_telemetry(patched_handle_telemetry)
         self._trip_ongoing = True
 
     def finish_random_trip(self) -> None:
@@ -118,7 +119,8 @@ class RandomMobilityAddon:
         """
         self._logger.info("RandomMobilityAddon: Finishing a random trip")
         if self._trip_ongoing:
-            self._instance.handle_telemetry = self._instance_handle_telemetry
+            self._dispatcher.unregister_handle_telemetry(self._patched_handle_telemetry)
+            self._patched_handle_telemetry = None
             self._trip_ongoing = False
 
     @property
