@@ -52,6 +52,7 @@ class ProtocolWrapper:
     """
     _protocol: IProtocol
 
+    _handle_initialize_chain: List[Callable[[IProtocol, int], None]]
     _handle_timer_chain: List[Callable[[IProtocol, str], DispatchReturn]]
     _handle_telemetry_chain: List[Callable[[IProtocol, Telemetry], DispatchReturn]]
     _handle_packet_chain: List[Callable[[IProtocol, str], DispatchReturn]]
@@ -69,15 +70,28 @@ class ProtocolWrapper:
         """
         self._protocol = protocol
 
+        self._handle_initialize_chain = []
         self._handle_timer_chain = []
         self._handle_telemetry_chain = []
         self._handle_packet_chain = []
         self._finish_queue_chain = []
 
+        _wrap_functionality(protocol, 'initialize', self._handle_initialize_chain)
         _wrap_functionality(protocol, 'handle_timer', self._handle_timer_chain)
         _wrap_functionality(protocol, 'handle_telemetry', self._handle_telemetry_chain)
         _wrap_functionality(protocol, 'handle_packet', self._handle_packet_chain)
         _wrap_functionality(protocol, 'finish', self._finish_queue_chain)
+
+    def register_initialize(self, handler: Callable[[IProtocol, int], None]) -> None:
+        """
+        Registers a handler for the [initialize][protocol.interface.IProtocol.initialize] method. Handlers should
+        have the same signature as the initialize method. DispatcherReturn is not supported for this method, the call
+        chain is always followed.
+
+        Args:
+            handler: Handler being registered
+        """
+        self._handle_initialize_chain.insert(0, handler)
 
     def register_handle_timer(self, handler: Callable[[IProtocol, str], DispatchReturn]) -> None:
         """
@@ -122,6 +136,15 @@ class ProtocolWrapper:
             handler: Handler being registered
         """
         self._finish_queue_chain.insert(0, handler)
+
+    def unregister_initialize(self, handler: Callable[[IProtocol, int], None]) -> None:
+        """
+        Unregisters a handle_initialize handler. Raises ValueError if handler was not registered
+
+        Args:
+            handler: Handler instance being unregistered
+        """
+        self._handle_initialize_chain.remove(handler)
 
     def unregister_handle_timer(self, handler: Callable[[IProtocol, str], DispatchReturn]) -> None:
         """
