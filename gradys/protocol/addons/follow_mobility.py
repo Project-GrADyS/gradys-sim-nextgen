@@ -1,5 +1,13 @@
+"""
+This module declares two addons for the protocol: a leader and a follower. The leader broadcasts its position and the
+follower follows it.
+
+Beware that this addon controls your protocol's mobility to implement its behaviour, so you should not use any other
+mobility addon with it or implement any mobility behaviour in your protocol. The MobilityLeaderAddon does not affect
+the node's movement and thus should be fine to use with other mobility addons or mobility behaviour.
+"""
+
 import json
-import logging
 from dataclasses import dataclass
 from typing import Optional, Dict, Set, Tuple
 
@@ -10,8 +18,20 @@ from gradys.protocol.messages.mobility import GotoCoordsMobilityCommand
 from gradys.protocol.messages.telemetry import Telemetry
 
 BROADCAST_TIMER_TAG = "FollowMobilityAddon__leader_broadcast_timer"
+"""
+The leader will broadcast its position using a timer with this name, make sure it doesn't conflict with other timers
+"""
+
 LEADER_TAG = "FollowMobilityAddon__leader"
+"""
+The leader will broadcast its position using a packet with this tag, make sure it doesn't conflict with other packets
+"""
+
 FOLLOWER_TAG = "FollowMobilityAddon__follower"
+"""
+
+"""
+
 FOLLOWER_TIMER_TAG = "FollowMobilityAddon__follower_timer"
 
 
@@ -166,10 +186,20 @@ class MobilityFollowerAddon:
 
             if leader_id == self._leader:
                 self._leader_position = leader_payload["position"]
+
+                # Going to the leader's position at relative coordinates
                 destination = (coord + relative_coord
                                for coord, relative_coord in zip(self._leader_position, self._relative_position))
-                command = GotoCoordsMobilityCommand(*destination)
-                self._protocol.provider.send_mobility_command(command)
+                mobility_command = GotoCoordsMobilityCommand(*destination)
+                self._protocol.provider.send_mobility_command(mobility_command)
+
+                # Informing the leader that we are following him
+                command = CommunicationCommand(
+                    CommunicationCommandType.SEND,
+                    f"{FOLLOWER_TAG}:{self._protocol.provider.get_id()}",
+                    leader_id
+                )
+                self._protocol.provider.send_communication_command(command)
 
             return DispatchReturn.INTERRUPT
 
