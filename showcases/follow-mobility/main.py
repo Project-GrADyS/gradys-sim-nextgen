@@ -1,5 +1,3 @@
-from typing import List
-
 from protocol import LeaderProtocol, FollowerProtocol
 from gradys.simulator.handler.communication import CommunicationHandler
 from gradys.simulator.handler.mobility import MobilityHandler

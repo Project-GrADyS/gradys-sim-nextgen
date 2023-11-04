@@ -15,7 +15,7 @@ the protocol's methods.
 
 import types
 from enum import Enum
-from typing import Dict, Type, List, Callable
+from typing import Dict, List, Callable
 
 from gradys.protocol.interface import IProtocol
 from gradys.protocol.messages.telemetry import Telemetry

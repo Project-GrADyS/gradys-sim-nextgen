@@ -4,9 +4,8 @@ provides a simple way to implement random mobility in your protocol.
 """
 import logging
 import random
-import types
 from dataclasses import dataclass
-from typing import Tuple, Type, Optional, Callable
+from typing import Tuple, Optional, Callable
 
 from gradys.protocol.addons.dispatcher import DispatchReturn, create_dispatcher
 from gradys.simulator.log import SIMULATION_LOGGER
