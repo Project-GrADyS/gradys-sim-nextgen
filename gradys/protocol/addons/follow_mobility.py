@@ -1,4 +1,5 @@
 import json
+import logging
 from dataclasses import dataclass
 from typing import Optional, Dict, Set, Tuple
 
@@ -136,6 +137,8 @@ class MobilityFollowerAddon:
     _leader: Optional[int] = None
     _leader_position: Optional[Tuple[float, float, float]] = None
 
+    _relative_position: Tuple[float, float, float] = (0, 0, 0)
+
     _last_leader_broadcast: Dict[int, float]
 
     def __init__(self, protocol: IProtocol,
@@ -163,7 +166,9 @@ class MobilityFollowerAddon:
 
             if leader_id == self._leader:
                 self._leader_position = leader_payload["position"]
-                command = GotoCoordsMobilityCommand(*self._leader_position)
+                destination = (coord + relative_coord
+                               for coord, relative_coord in zip(self._leader_position, self._relative_position))
+                command = GotoCoordsMobilityCommand(*destination)
                 self._protocol.provider.send_mobility_command(command)
 
             return DispatchReturn.INTERRUPT
@@ -187,6 +192,7 @@ class MobilityFollowerAddon:
                 self._leader = None
                 self._leader_position = None
 
+
             self._protocol.provider.schedule_timer(
                 FOLLOWER_TIMER_TAG,
                 self._protocol.provider.current_time() + self._config.scanning_interval
@@ -206,6 +212,10 @@ class MobilityFollowerAddon:
         return self._leader
 
     @property
+    def relative_position(self) -> Tuple[float, float, float]:
+        return self._relative_position
+
+    @property
     def current_leader_position(self) -> Optional[Tuple[float, float, float]]:
         return self._leader_position
 
@@ -213,3 +223,6 @@ class MobilityFollowerAddon:
         if leader_id not in self.available_leaders:
             raise FollowMobilityException(f"Leader {leader_id} is not available")
         self._leader = leader_id
+
+    def set_relative_position(self, position: Tuple[float, float, float]) -> None:
+        self._relative_position = position
