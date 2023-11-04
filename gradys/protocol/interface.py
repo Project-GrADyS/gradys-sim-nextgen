@@ -60,6 +60,16 @@ class IProvider(ABC):
         """
         pass
 
+    @abstractmethod
+    def get_id(self) -> int:
+        """
+        Returns the node's unique identifier in the simulation
+
+        Returns:
+            the node's unique identifier in the simulation
+        """
+        pass
+
     # TODO: Document this
     tracked_variables: Dict[str, Any]
 

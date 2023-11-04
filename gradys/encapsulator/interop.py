@@ -64,6 +64,7 @@ class InteropProvider(IProvider):
     """
     consequences: List[Consequence]
     timestamp: int
+    id: int
 
     def __init__(self):
         """
@@ -71,6 +72,7 @@ class InteropProvider(IProvider):
         """
         self.consequences = []
         self.timestamp = 0
+        self.id = 0
         self.tracked_variables = \
             _TrackedVariableContainer(lambda key, value: self.consequences.append((ConsequenceType.TRACK_VARIABLE,
                                                                                    (key, value))))
@@ -111,6 +113,15 @@ class InteropProvider(IProvider):
         """
         return self.timestamp
 
+    def get_id(self) -> int:
+        """
+        Returns the node's unique identifier in the simulation
+
+        Returns:
+            The node's unique identifier in the simulation
+        """
+        return self.id
+
 
 class InteropEncapsulator(IEncapsulator):
     """
@@ -146,6 +157,13 @@ class InteropEncapsulator(IEncapsulator):
         the protocol's methods, to make sure the protocol has the correct time.
         """
         self.provider.timestamp = timestamp
+
+    def set_id(self, id: int):
+        """
+        Sets the node's unique identifier in the simulation. This method is called once by the OMNeT++ environment
+        before calling any of the protocol's methods, to make sure the protocol has the correct id.
+        """
+        self.provider.id = id
 
     def initialize(self, stage: int) -> List[Consequence]:
         """
