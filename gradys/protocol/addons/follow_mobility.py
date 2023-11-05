@@ -152,6 +152,13 @@ class MobilityFollowerConfiguration:
     disconnected
     """
 
+    auto_follow: bool = True
+    """
+    Automatically follows the first leader available if set to True. If set to False, the user must call 
+    follow_leader manually. If True the user can still call follow_leader to follow a specific leader, but if connection
+    to that leader is lost the follower will automatically follow the first leader available.
+    """
+
 
 class MobilityFollowerAddon:
     _leader: Optional[int] = None
@@ -218,10 +225,12 @@ class MobilityFollowerAddon:
                 if self._protocol.provider.current_time() - last_broadcast < self._config.leader_timeout
             }
 
-            if self._leader not in self._last_leader_broadcast:
+            if self._leader is not None and self._leader not in self._last_leader_broadcast:
                 self._leader = None
                 self._leader_position = None
 
+            if self._leader is None and len(self.available_leaders) > 0:
+                self.follow_leader(list(self.available_leaders)[0])
 
             self._protocol.provider.schedule_timer(
                 FOLLOWER_TIMER_TAG,
