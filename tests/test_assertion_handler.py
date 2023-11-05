@@ -93,6 +93,7 @@ class TestAssertionHandler(unittest.TestCase):
             def initialize(self, stage: int):
                 self.provider.schedule_timer("", 1)
                 self.provider.schedule_timer("", 1)
+                self.provider.schedule_timer("", 1)
 
             def handle_timer(self, timer: str):
                 self.variable = not self.variable
