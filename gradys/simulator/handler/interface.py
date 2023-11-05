@@ -53,3 +53,10 @@ class INodeHandler(ABC):
             node: Encapsulated node instance added to the simulation
         """
         pass
+
+    def finalize(self) -> None:
+        """
+        This is called after the simulation is finished. Useful if the handler implements some functionality
+        that depends on running code at the end of the simulation.
+        """
+        pass

@@ -153,6 +153,9 @@ class Simulator:
             self._formatter.scope_event(0, 0, f"Node {node.id} Finalization")
             node.protocol_encapsulator.finish()
 
+        for handler in self._handlers.values():
+            handler.finalize()
+
         self._formatter.clear_iteration()
 
         self._logger.info(f"Real time elapsed: {timedelta(seconds=total_time)}\t"
