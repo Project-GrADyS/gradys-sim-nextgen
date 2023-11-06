@@ -1,6 +1,8 @@
 build/**
 .idea/**
 
-simulator.egg-info/**
+**.egg-info/**
 
 **__pycache__**
+
+dist/**
