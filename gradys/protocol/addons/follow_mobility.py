@@ -187,7 +187,7 @@ class MobilityFollowerAddon:
             if not message.startswith(LEADER_TAG):
                 return DispatchReturn.CONTINUE
 
-            leader_payload = json.loads(message.removeprefix(f"{LEADER_TAG}:"))
+            leader_payload = json.loads(message[len(f"{LEADER_TAG}:"):])
             leader_id = leader_payload["id"]
             self._last_leader_broadcast[leader_id] = self._protocol.provider.current_time()
 
