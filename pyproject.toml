@@ -6,9 +6,9 @@ build-backend = "setuptools.build_meta"
 include = ["gradys*"]
 
 [project]
-name = "GrADySIM"
+name = "gradysim"
 version = "0.0.1"
-description = "A framework for implementing distributed algorithms in a simulated network environment"
+description = "GrADyS-SIM TNG is a framework for implementing distributed algorithms in a simulated network environment"
 keywords = ["network", "distributed", "algorithm", "simulation", "gradys", "LAC", "PUC", "drone", "sensor"]
 authors = [
     { name = "Thiago de Souza Lamenza", email = "thlamenza@hotmail.com" },
