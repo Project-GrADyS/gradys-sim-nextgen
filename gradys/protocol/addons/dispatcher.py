@@ -2,7 +2,7 @@
 This module contains a function that creates a dispatcher which wraps a protocol instance and it's methods. Implements
  a call chain for each of the protocol interface's methods.
 
- Use this module through the [**create_dispatcher**][gradys.protocol.addons.dispatcher.create_dispatcher] method,
+ Use this module through the **create_dispatcher**][gradys.protocol.addons.dispatcher.create_dispatcher] method,
 **never** instantiate the ProtocolWrapper directly.
 
 This module is useful if you want to implement an addon on or some other functionality that relies on overriding the
@@ -45,6 +45,9 @@ def _wrap_functionality(protocol: IProtocol, functionality: str, queue: List[Cal
 
 class ProtocolWrapper:
     """
+    Do not use this class directly, instead use
+    [create_dispatcher][gradys.protocol.addons.dispatcher.create_dispatcher].
+
     Wraps the protocol's calls into a call chain. Instead of going directly to the protocol's methods calls to the
     protocol interface will be passed down a chain of registered handlers. The protocol's own method is at the end
     of the chain. Methods should return a value in the DispatchReturn Enum, INTERRUPT do interrupt the chain and
@@ -61,7 +64,7 @@ class ProtocolWrapper:
     def __init__(self, protocol: IProtocol):
         """
         Instantiates a protocol wrapper. Should not be instantiated directly, create a dispatcher using the
-        [create_dispatcher][protocol.addons.dispatcher.create_dispather] method.
+        [create_dispatcher][gradys.protocol.addons.dispatcher.create_dispatcher] method.
 
         **Do not instantiate this class directly**
 
@@ -84,7 +87,7 @@ class ProtocolWrapper:
 
     def register_initialize(self, handler: Callable[[IProtocol, int], None]) -> None:
         """
-        Registers a handler for the [initialize][protocol.interface.IProtocol.initialize] method. Handlers should
+        Registers a handler for the [initialize][gradys.protocol.interface.IProtocol.initialize] method. Handlers should
         have the same signature as the initialize method. DispatcherReturn is not supported for this method, the call
         chain is always followed.
 
@@ -95,7 +98,7 @@ class ProtocolWrapper:
 
     def register_handle_timer(self, handler: Callable[[IProtocol, str], DispatchReturn]) -> None:
         """
-        Registers a handler for the [handle_timer][protocol.interface.IProtocol.handle_timer] method. Handlers should
+        Registers a handler for the [handle_timer][gradys.protocol.interface.IProtocol.handle_timer] method. Handlers should
         have the same signature as the handle_timer method but return a value in the DispatcherReturn enum.
 
         Args:
@@ -105,7 +108,7 @@ class ProtocolWrapper:
 
     def register_handle_telemetry(self, handler: Callable[[IProtocol, Telemetry], DispatchReturn]) -> None:
         """
-        Registers a handler for the [handle_telemetry][protocol.interface.IProtocol.handle_telemetry] method. Handlers
+        Registers a handler for the [handle_telemetry][gradys.protocol.interface.IProtocol.handle_telemetry] method. Handlers
         should have the same signature as the handle_telemetry method but return a value in the DispatcherReturn enum.
 
         Args:
@@ -115,7 +118,7 @@ class ProtocolWrapper:
 
     def register_handle_packet(self, handler: Callable[[IProtocol, str], DispatchReturn]) -> None:
         """
-        Registers a handler for the [handle_packet][protocol.interface.IProtocol.handle_packet] method. Handlers should
+        Registers a handler for the [handle_packet][gradys.protocol.interface.IProtocol.handle_packet] method. Handlers should
         have the same signature as the handle_packet method but return a value in the DispatcherReturn enum.
 
         Args:
@@ -125,7 +128,7 @@ class ProtocolWrapper:
 
     def register_finish(self, handler: Callable[[IProtocol], None]) -> None:
         """
-        Registers a handler for the [handle_timer][protocol.interface.IProtocol.finish] method. Handlers should
+        Registers a handler for the [handle_timer][gradys.protocol.interface.IProtocol.finish] method. Handlers should
         have the same signature as the finish. This method doesn't support returning DispatchReturn values, the
         call chain is always followed.
 
