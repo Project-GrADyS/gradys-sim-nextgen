@@ -1,8 +1,8 @@
 import random
-from gradysim.protocol import SendMessageCommand
-from gradysim.protocol import Telemetry
-from gradysim.protocol import IProtocol
-from showcases.simple.message import SimpleMessage, SenderType
+from gradysim.protocol.messages.communication import SendMessageCommand
+from gradysim.protocol.messages.telemetry import Telemetry
+from gradysim.protocol.interface import IProtocol
+from message import SimpleMessage, SenderType
 
 
 class SimpleProtocolSensor(IProtocol):
