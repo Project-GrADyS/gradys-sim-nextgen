@@ -19,9 +19,8 @@ def assert_received_equals_sent(nodes: List[Node[PingProtocol]]) -> bool:
         sent += node.protocol_encapsulator.protocol.received
     return received == sent
 
-
-if __name__ == '__main__':
-    builder = SimulationBuilder(SimulationConfiguration(duration=30, debug=True, real_time=True))
+def run_simulation(real_time: bool):
+    builder = SimulationBuilder(SimulationConfiguration(duration=30, debug=True, real_time=real_time))
     builder.add_handler(CommunicationHandler())
     builder.add_handler(TimerHandler())
     builder.add_handler(MobilityHandler())
@@ -33,3 +32,6 @@ if __name__ == '__main__':
 
     simulation = builder.build()
     simulation.start_simulation()
+
+if __name__ == '__main__':
+    run_simulation(True)
