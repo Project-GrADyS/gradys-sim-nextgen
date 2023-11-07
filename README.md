@@ -1,27 +1,4 @@
-# Prototype for Gradys-SIM V2
-## Running instructions
-
-Create the build directory
-```shell
-mkdir build
-```
-
-Enter the build directory
-```shell
-cd build
-```
-
-CMake the project
-```shell
-cmake ..
-```
-
-Build the project
-```shell
-make
-```
-
-Run the project
-```shell
-./simulator
-```
+# GrADyS-SIM TNG
+This repository contains the source code for the GrADyS-SIM TNG 
+simulation framework. Visit https://thlamz.github.io/GrADyS-SIM-TNG/ 
+to view the project's full documentation.
