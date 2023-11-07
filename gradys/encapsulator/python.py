@@ -102,6 +102,15 @@ class PythonProvider(IProvider):
                                  "will always return zero.")
             return 0
 
+    def get_id(self) -> int:
+        """
+        Returns the node's unique identifier in the simulation
+
+        Returns:
+            the node's unique identifier in the simulation
+        """
+        return self.node.id
+
 
 class PythonEncapsulator(IEncapsulator):
     """

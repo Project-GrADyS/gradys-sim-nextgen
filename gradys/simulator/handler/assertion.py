@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from typing import Type, List, Callable, TypeVar
+from typing import Type, List, Callable, TypeVar, Dict
 
 from gradys.protocol.interface import IProtocol
 from gradys.simulator.event import EventLoop
@@ -56,7 +56,8 @@ def assert_always_true_for_protocol(protocol_type: Type[P],
                 for node in nodes:
                     if isinstance(node.protocol_encapsulator.protocol, protocol_type):
                         if not func(node):
-                            raise FailedAssertionException(f"Assertion \"{name}\" {'(' + description + ') '}failed "
+                            description_string = "(" + description + ") " if description != "" else ""
+                            raise FailedAssertionException(f"Assertion \"{name}\" {description_string}failed "
                                                            f"[iteration={iteration} | timestamp={timestamp}]")
 
             def finalize(self):
@@ -92,21 +93,26 @@ def assert_eventually_true_for_protocol(protocol_type: Type[IProtocol],
             name = func.__name__
 
         class TestCase(SimulationTestCase):
-            has_been_true = None
+            has_been_true: Dict[int, bool]
+
+            def __init__(self):
+                self.has_been_true = {}
 
             def test_iteration(self, nodes: List[Node], iteration: int, timestamp: float):
-                if self.has_been_true is None:
-                    self.has_been_true = {node.id: False for node in nodes}
                 for node in nodes:
                     if isinstance(node.protocol_encapsulator.protocol, protocol_type):
+                        if node.id not in self.has_been_true:
+                            self.has_been_true[node.id] = False
                         if func(node):
                             self.has_been_true[node.id] = True
 
             def finalize(self):
                 for node, has_been in self.has_been_true.items():
                     if not has_been:
-                        raise FailedAssertionException(f"Assertion \"{name}\" {'(' + description + ') '}failed in node {node}\n"
-                                                    f"The condition was never met during the simulation")
+                        description_string = "(" + description + ") " if description != "" else ""
+                        raise FailedAssertionException(
+                            f"Assertion \"{name}\" {description_string} failed in node {node}\n"
+                            f"The condition was never met during the simulation")
 
         return TestCase
 
@@ -136,7 +142,8 @@ def assert_always_true_for_simulation(name: str,
         class TestCase(SimulationTestCase):
             def test_iteration(self, nodes: List[Node], iteration: int, timestamp: float):
                 if not func(nodes):
-                    raise FailedAssertionException(f"Assertion \"{name}\" {'(' + description + ') '}failed\n"
+                    description_string = "(" + description + ") " if description != "" else ""
+                    raise FailedAssertionException(f"Assertion \"{name}\" {description_string}failed\n"
                                                    f"[iteration={iteration} | timestamp={timestamp}]\n")
 
             def finalize(self):
@@ -176,7 +183,8 @@ def assert_eventually_true_for_simulation(name: str,
 
             def finalize(self):
                 if not self.has_been_true:
-                    raise FailedAssertionException(f"Assertion \"{name}\" {'(' + description + ') '}failed\n"
+                    description_string = "(" + description + ") " if description != "" else ""
+                    raise FailedAssertionException(f"Assertion \"{name}\" {description_string}failed\n"
                                                    f"The condition was never met during the simulation")
 
         return TestCase
