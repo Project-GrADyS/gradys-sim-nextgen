@@ -1,10 +1,6 @@
 name: Publish Python 🐍 distribution 📦 to PyPI
 
-on:
-  push:
-    branches:
-      - main
-      - th-package # TODO: Temporary
+on: push
 jobs:
   build:
     name: Build distribution 📦
