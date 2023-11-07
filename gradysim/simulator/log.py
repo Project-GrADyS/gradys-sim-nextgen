@@ -12,7 +12,7 @@ from datetime import timedelta
 from pathlib import Path
 from typing import Optional
 
-SIMULATION_LOGGER = "gradys-sim"
+SIMULATION_LOGGER = "gradysim-sim"
 """
 Use this logger to have properly formatted logs. Beware that if you use logging in your protocols the logs will only
 be properly formatted when you are running in prototype-mode.
@@ -34,7 +34,7 @@ class SimulationFormatter(logging.Formatter):
     def scope_event(self, iteration: int, timestamp: float, context: str):
         """
         Call this method to update the formatter's annotation with current information. This module is called by
-        the [Simulator][gradys.simulator.simulation.Simulator].
+        the [Simulator][gradysim.simulator.simulation.Simulator].
 
         Args:
             iteration: Current iteration the simulation is at

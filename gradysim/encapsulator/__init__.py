@@ -9,5 +9,5 @@ This module provides encapsulators that enable users to run their protocols insi
 ([prototype-mode][]), integrated with a realistic network simulator OMNeT++ ([integrated-mode][]) and, in the future,
 connected to real-life nodes.
 
-All encapsulators implement the [IEncapsulator][gradys.encapsulator.interface.IEncapsulator] interface.
+All encapsulators implement the [IEncapsulator][gradysim.encapsulator.interface.IEncapsulator] interface.
 """

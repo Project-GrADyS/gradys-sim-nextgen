@@ -1,15 +1,15 @@
 import unittest
 
-from gradys.protocol.addons.follow_mobility import MobilityLeaderAddon, MobilityFollowerAddon
-from gradys.protocol.interface import IProtocol
-from gradys.protocol.messages.mobility import GotoCoordsMobilityCommand, SetSpeedMobilityCommand
-from gradys.protocol.messages.telemetry import Telemetry
-from gradys.simulator.handler.assertion import assert_eventually_true_for_protocol, AssertionHandler
-from gradys.simulator.handler.communication import CommunicationHandler
-from gradys.simulator.handler.mobility import MobilityHandler
-from gradys.simulator.handler.timer import TimerHandler
-from gradys.simulator.node import Node
-from gradys.simulator.simulation import SimulationBuilder, SimulationConfiguration, PositionScheme
+from gradysim.protocol.addons.follow_mobility import MobilityLeaderAddon, MobilityFollowerAddon
+from gradysim.protocol.interface import IProtocol
+from gradysim.protocol.messages.mobility import GotoCoordsMobilityCommand, SetSpeedMobilityCommand
+from gradysim.protocol.messages.telemetry import Telemetry
+from gradysim.simulator.handler.assertion import assert_eventually_true_for_protocol, AssertionHandler
+from gradysim.simulator.handler.communication import CommunicationHandler
+from gradysim.simulator.handler.mobility import MobilityHandler
+from gradysim.simulator.handler.timer import TimerHandler
+from gradysim.simulator.node import Node
+from gradysim.simulator.simulation import SimulationBuilder, SimulationConfiguration, PositionScheme
 
 
 class DummyLeaderProtocol(IProtocol):

@@ -1,3 +1,3 @@
 # Introduction
 
-:::gradys.protocol.messages
+:::gradysim.protocol.messages

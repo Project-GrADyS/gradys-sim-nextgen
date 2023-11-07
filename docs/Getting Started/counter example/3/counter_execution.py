@@ -1,7 +1,7 @@
 from counter_protocol import CounterProtocol
-from gradys.simulator import CommunicationHandler, CommunicationMedium
-from gradys.simulator import TimerHandler
-from gradys.simulator.simulation import SimulationBuilder, SimulationConfiguration
+from gradysim.simulator import CommunicationHandler, CommunicationMedium
+from gradysim.simulator import TimerHandler
+from gradysim.simulator.simulation import SimulationBuilder, SimulationConfiguration
 
 # This time we will be running the simulator for a longer time
 # to help us visualize the effect of the medium configurations.

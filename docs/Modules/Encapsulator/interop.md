@@ -1,3 +1,3 @@
 # Interop
 
-:::gradys.encapsulator.interop
+:::gradysim.encapsulator.interop

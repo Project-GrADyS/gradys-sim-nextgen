@@ -1,13 +1,13 @@
 from typing import List
 
 from ping import PingProtocol
-from gradys.simulator.handler.assertion import assert_always_true_for_simulation, AssertionHandler
-from gradys.simulator.handler.communication import CommunicationHandler
-from gradys.simulator.handler.mobility import MobilityHandler
-from gradys.simulator.handler.timer import TimerHandler
-from gradys.simulator.handler.visualization import VisualizationHandler
-from gradys.simulator.node import Node
-from gradys.simulator.simulation import SimulationBuilder, SimulationConfiguration
+from gradysim.simulator.handler.assertion import assert_always_true_for_simulation, AssertionHandler
+from gradysim.simulator.handler.communication import CommunicationHandler
+from gradysim.simulator.handler.mobility import MobilityHandler
+from gradysim.simulator.handler.timer import TimerHandler
+from gradysim.simulator.handler.visualization import VisualizationHandler
+from gradysim.simulator.node import Node
+from gradysim.simulator.simulation import SimulationBuilder, SimulationConfiguration
 
 
 @assert_always_true_for_simulation(name="received_equals_sent")

@@ -11,11 +11,11 @@ import json
 from dataclasses import dataclass
 from typing import Optional, Dict, Set, Tuple
 
-from gradys.protocol.addons.dispatcher import create_dispatcher, DispatchReturn
-from gradys.protocol.interface import IProtocol
-from gradys.protocol.messages.communication import CommunicationCommand, CommunicationCommandType
-from gradys.protocol.messages.mobility import GotoCoordsMobilityCommand
-from gradys.protocol.messages.telemetry import Telemetry
+from gradysim.protocol.addons.dispatcher import create_dispatcher, DispatchReturn
+from gradysim.protocol.interface import IProtocol
+from gradysim.protocol.messages.communication import CommunicationCommand, CommunicationCommandType
+from gradysim.protocol.messages.mobility import GotoCoordsMobilityCommand
+from gradysim.protocol.messages.telemetry import Telemetry
 
 BROADCAST_TIMER_TAG = "FollowMobilityAddon__leader_broadcast_timer"
 """

@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
-from gradys.simulator.event import EventLoop
-from gradys.simulator.node import Node
+from gradysim.simulator.event import EventLoop
+from gradysim.simulator.node import Node
 
 
 class INodeHandler(ABC):

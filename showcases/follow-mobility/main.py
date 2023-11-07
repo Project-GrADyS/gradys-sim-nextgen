@@ -1,9 +1,9 @@
 from protocol import LeaderProtocol, FollowerProtocol
-from gradys.simulator.handler.communication import CommunicationHandler
-from gradys.simulator.handler.mobility import MobilityHandler
-from gradys.simulator.handler.timer import TimerHandler
-from gradys.simulator.handler.visualization import VisualizationHandler
-from gradys.simulator.simulation import SimulationBuilder, SimulationConfiguration, PositionScheme
+from gradysim.simulator.handler.communication import CommunicationHandler
+from gradysim.simulator.handler.mobility import MobilityHandler
+from gradysim.simulator.handler.timer import TimerHandler
+from gradysim.simulator.handler.visualization import VisualizationHandler
+from gradysim.simulator.simulation import SimulationBuilder, SimulationConfiguration, PositionScheme
 
 if __name__ == '__main__':
     builder = SimulationBuilder(SimulationConfiguration(duration=30, debug=True, real_time=True))

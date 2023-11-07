@@ -1,3 +1,3 @@
 # Dispatcher
 
-:::gradys.protocol.addons.dispatcher
+:::gradysim.protocol.addons.dispatcher

@@ -3,9 +3,9 @@ from typing import List, Tuple
 
 from matplotlib import pyplot as plt
 
-from gradys.simulator.event import EventLoop
-from gradys.simulator.handler.interface import INodeHandler
-from gradys.simulator.node import Node
+from gradysim.simulator.event import EventLoop
+from gradysim.simulator.handler.interface import INodeHandler
+from gradysim.simulator.node import Node
 
 
 @dataclass

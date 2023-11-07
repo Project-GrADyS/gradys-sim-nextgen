@@ -1,7 +1,7 @@
 # Introduction
 
-:::gradys.protocol
+:::gradysim.protocol
 
-:::gradys.protocol.interface.IProtocol
+:::gradysim.protocol.interface.IProtocol
 
-:::gradys.protocol.interface.IProvider
+:::gradysim.protocol.interface.IProvider

@@ -2,14 +2,14 @@ import math
 import unittest
 from typing import Type
 
-from gradys.protocol.interface import IProtocol
-from gradys.encapsulator.interface import IEncapsulator
-from gradys.simulator.event import EventLoop
-from gradys.protocol.messages.mobility import MobilityCommand, MobilityCommandType
-from gradys.protocol.messages.telemetry import Telemetry
-from gradys.simulator.handler.mobility import MobilityHandler, MobilityConfiguration, MobilityException
-from gradys.simulator.node import Node
-from gradys.simulator.simulation import SimulationBuilder, SimulationConfiguration
+from gradysim.protocol.interface import IProtocol
+from gradysim.encapsulator.interface import IEncapsulator
+from gradysim.simulator.event import EventLoop
+from gradysim.protocol.messages.mobility import MobilityCommand, MobilityCommandType
+from gradysim.protocol.messages.telemetry import Telemetry
+from gradysim.simulator.handler.mobility import MobilityHandler, MobilityConfiguration, MobilityException
+from gradysim.simulator.node import Node
+from gradysim.simulator.simulation import SimulationBuilder, SimulationConfiguration
 
 
 def setup_mobility_handler(settings: MobilityConfiguration):

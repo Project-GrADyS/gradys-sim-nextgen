@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 include = ["gradys*"]
 
 [project]
-name = "gradys_sim"
+name = "GrADySIM"
 version = "0.0.1"
 description = "A framework for implementing distributed algorithms in a simulated network environment"
 keywords = ["network", "distributed", "algorithm", "simulation", "gradys", "LAC", "PUC", "drone", "sensor"]

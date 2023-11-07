@@ -1,3 +1,3 @@
 # Mobility
 
-:::gradys.protocol.messages.mobility
+:::gradysim.protocol.messages.mobility

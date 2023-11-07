@@ -1,14 +1,14 @@
 import unittest
 from typing import List
 
-from gradys.protocol.interface import IProtocol
-from gradys.protocol.messages.telemetry import Telemetry
-from gradys.simulator.handler.assertion import AssertionHandler, assert_always_true_for_simulation, \
+from gradysim.protocol.interface import IProtocol
+from gradysim.protocol.messages.telemetry import Telemetry
+from gradysim.simulator.handler.assertion import AssertionHandler, assert_always_true_for_simulation, \
     FailedAssertionException, assert_always_true_for_protocol, assert_eventually_true_for_protocol
-from gradys.simulator.handler.mobility import MobilityHandler
-from gradys.simulator.handler.timer import TimerHandler
-from gradys.simulator.node import Node
-from gradys.simulator.simulation import SimulationBuilder, SimulationConfiguration
+from gradysim.simulator.handler.mobility import MobilityHandler
+from gradysim.simulator.handler.timer import TimerHandler
+from gradysim.simulator.node import Node
+from gradysim.simulator.simulation import SimulationBuilder, SimulationConfiguration
 
 
 class TestAssertionHandler(unittest.TestCase):

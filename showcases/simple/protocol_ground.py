@@ -1,6 +1,6 @@
-from gradys.protocol import SendMessageCommand
-from gradys.protocol import Telemetry
-from gradys.protocol import IProtocol
+from gradysim.protocol import SendMessageCommand
+from gradysim.protocol import Telemetry
+from gradysim.protocol import IProtocol
 from showcases.simple.message import SimpleMessage, SenderType
 
 
