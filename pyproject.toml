@@ -12,7 +12,7 @@ description = "A framework for implementing distributed algorithms in a simulate
 keywords = ["network", "distributed", "algorithm", "simulation", "gradys", "LAC", "PUC", "drone", "sensor"]
 authors = [
     { name = "Thiago de Souza Lamenza", email = "thlamenza@hotmail.com" },
-#    TODO: Add Josef here
+    { name = "Josef Maria Kamysek", email = "josef@kamysek.com" }
 ]
 license = { file = "LICENSE.txt" }
 readme = "README.md"
