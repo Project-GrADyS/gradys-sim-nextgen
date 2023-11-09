@@ -6,7 +6,7 @@ from gradysim.simulator.event import EventLoop
 from gradysim.protocol.messages.mobility import MobilityCommand, MobilityCommandType
 from gradysim.protocol.messages.telemetry import Telemetry
 from gradysim.simulator.node import Node
-from gradysim.simulator.position import Position
+from gradysim.protocol.position import Position
 from gradysim.simulator.handler.interface import INodeHandler
 
 

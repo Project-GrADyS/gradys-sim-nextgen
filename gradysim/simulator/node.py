@@ -6,7 +6,7 @@ from typing import Generic, TypeVar
 
 from gradysim.protocol.interface import IProtocol
 from gradysim.encapsulator.interface import IEncapsulator
-from gradysim.simulator.position import Position
+from gradysim.protocol.position import Position
 
 T = TypeVar("T", bound=IProtocol)
 

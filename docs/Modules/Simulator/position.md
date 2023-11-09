@@ -1,1 +1,0 @@
-:::gradysim.simulator.position

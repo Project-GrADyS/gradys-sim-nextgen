@@ -12,7 +12,7 @@ from gradysim.simulator.event import EventLoop
 from gradysim.simulator.log import SIMULATION_LOGGER, setup_simulation_formatter
 from gradysim.simulator.handler.interface import INodeHandler
 from gradysim.simulator.node import Node
-from gradysim.simulator.position import Position
+from gradysim.protocol.position import Position
 
 
 @dataclass
