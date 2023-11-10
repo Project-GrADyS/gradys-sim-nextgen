@@ -1,4 +1,5 @@
 import enum
+import logging
 from dataclasses import dataclass
 from typing import List, Optional
 
@@ -7,6 +8,7 @@ from gradysim.protocol.interface import IProtocol
 from gradysim.protocol.messages.mobility import GotoCoordsMobilityCommand
 from gradysim.protocol.messages.telemetry import Telemetry
 from gradysim.protocol.position import Position, squared_distance
+from gradysim.simulator.log import SIMULATION_LOGGER
 
 
 class LoopMission(enum.Enum):
@@ -41,6 +43,7 @@ class MissionMobilityAddon:
         self._dispatcher = create_dispatcher(protocol)
         self._instance = protocol
         self._config = configuration
+        self._logger = logging.getLogger(SIMULATION_LOGGER)
 
         self._initialize_telemetry_handling()
 
@@ -88,6 +91,12 @@ class MissionMobilityAddon:
                 self._current_waypoint = len(self._current_mission) - 1
                 self._is_reversed = True
 
+        if self._current_waypoint is not None:
+            if self._is_reversed:
+                self._logger.info(f"Mission: Going to waypoint {self._current_waypoint} (REVERSED)")
+            else:
+                self._logger.info(f"Mission: Going to waypoint {self._current_waypoint}")
+
     def _has_overran_bounds(self) -> bool:
         if self._current_mission is None:
             return False
@@ -115,6 +124,11 @@ class MissionMobilityAddon:
         self._is_idle = False
         self._current_waypoint = 0
         self._travel_to_current_waypoint()
+
+        speed_command = SetSpeedMobilityCommand(self._config.speed)
+        self._instance.provider.send_mobility_command(speed_command)
+
+        self._logger.info("Mission: Starting mission")
 
     def stop_mission(self) -> None:
         """
