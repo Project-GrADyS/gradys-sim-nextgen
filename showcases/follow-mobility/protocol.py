@@ -2,6 +2,7 @@ import logging
 import random
 
 from gradysim.protocol.addons.follow_mobility import MobilityFollowerAddon, MobilityLeaderAddon
+from gradysim.protocol.addons.mission_mobility import MissionMobilityAddon, MissionMobilityConfiguration, LoopMission
 from gradysim.protocol.addons.random_mobility import RandomMobilityAddon
 from gradysim.protocol.interface import IProtocol
 from gradysim.protocol.messages.mobility import SetSpeedMobilityCommand
@@ -52,8 +53,14 @@ class LeaderProtocol(IProtocol):
 
     def initialize(self, stage: int) -> None:
         self.leader = MobilityLeaderAddon(self)
-        random = RandomMobilityAddon(self)
-        random.initiate_random_trip()
+
+        mission = MissionMobilityAddon(self, MissionMobilityConfiguration(loop_mission=LoopMission.RESTART))
+        mission.start_mission([
+            (20, 20, 5),
+            (20, -20, 5),
+            (-20, -20, 5),
+            (-20, 20, 5)
+        ])
 
         command = SetSpeedMobilityCommand(5)
         self.provider.send_mobility_command(command)
