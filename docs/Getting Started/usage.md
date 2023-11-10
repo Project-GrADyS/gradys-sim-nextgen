@@ -48,7 +48,7 @@ timer fires the protocol increments a counter and sets the timer again.
 
 Now that we have created a protocol, we just have to execute it. As mentioned we
 will be using [prototype mode](execution.md#prototype-mode) for this example. Creating a simulation is 
-preferably done through the [SimulationBuilder][gradys.simulator.simulation.SimulationBuilder] 
+preferably done through the [SimulationBuilder][gradysim.simulator.simulation.SimulationBuilder] 
 class. This class presents a simple API for instantiating python simulations.
 
 ``` py title="counter_execution.py"

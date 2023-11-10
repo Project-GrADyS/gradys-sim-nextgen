@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 from typing import Type, Generic, TypeVar
 
-from gradys.protocol.messages.telemetry import Telemetry
-from gradys.protocol.interface import IProtocol
+from gradysim.protocol.messages.telemetry import Telemetry
+from gradysim.protocol.interface import IProtocol
 
 T = TypeVar("T", bound=IProtocol)
 

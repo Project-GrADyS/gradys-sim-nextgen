@@ -1,6 +1,6 @@
-from gradys.simulator.event import EventLoop
-from gradys.simulator.node import Node
-from gradys.simulator.handler.interface import INodeHandler
+from gradysim.simulator.event import EventLoop
+from gradysim.simulator.node import Node
+from gradysim.simulator.handler.interface import INodeHandler
 
 
 class TimerException(Exception):

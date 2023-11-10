@@ -6,9 +6,9 @@ use to interact with their environment, the IProvider interface.
 from abc import ABC, abstractmethod
 from typing import Dict, Any
 
-from gradys.protocol.messages.communication import CommunicationCommand
-from gradys.protocol.messages.mobility import MobilityCommand
-from gradys.protocol.messages.telemetry import Telemetry
+from gradysim.protocol.messages.communication import CommunicationCommand
+from gradysim.protocol.messages.mobility import MobilityCommand
+from gradysim.protocol.messages.telemetry import Telemetry
 
 
 class IProvider(ABC):

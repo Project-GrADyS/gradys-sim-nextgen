@@ -1,9 +1,9 @@
 import unittest
 
-from gradys.simulator.event import EventLoop
-from gradys.protocol.messages.communication import CommunicationCommand, CommunicationCommandType
-from gradys.simulator.node import Node
-from gradys.simulator.handler.communication import CommunicationMedium, can_transmit, CommunicationHandler, \
+from gradysim.simulator.event import EventLoop
+from gradysim.protocol.messages.communication import CommunicationCommand, CommunicationCommandType
+from gradysim.simulator.node import Node
+from gradysim.simulator.handler.communication import CommunicationMedium, can_transmit, CommunicationHandler, \
     CommunicationException
 
 

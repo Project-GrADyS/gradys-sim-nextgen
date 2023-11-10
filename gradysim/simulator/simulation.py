@@ -6,13 +6,13 @@ from datetime import timedelta
 from pathlib import Path
 from typing import Type, Optional, Dict, Tuple
 
-from gradys.protocol.interface import IProtocol
-from gradys.encapsulator.python import PythonEncapsulator
-from gradys.simulator.event import EventLoop
-from gradys.simulator.log import SIMULATION_LOGGER, setup_simulation_formatter
-from gradys.simulator.handler.interface import INodeHandler
-from gradys.simulator.node import Node
-from gradys.simulator.position import Position
+from gradysim.protocol.interface import IProtocol
+from gradysim.encapsulator.python import PythonEncapsulator
+from gradysim.simulator.event import EventLoop
+from gradysim.simulator.log import SIMULATION_LOGGER, setup_simulation_formatter
+from gradysim.simulator.handler.interface import INodeHandler
+from gradysim.simulator.node import Node
+from gradysim.simulator.position import Position
 
 
 @dataclass
@@ -56,13 +56,13 @@ class Simulator:
     conditions and configuring logging.
 
     You shouldn't instantiate this class directly, prefer to build it through
-    [SimulationBuilder][gradys.simulator.simulation.SimulationBuilder].
+    [SimulationBuilder][gradysim.simulator.simulation.SimulationBuilder].
     """
 
     def __init__(self, handlers: Dict[str, INodeHandler], configuration: SimulationConfiguration):
         """
         Instantiates the simulation class. This constructor should not be called directly, prefer to use the
-        [SimulationBuilder][gradys.simulator.simulation.SimulationBuilder] API to get a simulator instance.
+        [SimulationBuilder][gradysim.simulator.simulation.SimulationBuilder] API to get a simulator instance.
 
         Args:
             handlers: Dictionary of handlers indexed by their labels
@@ -86,7 +86,7 @@ class Simulator:
     def create_node(self, position: Position, protocol: Type[IProtocol]) -> Node:
         """
         Creates a new simulation node, encapsulating it. You shouldn't call this method directly, prefer to use the
-        [SimulationBuilder][gradys.simulator.simulation.SimulationBuilder] API.
+        [SimulationBuilder][gradysim.simulator.simulation.SimulationBuilder] API.
 
         Args:
             position: Position where the node should be placed
@@ -215,7 +215,7 @@ class SimulationBuilder:
     A simulation is build through a fluent interface. This means that you after instantiating this builder class you
     will set up your simulation by calling methods on that instance gradually building up your simulation.
 
-    All methods return the [SimulationBuilder][gradys.simulator.simulation.SimulationBuilder] instance to help you with method chaining.
+    All methods return the [SimulationBuilder][gradysim.simulator.simulation.SimulationBuilder] instance to help you with method chaining.
     """
 
     def __init__(self,

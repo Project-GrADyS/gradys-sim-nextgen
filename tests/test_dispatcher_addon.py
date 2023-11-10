@@ -1,8 +1,8 @@
 import unittest
 
-from gradys.protocol.addons.dispatcher import create_dispatcher, DispatchReturn
-from gradys.protocol.interface import IProtocol
-from gradys.protocol.messages.telemetry import Telemetry
+from gradysim.protocol.addons.dispatcher import create_dispatcher, DispatchReturn
+from gradysim.protocol.interface import IProtocol
+from gradysim.protocol.messages.telemetry import Telemetry
 
 
 class DispatchAddonTestCase(unittest.TestCase):

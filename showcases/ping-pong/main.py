@@ -1,13 +1,13 @@
 from typing import List
 
+from gradysim.simulator.handler.assertion import assert_always_true_for_simulation, AssertionHandler
+from gradysim.simulator.handler.communication import CommunicationHandler
+from gradysim.simulator.handler.mobility import MobilityHandler
+from gradysim.simulator.handler.timer import TimerHandler
+from gradysim.simulator.handler.visualization import VisualizationHandler
+from gradysim.simulator.node import Node
+from gradysim.simulator.simulation import SimulationBuilder, SimulationConfiguration
 from ping import PingProtocol
-from gradys.simulator.handler.assertion import assert_always_true_for_simulation, AssertionHandler
-from gradys.simulator.handler.communication import CommunicationHandler
-from gradys.simulator.handler.mobility import MobilityHandler
-from gradys.simulator.handler.timer import TimerHandler
-from gradys.simulator.handler.visualization import VisualizationHandler
-from gradys.simulator.node import Node
-from gradys.simulator.simulation import SimulationBuilder, SimulationConfiguration
 
 
 @assert_always_true_for_simulation(name="received_equals_sent")
@@ -20,12 +20,13 @@ def assert_received_equals_sent(nodes: List[Node[PingProtocol]]) -> bool:
     return received == sent
 
 
-if __name__ == '__main__':
-    builder = SimulationBuilder(SimulationConfiguration(duration=30, debug=True, real_time=True))
+def run_simulation(real_time: bool):
+    builder = SimulationBuilder(SimulationConfiguration(duration=30, debug=True, real_time=real_time))
     builder.add_handler(CommunicationHandler())
     builder.add_handler(TimerHandler())
     builder.add_handler(MobilityHandler())
-    builder.add_handler(VisualizationHandler())
+    if real_time:
+        builder.add_handler(VisualizationHandler())
     builder.add_handler(AssertionHandler([assert_received_equals_sent]))
 
     builder.add_node(PingProtocol, (0, 0, 0))
@@ -33,3 +34,7 @@ if __name__ == '__main__':
 
     simulation = builder.build()
     simulation.start_simulation()
+
+
+if __name__ == '__main__':
+    run_simulation(True)

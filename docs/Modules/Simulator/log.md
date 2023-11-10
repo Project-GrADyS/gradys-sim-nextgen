@@ -1,3 +1,3 @@
 # Log
 
-:::gradys.simulator.log
+:::gradysim.simulator.log

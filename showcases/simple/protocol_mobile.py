@@ -1,13 +1,10 @@
 import random
-from gradys.protocol import SendMessageCommand
-from gradys.protocol.messages.mobility import (
-    SetModeCommand,
-    MobilityMode,
-    ReverseCommand
-)
-from gradys.protocol import Telemetry
-from gradys.protocol import IProtocol
-from showcases.simple.message import SimpleMessage, SenderType
+from gradysim.protocol.messages.communication import SendMessageCommand
+from gradysim.protocol.messages.mobility import GotoCoordsMobilityCommand
+
+from gradysim.protocol.messages.telemetry import Telemetry
+from gradysim.protocol.interface import IProtocol
+from message import SimpleMessage, SenderType
 
 
 class SimpleProtocolMobile(IProtocol):
@@ -16,8 +13,8 @@ class SimpleProtocolMobile(IProtocol):
 
     def initialize(self, stage: int):
         self.packets = 0
-        self.last_telemetry_message = Telemetry()
-        self.provider.send_mobility_command(SetModeCommand(MobilityMode.AUTO))
+        self.last_telemetry_message = Telemetry(current_position=(0,0,0))
+        self.provider.send_mobility_command(GotoCoordsMobilityCommand(10,10,10))
 
         # Scheduling self message with a random delay to prevent collision when sending pings
         self.provider.tracked_variables["packets"] = self.packets
@@ -30,15 +27,15 @@ class SimpleProtocolMobile(IProtocol):
 
     def handle_packet(self, message: str):
         message: SimpleMessage = SimpleMessage.from_json(message)
-        print(f"SimpleProtocolMobile received packet: "
-              f"{self.packets}, {message.sender}, {self.last_telemetry_message.is_reversed}")
+        # print(f"SimpleProtocolMobile received packet: "
+        #       f"{self.packets}, {message.sender}, {self.last_telemetry_message.is_reversed}")
 
         if message.sender == SenderType.GROUND_STATION:
             self.packets = 0
             self.provider.tracked_variables["packets"] = self.packets
 
-            if self.last_telemetry_message.is_reversed:
-                self.provider.send_mobility_command(ReverseCommand())
+            # if self.last_telemetry_message.is_reversed:
+            #     self.provider.send_mobility_command(GotoCoordsMobilityCommand(10,10,10))
 
         elif message.sender == SenderType.SENSOR:
             self.packets += message.content

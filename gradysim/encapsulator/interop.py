@@ -1,6 +1,6 @@
 """
 Wraps the running protocol and prepares it for integration with the OMNeT++, in [integrated-mode][]. It is injected with
-a [InteropProvider][gradys.encapsulator.interop.InteropProvider] instance that provides it with the necessary tools to
+a [InteropProvider][gradysim.encapsulator.interop.InteropProvider] instance that provides it with the necessary tools to
 interact with the OMNeT++ environment.
 
 The integration works by collecting all the consequences of the protocol's actions and returning them to the OMNeT++.
@@ -16,12 +16,12 @@ mode.
 from enum import Enum
 from typing import List, Type, Tuple, Union, Any, Callable
 
-from gradys.protocol.interface import IProtocol, IProvider
-from gradys.encapsulator.interface import IEncapsulator
-from gradys.protocol.messages.communication import CommunicationCommand
-from gradys.protocol.messages.mobility import MobilityCommand
+from gradysim.protocol.interface import IProtocol, IProvider
+from gradysim.encapsulator.interface import IEncapsulator
+from gradysim.protocol.messages.communication import CommunicationCommand
+from gradysim.protocol.messages.mobility import MobilityCommand
 
-from gradys.protocol.messages.telemetry import Telemetry
+from gradysim.protocol.messages.telemetry import Telemetry
 
 
 class ConsequenceType(int, Enum):
@@ -126,7 +126,7 @@ class InteropProvider(IProvider):
 class InteropEncapsulator(IEncapsulator):
     """
     Encapsulator implementation for the OMNeT++ environment. The encapsulator wraps the protocol and prepares it for
-    integration with the OMNeT++ environment. It is injected with a [InteropProvider][gradys.encapsulator.interop.InteropProvider]
+    integration with the OMNeT++ environment. It is injected with a [InteropProvider][gradysim.encapsulator.interop.InteropProvider]
     instance that provides it with the necessary tools to interact with the OMNeT++ environment.
     """
     provider: InteropProvider

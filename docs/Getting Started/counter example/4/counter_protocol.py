@@ -1,11 +1,11 @@
 import logging
 import random
 
-from gradys.protocol import IProtocol
-from gradys.simulator import SIMULATION_LOGGER
-from gradys.protocol import CommunicationCommand, CommunicationCommandType
-from gradys.protocol.messages.mobility import GotoCoordsMobilityCommand
-from gradys.protocol import Telemetry
+from gradysim.protocol.interface import IProtocol
+from gradysim.simulator import SIMULATION_LOGGER
+from gradysim.protocol import CommunicationCommand, CommunicationCommandType
+from gradysim.protocol.messages.mobility import GotoCoordsMobilityCommand
+from gradysim.protocol.messages.telemetry import Telemetry
 
 
 class CounterProtocol(IProtocol):

@@ -1,3 +1,3 @@
-:::gradys.simulator.handler.communication.CommunicationHandler
+:::gradysim.simulator.handler.communication.CommunicationHandler
 
-:::gradys.simulator.handler.communication.CommunicationMedium
+:::gradysim.simulator.handler.communication.CommunicationMedium

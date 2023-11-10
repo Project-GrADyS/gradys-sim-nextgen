@@ -1,4 +1,4 @@
-:::gradys.simulator.handler.assertion.AssertionHandler
+:::gradysim.simulator.handler.assertion.AssertionHandler
 
 ## Creating assertions
 Assertions can be created using one of the provided assertion decorators. They should be
@@ -22,7 +22,7 @@ def assert_received_equals_sent(nodes: List[Node[PingProtocol]]) -> bool:
     return received == sent
 ```
 
-:::gradys.simulator.handler.assertion.assert_always_true_for_protocol
-:::gradys.simulator.handler.assertion.assert_eventually_true_for_protocol
-:::gradys.simulator.handler.assertion.assert_always_true_for_simulation
-:::gradys.simulator.handler.assertion.assert_eventually_true_for_simulation
+:::gradysim.simulator.handler.assertion.assert_always_true_for_protocol
+:::gradysim.simulator.handler.assertion.assert_eventually_true_for_protocol
+:::gradysim.simulator.handler.assertion.assert_always_true_for_simulation
+:::gradysim.simulator.handler.assertion.assert_eventually_true_for_simulation
