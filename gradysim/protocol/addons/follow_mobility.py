@@ -9,7 +9,7 @@ the node's movement and thus should be fine to use with other mobility addons or
 
 import json
 from dataclasses import dataclass
-from typing import Optional, Dict, Set, Tuple
+from typing import Optional, Dict, Set
 
 from gradysim.protocol.addons.dispatcher import create_dispatcher, DispatchReturn
 from gradysim.protocol.interface import IProtocol
