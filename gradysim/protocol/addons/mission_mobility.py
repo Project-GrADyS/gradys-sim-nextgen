@@ -5,7 +5,7 @@ from typing import List, Optional
 
 from gradysim.protocol.addons.dispatcher import create_dispatcher, DispatchReturn
 from gradysim.protocol.interface import IProtocol
-from gradysim.protocol.messages.mobility import GotoCoordsMobilityCommand
+from gradysim.protocol.messages.mobility import GotoCoordsMobilityCommand, SetSpeedMobilityCommand
 from gradysim.protocol.messages.telemetry import Telemetry
 from gradysim.protocol.position import Position, squared_distance
 from gradysim.simulator.log import SIMULATION_LOGGER
@@ -36,7 +36,26 @@ class MissionMobilityConfiguration:
     """
 
 
+class MissionMobilityAddonException(Exception):
+    pass
+
+
 class MissionMobilityAddon:
+    """
+    Use this addon if you want your node to follow a fixed list of positions, or waypoints. The waypoints will be
+    followed in order after they are received by the
+    [start_mission][protocol.addon.mission_mobility.MissionMobilityAddon.start_mission] method. You can stop the mission
+    at any time using the [stop_mission][protocol.addon.mission_mobility.MissionMobilityAddon.stop_mission]. The
+    [current_waypoint][protocol.addon.mission_mobility.MissionMobilityAddon.current_waypoint],
+    [is_reversed][protocol.addon.mission_mobility.MissionMobilityAddon.is_reversed] and
+     [is_idle][protocol.addon.mission_mobility.MissionMobilityAddon.is_idle] properties can be used to check
+    the current mission status.
+
+    Beware that if any mobility commands are sent by your protocol or any of its addons while a mission is in progress,
+    the mission is in high risk of breaking. If sending a mobility command is necessary, stop the mission and restart
+    it.
+    """
+
     def __init__(self,
                  protocol: IProtocol,
                  configuration: MissionMobilityConfiguration = MissionMobilityConfiguration()):
@@ -139,10 +158,85 @@ class MissionMobilityAddon:
         self._is_idle = True
         self._current_waypoint = None
 
+        self._logger.info("Mission: Stopping mission")
+
+    def set_current_waypoint(self, waypoint: int) -> None:
+        """
+        Manually sets the index of the waypoint in the mission that should be followed immediately. The mission will
+        progress normally after this. If the mission is reversed, it will keep being followed in reverse direction.
+        
+        If there is no mission going on, will raise MissionMobilityAddonException.
+        
+        If waypoint is outsidef the mission bounds a MissionMobilityAddonException will be raised
+
+        Args:
+            waypoint: Index of the waypoint that should be followed next
+        """
+        if self._current_mission is None:
+            raise MissionMobilityAddonException("Could not set waypoint: No mission in progress")
+        
+        if waypoint < 0 or waypoint >= len(self._current_mission):
+            raise MissionMobilityAddonException(f"Could not set waypoint: Waypoint index {waypoint} is not in mission "
+                                                f"bounds [0, {len(self._current_mission) - 1}]")
+
+        self._current_waypoint = waypoint
+        self._travel_to_current_waypoint()
+        
+    def set_reversed(self, reversed: bool) -> None:
+        """
+        Sets the reversed state of the mission. If True the node will start travelling the mission in reverse order
+        and when False in normal order. When this method is called while the node is travelling between to a waypoint,
+        the movement will be updated immediately. This means that if the node was previously traveling un-reversed, it
+        will turn around and go where it came from.
+
+        This method is only relevant when LoopMission.REVERSE is configured, in any other case this will raise
+        MissionMobilityAddonException.
+
+        Args:
+            reversed: True if the node should reverse and False otherwise
+        """
+        if self._current_mission is None:
+            raise MissionMobilityAddonException("Could not set reversed: No mission in progress")
+
+        if self._config.loop_mission != LoopMission.REVERSE:
+            raise MissionMobilityAddonException(f"Could not set reversed: Not supported loop "
+                                                f"option {self._config.loop_mission.name}. "
+                                                f"Only supported when loop_mission is LoopMission.REVERSE")
+
+        old_value = self._is_reversed
+        self._is_reversed = reversed
+
+        if old_value != reversed:
+            self._progress_current_waypoint()
+            self._travel_to_current_waypoint()
+
+
     @property
-    def current_waypoint(self):
+    def current_waypoint(self) -> int:
+        """
+        Current waypoint the mission is travelling to
+
+        Returns:
+            Current waypoint
+        """
         return self._current_waypoint
 
     @property
-    def is_reversed(self):
+    def is_reversed(self) -> bool:
+        """
+        If True the mission is being travelled in reverse direction because of LoopMission.REVERT. False otherwise
+
+        Returns:
+            If the mission is being travelled in reverse
+        """
         return self._is_reversed
+
+    @property
+    def is_idle(self) -> bool:
+        """
+        Returns True if the node is not following a mission. False if there is a mission in progress
+
+        Returns:
+            Whether there is a mission happening
+        """
+        return self._is_idle
