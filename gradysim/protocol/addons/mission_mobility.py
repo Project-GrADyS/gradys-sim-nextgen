@@ -212,9 +212,9 @@ class MissionMobilityAddon:
 
 
     @property
-    def current_waypoint(self) -> int:
+    def current_waypoint(self) -> Optional[int]:
         """
-        Current waypoint the mission is travelling to
+        Current waypoint the mission is travelling to. If no mission is ongoing, returns None
 
         Returns:
             Current waypoint
@@ -224,7 +224,9 @@ class MissionMobilityAddon:
     @property
     def is_reversed(self) -> bool:
         """
-        If True the mission is being travelled in reverse direction because of LoopMission.REVERT. False otherwise
+        If True the mission is being travelled in reverse direction because of LoopMission.REVERT. False otherwise.
+
+        If no mission is ongoing returns False
 
         Returns:
             If the mission is being travelled in reverse
@@ -235,6 +237,8 @@ class MissionMobilityAddon:
     def is_idle(self) -> bool:
         """
         Returns True if the node is not following a mission. False if there is a mission in progress
+
+        If no mission is ongoing returns True
 
         Returns:
             Whether there is a mission happening
