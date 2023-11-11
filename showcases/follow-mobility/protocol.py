@@ -3,7 +3,6 @@ import random
 
 from gradysim.protocol.addons.follow_mobility import MobilityFollowerAddon, MobilityLeaderAddon
 from gradysim.protocol.addons.mission_mobility import MissionMobilityAddon, MissionMobilityConfiguration, LoopMission
-from gradysim.protocol.addons.random_mobility import RandomMobilityAddon
 from gradysim.protocol.interface import IProtocol
 from gradysim.protocol.messages.mobility import SetSpeedMobilityCommand
 from gradysim.protocol.messages.telemetry import Telemetry
