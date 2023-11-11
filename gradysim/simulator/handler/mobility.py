@@ -123,11 +123,11 @@ class MobilityHandler(INodeHandler):
         if node.id not in self._nodes:
             raise MobilityException("Error handling commands: Cannot handle command from unregistered node")
 
-        if command.command == MobilityCommandType.GOTO_COORDS:
+        if command.command_type == MobilityCommandType.GOTO_COORDS:
             self._goto((command.param_1, command.param_2, command.param_3), node)
-        elif command.command == MobilityCommandType.GOTO_GEO_COORDS:
+        elif command.command_type == MobilityCommandType.GOTO_GEO_COORDS:
             raise NotImplementedError()
-        elif command.command == MobilityCommandType.SET_SPEED:
+        elif command.command_type == MobilityCommandType.SET_SPEED:
             self._speeds[node.id] = command.param_1
 
     def _goto(self, position: Position, node: Node):

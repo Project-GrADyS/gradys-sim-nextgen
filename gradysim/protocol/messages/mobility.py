@@ -30,7 +30,7 @@ class MobilityCommand:
     instead (e.g. GotoCoordsMobilityCommand) to have properly typed parameters.
     """
 
-    command: MobilityCommandType
+    command_type: MobilityCommandType
     """The type of the mobility command"""
 
     param_1: float = 0
