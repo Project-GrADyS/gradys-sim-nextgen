@@ -71,6 +71,25 @@ class GotoCoordsMobilityCommand(MobilityCommand):
         super().__init__(MobilityCommandType.GOTO_COORDS, x, y, z)
 
 
+class GotoGeoCoordsMobilityCommand(MobilityCommand):
+    """
+    Represents a mobility command that instructs the mobility module to move the node to a new location. The new
+    location is specified by its x, y, and z coordinates.
+    """
+
+    def __init__(self, lat: float, lon: float, alt: float):
+        """
+        Initializes a GoToCoordsMobilityCommand
+
+        Args:
+            lat: The latitude of the desired location
+            lon: The longitude of the desired location
+            alt: The altitude of the desired location
+        """
+
+        super().__init__(MobilityCommandType.GOTO_GEO_COORDS, lat, lon, alt)
+
+
 class SetSpeedMobilityCommand(MobilityCommand):
     """
     Represents a mobility command that sets the node's speed. The only parameter of this command is the desired speed

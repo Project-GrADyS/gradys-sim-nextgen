@@ -1,12 +1,12 @@
 import math
 from dataclasses import dataclass
-from typing import Dict
+from typing import Dict, Tuple
 
 from gradysim.simulator.event import EventLoop
 from gradysim.protocol.messages.mobility import MobilityCommand, MobilityCommandType
 from gradysim.protocol.messages.telemetry import Telemetry
 from gradysim.simulator.node import Node
-from gradysim.protocol.position import Position
+from gradysim.protocol.position import Position, geo_to_cartesian
 from gradysim.simulator.handler.interface import INodeHandler
 
 
@@ -25,6 +25,12 @@ class MobilityConfiguration:
 
     default_speed: float = 10
     """This is the default speed of a node in m/s"""
+
+    reference_coordinates: Tuple[float, float, float] = (0, 0, 0)
+    """
+    These coordinates are used as a reference frame to convert geographical coordinates to cartesian coordinates. They
+    will be used as the center of the scene and all geographical coordinates will be converted relative to it.
+    """
 
 
 class MobilityHandler(INodeHandler):
@@ -126,7 +132,9 @@ class MobilityHandler(INodeHandler):
         if command.command_type == MobilityCommandType.GOTO_COORDS:
             self._goto((command.param_1, command.param_2, command.param_3), node)
         elif command.command_type == MobilityCommandType.GOTO_GEO_COORDS:
-            raise NotImplementedError()
+            relative_coords = geo_to_cartesian(self._configuration.reference_coordinates,
+                                               (command.param_1, command.param_2, command.param_3))
+            self._goto(relative_coords, node)
         elif command.command_type == MobilityCommandType.SET_SPEED:
             self._speeds[node.id] = command.param_1
 
