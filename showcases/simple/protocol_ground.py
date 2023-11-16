@@ -11,7 +11,7 @@ class SimpleProtocolGround(IProtocol):
         self.packets = 0
         self.provider.tracked_variables["packets"] = self.packets
 
-    def handle_timer(self, timer: dict):
+    def handle_timer(self, timer: str):
         pass
 
     def handle_packet(self, message: str):
@@ -26,7 +26,7 @@ class SimpleProtocolGround(IProtocol):
                 sender=SenderType.GROUND_STATION, content=self.packets
             )
             self.provider.send_communication_command(
-                SendMessageCommand(response.to_json())
+                SendMessageCommand(response.to_json(), destination=1)
             )
 
     def handle_telemetry(self, telemetry: Telemetry):
@@ -34,3 +34,4 @@ class SimpleProtocolGround(IProtocol):
 
     def finish(self):
         pass
+        

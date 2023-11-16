@@ -2,7 +2,7 @@ import logging
 import random
 
 from gradysim.protocol.interface import IProtocol
-from gradysim.simulator import SIMULATION_LOGGER
+from gradysim.simulator.log import SIMULATION_LOGGER
 from gradysim.protocol import CommunicationCommand, CommunicationCommandType
 from gradysim.protocol.messages.mobility import GotoCoordsMobilityCommand
 from gradysim.protocol.messages.telemetry import Telemetry

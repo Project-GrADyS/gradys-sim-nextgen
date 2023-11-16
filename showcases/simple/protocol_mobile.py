@@ -18,12 +18,12 @@ class SimpleProtocolMobile(IProtocol):
 
         # Scheduling self message with a random delay to prevent collision when sending pings
         self.provider.tracked_variables["packets"] = self.packets
-        self.provider.schedule_timer({}, self.provider.current_time() + random.random())
+        self.provider.schedule_timer("", self.provider.current_time() + random.random())
 
-    def handle_timer(self, timer: dict):
+    def handle_timer(self, timer: str):
         ping = SimpleMessage(sender=SenderType.DRONE, content=self.packets)
-        self.provider.send_communication_command(SendMessageCommand(ping.to_json()))
-        self.provider.schedule_timer({}, self.provider.current_time() + 2)
+        self.provider.send_communication_command(SendMessageCommand(ping.to_json(), destination=1))
+        self.provider.schedule_timer("", self.provider.current_time() + 2)
 
     def handle_packet(self, message: str):
         message: SimpleMessage = SimpleMessage.from_json(message)

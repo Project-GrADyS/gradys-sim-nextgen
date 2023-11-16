@@ -11,12 +11,12 @@ class SimpleProtocolSensor(IProtocol):
     def initialize(self, stage: int):
         self.packets = 5
         self.provider.tracked_variables["packets"] = self.packets
-        self.provider.schedule_timer({}, self.provider.current_time() + random.random())
+        self.provider.schedule_timer("", self.provider.current_time() + random.random())
 
     def handle_timer(self, timer: dict):
         self.packets += 1
         self.provider.tracked_variables["packets"] = self.packets
-        self.provider.schedule_timer({}, self.provider.current_time() + 2)
+        self.provider.schedule_timer("", self.provider.current_time() + 2)
 
     def handle_packet(self, message: str):
         message: SimpleMessage = SimpleMessage.from_json(message)
@@ -25,7 +25,7 @@ class SimpleProtocolSensor(IProtocol):
         if message.sender == SenderType.DRONE:
             response = SimpleMessage(sender=SenderType.SENSOR, content=self.packets)
             self.provider.send_communication_command(
-                SendMessageCommand(response.to_json())
+                SendMessageCommand(response.to_json(), destination=1)
             )
 
             self.packets = 0

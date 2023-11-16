@@ -20,7 +20,7 @@ class PingProtocol(IProtocol):
         self.provider.schedule_timer("", self.provider.current_time() + random.random() + 2)
         self._movement.initiate_random_trip()
 
-    def handle_timer(self, timer: dict):
+    def handle_timer(self, timer: str):
         command = CommunicationCommand(
             CommunicationCommandType.BROADCAST,
             "ping"

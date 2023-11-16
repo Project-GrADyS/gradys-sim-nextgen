@@ -1,7 +1,7 @@
 import logging
 
 from gradysim.protocol.interface import IProtocol
-from gradysim.simulator import SIMULATION_LOGGER
+from gradysim.simulator.log import SIMULATION_LOGGER
 from gradysim.protocol.messages.telemetry import Telemetry
 
 
