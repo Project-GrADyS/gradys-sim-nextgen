@@ -27,7 +27,7 @@ class IEncapsulator(ABC, Generic[T]):
         pass
 
     @abstractmethod
-    def initialize(self, stage: int):
+    def initialize(self):
         """
         Wraps the protocols initialize function
         """

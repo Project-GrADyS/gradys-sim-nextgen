@@ -15,7 +15,7 @@ class FollowerProtocol(IProtocol):
     def __init__(self):
         self._logger = logging.getLogger(SIMULATION_LOGGER)
 
-    def initialize(self, stage: int) -> None:
+    def initialize(self) -> None:
         self.follower = MobilityFollowerAddon(self)
 
         self.follower.set_relative_position((
@@ -50,7 +50,7 @@ class LeaderProtocol(IProtocol):
     def __init__(self):
         self._logger = logging.getLogger(SIMULATION_LOGGER)
 
-    def initialize(self, stage: int) -> None:
+    def initialize(self) -> None:
         self.leader = MobilityLeaderAddon(self)
 
         mission = MissionMobilityAddon(self, MissionMobilityConfiguration(loop_mission=LoopMission.RESTART))

@@ -8,7 +8,7 @@ from message import SimpleMessage, SenderType
 class SimpleProtocolSensor(IProtocol):
     packets: int
 
-    def initialize(self, stage: int):
+    def initialize(self):
         self.packets = 5
         self.provider.tracked_variables["packets"] = self.packets
         self.provider.schedule_timer("", self.provider.current_time() + random.random())

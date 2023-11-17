@@ -15,7 +15,7 @@ class ZigZagProtocolSensor(IProtocol):
     tentative_target_name: str = ""
     data_load_signal_id: str = ""
 
-    def initialize(self, stage: int):
+    def initialize(self):
         pass
 
     def handle_timer(self, timer: str):

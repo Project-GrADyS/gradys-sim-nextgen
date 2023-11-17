@@ -12,7 +12,7 @@ class CounterProtocol(IProtocol):
     sent: int
     received: int
 
-    def initialize(self, stage):
+    def initialize(self):
         # We initialize two counters: one for sent and one
         # for received messages
         self.sent = 0

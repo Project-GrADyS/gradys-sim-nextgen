@@ -33,7 +33,7 @@ class TestSimulationBuilder(unittest.TestCase):
                     def instantiate(cls, provider: IProvider):
                         return cls()
 
-                    def initialize(self, stage: int):
+                    def initialize(self):
                         nonlocal initialized
                         initialized += 1
 

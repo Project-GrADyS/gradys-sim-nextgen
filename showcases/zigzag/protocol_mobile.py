@@ -30,17 +30,14 @@ class ZigZagProtocolMobile(IProtocol):
         self.last_payload: ZigZagMessage = ZigZagMessage()
         self._logger = logging.getLogger(SIMULATION_LOGGER)
 
-    def initialize(self, stage: int):
+    def initialize(self):
         self.provider.tracked_variables["current_data_load"] = self.current_data_load
 
         self.mission: MissionMobilityAddon = MissionMobilityAddon(
             self, MissionMobilityConfiguration(loop_mission=LoopMission.RESTART)
         )
-        # does not work
-        self.mission.start_mission([(20, 20, 5), (20, -20, 5), (-20, -20, 5), (-20, 20, 5)])
 
-        # works
-        # self.provider.send_mobility_command(GotoCoordsMobilityCommand(20, 20, 5)) 
+        self.mission.start_mission([(20, 20, 5), (20, -20, 5), (-20, -20, 5), (-20, 20, 5)])
 
         self._update_payload()
 

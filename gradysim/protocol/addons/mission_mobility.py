@@ -70,11 +70,16 @@ class MissionMobilityAddon:
     _is_reversed: bool = False
     _is_idle: bool = True
     _current_waypoint: Optional[int] = None
+    _run_once: bool = True
 
     def _initialize_telemetry_handling(self) -> None:
         def telemetry_handler(_instance: IProtocol, telemetry: Telemetry) -> DispatchReturn:
             if self._current_mission is None:
                 return DispatchReturn.CONTINUE
+        
+            if self._run_once:
+                self._travel_to_current_waypoint()
+                self._run_once = False
 
             if self._has_reached_target(telemetry.current_position):
                 self._progress_current_waypoint()

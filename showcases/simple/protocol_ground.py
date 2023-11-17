@@ -7,7 +7,7 @@ from message import SimpleMessage, SenderType
 class SimpleProtocolGround(IProtocol):
     packets: int
 
-    def initialize(self, stage: int):
+    def initialize(self):
         self.packets = 0
         self.provider.tracked_variables["packets"] = self.packets
 

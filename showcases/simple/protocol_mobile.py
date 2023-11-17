@@ -11,7 +11,7 @@ class SimpleProtocolMobile(IProtocol):
     packets: int
     last_telemetry_message: Telemetry
 
-    def initialize(self, stage: int):
+    def initialize(self):
         self.packets = 0
         self.last_telemetry_message = Telemetry(current_position=(0,0,0))
         self.provider.send_mobility_command(GotoCoordsMobilityCommand(10,10,10))

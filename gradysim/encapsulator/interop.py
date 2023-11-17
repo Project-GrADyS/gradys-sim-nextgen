@@ -165,14 +165,14 @@ class InteropEncapsulator(IEncapsulator):
         """
         self.provider.id = id
 
-    def initialize(self, stage: int) -> List[Consequence]:
+    def initialize(self) -> List[Consequence]:
         """
         Initializes the protocol. Called by the OMNeT++ environment before the simulation starts.
 
         Returns:
             A list of consequences that the protocol wants to perform on the environment from this call
         """
-        self.protocol.initialize(stage)
+        self.protocol.initialize()
         return self._collect_consequences()
 
     def handle_timer(self, timer: str) -> List[Consequence]:

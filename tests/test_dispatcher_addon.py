@@ -13,7 +13,7 @@ class DispatchAddonTestCase(unittest.TestCase):
             def __init__(self):
                 self.variable = 0
 
-            def initialize(self, stage: int):
+            def initialize(self):
                 self.variable += 1
 
             def handle_timer(self, timer: str):
@@ -48,7 +48,7 @@ class DispatchAddonTestCase(unittest.TestCase):
             def __init__(self):
                 self.variable = 0
 
-            def initialize(self, stage: int):
+            def initialize(self):
                 self.variable += 1
 
             def handle_timer(self, timer: str):
@@ -68,7 +68,7 @@ class DispatchAddonTestCase(unittest.TestCase):
 
         counter = 0
 
-        def initialize(_instance: IProtocol, stage: int):
+        def initialize(_instance: IProtocol):
             nonlocal counter
             counter += 1
 
@@ -124,7 +124,7 @@ class DispatchAddonTestCase(unittest.TestCase):
             def __init__(self):
                 self.variable = 0
 
-            def initialize(self, stage: int):
+            def initialize(self):
                 self.variable += 1
 
             def handle_timer(self, timer: str):
@@ -144,7 +144,7 @@ class DispatchAddonTestCase(unittest.TestCase):
 
         counter = 0
 
-        def initialize(_instance: IProtocol, stage: int):
+        def initialize(_instance: IProtocol):
             nonlocal counter
             counter += 1
 
@@ -206,7 +206,7 @@ class DispatchAddonTestCase(unittest.TestCase):
             def __init__(self):
                 self.variable = 0
 
-            def initialize(self, stage: int):
+            def initialize(self):
                 self.variable += 1
 
             def handle_timer(self, timer: str):
@@ -226,7 +226,7 @@ class DispatchAddonTestCase(unittest.TestCase):
 
         counter = 0
 
-        def initialize(_instance: IProtocol, stage: int):
+        def initialize(_instance: IProtocol):
             nonlocal counter
             counter += 1
 

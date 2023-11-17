@@ -16,7 +16,7 @@ class PingProtocol(IProtocol):
         self._logger = logging.getLogger(SIMULATION_LOGGER)
         self._movement = RandomMobilityAddon(self)
 
-    def initialize(self, stage: int):
+    def initialize(self):
         self.provider.schedule_timer("", self.provider.current_time() + random.random() + 2)
         self._movement.initiate_random_trip()
 
