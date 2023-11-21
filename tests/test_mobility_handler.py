@@ -5,7 +5,7 @@ from typing import Type
 from gradysim.protocol.interface import IProtocol
 from gradysim.encapsulator.interface import IEncapsulator
 from gradysim.simulator.event import EventLoop
-from gradysim.protocol.messages.mobility import MobilityCommand, MobilityCommandType
+from gradysim.protocol.messages.mobility import MobilityCommand, MobilityCommandType, GotoGeoCoordsMobilityCommand
 from gradysim.protocol.messages.telemetry import Telemetry
 from gradysim.simulator.handler.mobility import MobilityHandler, MobilityConfiguration, MobilityException
 from gradysim.simulator.node import Node
@@ -203,3 +203,23 @@ class TestMobility(unittest.TestCase):
 
         with self.assertRaises(MobilityException):
             mobility_handler.handle_command(MobilityCommand(MobilityCommandType.SET_SPEED), node)
+
+    def test_geo_to_cartesian(self):
+        node = Node()
+        node.id = 0
+        node.position = (0., 0., 0.)
+        node.protocol_encapsulator = DummyEncapsulator()
+
+        update_rate = 1
+        speed = 100
+        event_loop, mobility_handler = setup_mobility_handler(MobilityConfiguration(update_rate=update_rate,
+                                                                                    default_speed=speed))
+        mobility_handler.register_node(node)
+
+        mobility_handler.handle_command(GotoGeoCoordsMobilityCommand(0.0001, 0.0001, 10), node)
+
+        event_loop.pop_event().callback()
+
+        self.assertAlmostEqual(node.position[0], 11.119, 3)
+        self.assertAlmostEqual(node.position[1], 11.119, 3)
+        self.assertEqual(node.position[2], 10)

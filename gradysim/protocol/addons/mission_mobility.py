@@ -103,7 +103,7 @@ class MissionMobilityAddon:
                 self._current_waypoint = 0
                 self._is_reversed = False
             elif self._config.loop_mission == LoopMission.REVERSE and not self._is_reversed:
-                self._current_waypoint = len(self._current_mission) - 1
+                self._current_waypoint = len(self._current_mission) - 2
                 self._is_reversed = True
 
         if self._current_waypoint is not None:
@@ -122,6 +122,9 @@ class MissionMobilityAddon:
             return self._current_waypoint >= len(self._current_mission)
 
     def _travel_to_current_waypoint(self):
+        if self._current_waypoint is None:
+            return
+
         mobility_command = GotoCoordsMobilityCommand(*self._current_mission[self._current_waypoint])
         self._instance.provider.send_mobility_command(mobility_command)
 
