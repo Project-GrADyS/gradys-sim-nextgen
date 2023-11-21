@@ -43,12 +43,8 @@ class MissionMobilityAddonException(Exception):
 class MissionMobilityAddon:
     """
     Use this addon if you want your node to follow a fixed list of positions, or waypoints. The waypoints will be
-    followed in order after they are received by the
-    [start_mission][protocol.addon.mission_mobility.MissionMobilityAddon.start_mission] method. You can stop the mission
-    at any time using the [stop_mission][protocol.addon.mission_mobility.MissionMobilityAddon.stop_mission]. The
-    [current_waypoint][protocol.addon.mission_mobility.MissionMobilityAddon.current_waypoint],
-    [is_reversed][protocol.addon.mission_mobility.MissionMobilityAddon.is_reversed] and
-     [is_idle][protocol.addon.mission_mobility.MissionMobilityAddon.is_idle] properties can be used to check
+    followed in order after they are received by the start_mission method. You can stop the mission
+    at any time using stop_mission. The current_waypoint, is_reversed and is_idle properties can be used to check
     the current mission status.
 
     Beware that if any mobility commands are sent by your protocol or any of its addons while a mission is in progress,
