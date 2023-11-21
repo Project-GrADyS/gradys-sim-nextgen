@@ -121,7 +121,7 @@ class Simulator:
         start_time = time.time()
         for node in self._nodes.values():
             self._formatter.scope_event(0, 0, f"Node {node.id} Initialization")
-            node.protocol_encapsulator.initialize(1)
+            node.protocol_encapsulator.initialize()
 
         last_timestamp = 0
         event_duration = 0

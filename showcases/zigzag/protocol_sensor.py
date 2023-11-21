@@ -19,13 +19,10 @@ class ZigZagProtocolSensor(IProtocol):
         pass
 
     def handle_timer(self, timer: str):
-        self.packets += 1
-        self.provider.tracked_variables["packets"] = self.packets
-        self.provider.schedule_timer("", self.provider.current_time() + 2)
+        pass
 
     def handle_packet(self, message: str):
         message: ZigZagMessage = ZigZagMessage.from_json(message)
-        print(f"ZigZag Sensor protocol received packet")
 
         if message.message_type == ZigZagMessageType.HEARTBEAT:
             self.tentative_target = message.source_id
