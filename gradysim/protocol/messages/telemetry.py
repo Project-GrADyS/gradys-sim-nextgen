@@ -1,13 +1,8 @@
-from gradysim.simulator.position import Position
+from dataclasses import dataclass
+
+from gradysim.protocol.position import Position
 
 
-# TODO: Josef, I heavily simplified this class, this will probably change the calls from the OMNeT++
-#  side, can you update them?
+@dataclass
 class Telemetry:
     current_position: Position
-
-    def __init__(
-        self,
-        current_position: Position
-    ):
-        self.current_position = current_position

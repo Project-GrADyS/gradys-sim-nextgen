@@ -11,7 +11,7 @@ from gradysim.protocol.addons.dispatcher import DispatchReturn, create_dispatche
 from gradysim.simulator.log import SIMULATION_LOGGER
 from gradysim.protocol.messages.mobility import MobilityCommand, MobilityCommandType
 from gradysim.protocol.messages.telemetry import Telemetry
-from gradysim.simulator.position import Position, squared_distance
+from gradysim.protocol.position import Position, squared_distance
 from gradysim.protocol.interface import IProtocol
 
 

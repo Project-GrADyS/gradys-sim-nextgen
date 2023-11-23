@@ -6,7 +6,7 @@ from gradysim.simulator.event import EventLoop
 from gradysim.simulator.log import SIMULATION_LOGGER
 from gradysim.protocol.messages.communication import CommunicationCommand, CommunicationCommandType
 from gradysim.simulator.node import Node
-from gradysim.simulator.position import Position
+from gradysim.protocol.position import Position
 from gradysim.simulator.handler.interface import INodeHandler
 
 from typing import Dict

@@ -9,13 +9,14 @@ the node's movement and thus should be fine to use with other mobility addons or
 
 import json
 from dataclasses import dataclass
-from typing import Optional, Dict, Set, Tuple
+from typing import Optional, Dict, Set
 
 from gradysim.protocol.addons.dispatcher import create_dispatcher, DispatchReturn
 from gradysim.protocol.interface import IProtocol
 from gradysim.protocol.messages.communication import CommunicationCommand, CommunicationCommandType
 from gradysim.protocol.messages.mobility import GotoCoordsMobilityCommand
 from gradysim.protocol.messages.telemetry import Telemetry
+from gradysim.protocol.position import Position
 
 BROADCAST_TIMER_TAG = "FollowMobilityAddon__leader_broadcast_timer"
 """
@@ -51,7 +52,7 @@ class MobilityLeaderConfiguration:
 
 
 class MobilityLeaderAddon:
-    _position: Tuple[float, float, float]
+    _position: Position
 
     _last_connection_from_follower: Dict[int, float]
     """Last broadcast round in which a follower was connected"""
@@ -162,9 +163,9 @@ class MobilityFollowerConfiguration:
 
 class MobilityFollowerAddon:
     _leader: Optional[int] = None
-    _leader_position: Optional[Tuple[float, float, float]] = None
+    _leader_position: Optional[Position] = None
 
-    _relative_position: Tuple[float, float, float] = (0, 0, 0)
+    _relative_position: Position = (0, 0, 0)
 
     _last_leader_broadcast: Dict[int, float]
 
@@ -251,11 +252,11 @@ class MobilityFollowerAddon:
         return self._leader
 
     @property
-    def relative_position(self) -> Tuple[float, float, float]:
+    def relative_position(self) -> Position:
         return self._relative_position
 
     @property
-    def current_leader_position(self) -> Optional[Tuple[float, float, float]]:
+    def current_leader_position(self) -> Optional[Position]:
         return self._leader_position
 
     def follow_leader(self, leader_id: int) -> None:
@@ -263,5 +264,5 @@ class MobilityFollowerAddon:
             raise FollowMobilityException(f"Leader {leader_id} is not available")
         self._leader = leader_id
 
-    def set_relative_position(self, position: Tuple[float, float, float]) -> None:
+    def set_relative_position(self, position: Position) -> None:
         self._relative_position = position
