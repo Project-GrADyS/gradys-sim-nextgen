@@ -8,12 +8,8 @@ from utils import CommunicationStatus
 
 
 class ZigZagProtocolSensor(IProtocol):
-    timeout_duration: int = 0
     communication_status: CommunicationStatus = CommunicationStatus.FREE
     tentative_target: int = -1
-    last_target: int = -1
-    tentative_target_name: str = ""
-    data_load_signal_id: str = ""
 
     def initialize(self):
         pass
@@ -32,6 +28,7 @@ class ZigZagProtocolSensor(IProtocol):
                 source_id=self.provider.get_id(),
                 destination_id=self.tentative_target,
             )
+            
             self.provider.send_communication_command(
                 SendMessageCommand(
                     message=message.to_json(),

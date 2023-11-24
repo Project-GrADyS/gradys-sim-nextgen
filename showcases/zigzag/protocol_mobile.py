@@ -37,84 +37,61 @@ class ZigZagProtocolMobile(IProtocol):
             self, MissionMobilityConfiguration(loop_mission=LoopMission.REVERSE)
         )
 
-        self.mission.start_mission([(20, 20, 5), (20, -20, 5), (-20, -20, 5), (-20, 20, 5)])
+        self.mission.start_mission([(150, 150, 5), (150, -150, 5), (-150, -150, 5), (-150, 150, 5)])
 
-        self._update_payload()
-        self.provider.schedule_timer("", self.provider.current_time() + 1)
+        # self._update_payload()
+        self.provider.schedule_timer("", self.provider.current_time() + random.random())
 
     def handle_timer(self, timer: str):
-        
-        if (
-            not self._is_timedout()
-            and self.communication_status == CommunicationStatus.FREE
-        ):
-            self._update_payload()
-        
-        self.provider.schedule_timer("", self.provider.current_time() + 1)
-
+        self._send_heartbeat()        
+        self.provider.schedule_timer("", self.provider.current_time() + random.random())
 
     def handle_packet(self, message: str):
         message: ZigZagMessage = ZigZagMessage.from_json(message)
 
         match message.message_type:
             case ZigZagMessageType.HEARTBEAT:
-                if self._is_timedout() and self.last_target != message.source_id and self.tentative_target != message.source_id:
-                    self._reset_parameters()
-
-                if self.communication_status == CommunicationStatus.COLLECTING:
-                    self._reset_parameters()
-
                 if not self._is_timedout():
+                    self._reset_parameters()
                     self.tentative_target = message.source_id
-                    self._initiate_timeout()
-                    self.communication_status = CommunicationStatus.REQUESTING
+                    self._send_message()
 
             case ZigZagMessageType.PAIR_REQUEST:
-                if message.destination_id != self.provider.get_id():
+                if self._is_timedout() or message.destination_id != self.provider.get_id():
                     return
-
-                if self.communication_status == CommunicationStatus.COLLECTING:
-                    self._reset_parameters()
-
-                if self._is_timedout():
-                    if message.source_id == self.tentative_target:
-                        self.communication_status = CommunicationStatus.PAIRED
                 else: 
-                    self.tentative_target = message.source_id
-                    self._initiate_timeout()
-                    self.communication_status = CommunicationStatus.PAIRED
-            
+                    if self.communication_status != CommunicationStatus.PAIRED:
+                        self.tentative_target = message.source_id
+                        self.communication_status = CommunicationStatus.PAIRED
+                        self._send_message()
+
             case ZigZagMessageType.PAIR_CONFIRM:
-                if message.source_id == self.tentative_target and message.destination_id == self.provider.get_id():
-                    if self.communication_status != CommunicationStatus.PAIRED_FINISHED:
-                        if self.mission.is_reversed != message.reversed_flag or self.provider.get_id() > message.source_id:
-                            reversed = not self.mission.is_reversed
-                            self.mission.set_reversed(reversed = reversed)
-                            
-                            self.current_data_load = self.current_data_load + message.data_length
-                            self.provider.tracked_variables["current_data_load"] = self.current_data_load
-                    self.communication_status = CommunicationStatus.PAIRED_FINISHED
+                if self._is_timedout() or message.destination_id != self.provider.get_id():
+                    return 
+                else:
+                    if message.source_id == self.tentative_target:
+                        if self.communication_status != CommunicationStatus.PAIRED_FINISHED:
+                            self._initiate_timeout() 
+
+                            # if self.mission.is_reversed == message.reversed_flag: 
+                            if self.mission.is_reversed != message.reversed_flag or self.provider.get_id() > message.source_id:
+                                print("test5")
+                                reversed = not self.mission.is_reversed
+                                self.mission.set_reversed(reversed)
+
+                                self.communication_status = CommunicationStatus.PAIRED_FINISHED
+
+                                self._send_message()
 
             case ZigZagMessageType.BEARER:
-                if not self._is_timedout() and self.communication_status == CommunicationStatus.FREE:
-                    self.current_data_load = self.current_data_load + message.data_length
-                    self.stable_data_load = self.current_data_load
-                    self.provider.tracked_variables["current_data_load"] = self.current_data_load
-                    self._initiate_timeout()
-                    self.communication_status = CommunicationStatus.COLLECTING
-        
-        self._update_payload()
+                # Only used to exchange information between drone and sensor
+                self.current_data_load = self.current_data_load + message.data_length
+                self.stable_data_load = self.current_data_load
+                self.provider.tracked_variables["current_data_load"] = self.current_data_load
 
-    def handle_telemetry(self, telemetry: Telemetry):
-        self.current_telemetry = telemetry
+        # self._update_payload()
 
-        if self._is_timedout():
-            self.last_stable_telemetry = telemetry
-
-    def finish(self):
-        pass
-
-    def _update_payload(self):
+    def _send_message(self):
         message = ZigZagMessage(
             source_id=self.provider.get_id(),
             reversed_flag=self.mission.is_reversed,
@@ -125,9 +102,6 @@ class ZigZagProtocolMobile(IProtocol):
 
         match self.communication_status:
             case CommunicationStatus.FREE:
-                message.message_type = ZigZagMessageType.HEARTBEAT
-
-            case CommunicationStatus.REQUESTING:
                 message.message_type = ZigZagMessageType.PAIR_REQUEST
                 message.destination_id = self.tentative_target
 
@@ -136,29 +110,41 @@ class ZigZagProtocolMobile(IProtocol):
                 message.destination_id = self.tentative_target
                 message.data_length = self.stable_data_load
 
-            case CommunicationStatus.COLLECTING:
-                pass
+        self.last_payload = message
 
-        if (
-            message.message_type != self.last_payload.message_type
-            or message.source_id != self.last_payload.source_id
-            or message.destination_id != self.last_payload.destination_id
-            or message.reversed_flag != self.last_payload.reversed_flag
-        ):
-            self.last_payload = message
+        if self.tentative_target < 0:
+            command = BroadcastMessageCommand(
+                message=message.to_json()
+            )
 
-            if self.tentative_target < 0:
-                command = BroadcastMessageCommand(
-                    message=message.to_json()
-                )
+        else:
+            command = SendMessageCommand(
+                message=message.to_json(), destination=self.tentative_target
+            )
 
-            else:
-                command = SendMessageCommand(
-                    message=message.to_json(), destination=self.tentative_target
-                )
-  
-            self.provider.send_communication_command(command)
-           
+        self.provider.send_communication_command(command)
+
+    def handle_telemetry(self, telemetry: Telemetry):
+        self.current_telemetry = telemetry
+
+        if self._is_timedout():
+            self.last_stable_telemetry = telemetry
+
+    def finish(self):
+        pass
+
+    def _send_heartbeat(self):
+        message = ZigZagMessage(
+            source_id=self.provider.get_id(),
+            reversed_flag=self.mission.is_reversed,
+            message_type=ZigZagMessageType.HEARTBEAT
+        )
+
+        command = BroadcastMessageCommand(
+            message=message.to_json()
+        )
+        self.provider.send_communication_command(command)
+
     def _initiate_timeout(self):
         if self.timeout_duration > 0:
             self.timeout_end = self.provider.current_time() + self.timeout_duration
@@ -174,13 +160,13 @@ class ZigZagProtocolMobile(IProtocol):
                     return False
             else:
                 return False
-
         old_timeout_set = self.timeout_set
         is_timedout = __is_timedout()
         if not is_timedout and old_timeout_set:
             self._reset_parameters()
         return is_timedout
 
+           
     def _reset_parameters(self):
         self.timeout_set = False
         self.last_target = self.tentative_target
@@ -188,4 +174,3 @@ class ZigZagProtocolMobile(IProtocol):
         self.communication_status = CommunicationStatus.FREE
         self.last_stable_telemetry = self.current_telemetry
         self.stable_data_load = self.current_data_load
-        self._update_payload()
