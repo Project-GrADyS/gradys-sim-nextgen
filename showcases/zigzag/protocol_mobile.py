@@ -38,7 +38,7 @@ class ZigZagProtocolMobile(IProtocol):
             self, MissionMobilityConfiguration(loop_mission=LoopMission.REVERSE)
         )
 
-        self.mission.start_mission([(35, 35, 5), (35, -35, 5), (-35, -35, 5), (-35, 35, 5)])
+        self.mission.start_mission_with_waypoint_file(mission_file_path="/home/lac/Documents/Gradys/workspace/gradys-sim-prototype/showcases/zigzag/mission.txt")
 
         self.provider.schedule_timer("", self.provider.current_time() + random.random())
 

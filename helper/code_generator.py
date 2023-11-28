@@ -37,7 +37,9 @@ class CodeGenerator:
     def add_line(self, line):
         self.code += line + "\n"
 
-    def generate_python_code(self):
+    def generate_python_file(self):
+        print("Python main file (filename: main.py) \n")
+        
         template = self.env.get_template("python_template.jinja")
 
         data = {
@@ -53,16 +55,26 @@ class CodeGenerator:
         }
 
         generated_code = template.render(data)
-        print(generated_code)
+        print(generated_code + "\n")
+
+    def generate_mission_file(self):
+        print("Mission file (filename: mission.txt) \n")
+
+        for sensor_coord in self.sensor_coords:
+            print(f"{sensor_coord[0]},{sensor_coord[1]},{sensor_coord[2]}")
+
+        print("\n")
 
     def generate_ini_file(self, sections):
-        
+            
         def get_long_lat(x=None, y=None, z=None):
             R = 6371
             lat = np.degrees(np.arcsin(z / R))
             lon = np.degrees(np.arctan2(y, x))
             return lat, lon
         
+        print("Ini file (filename: omnetpp.ini) \n")
+
         lat, lon = get_long_lat(x, y, z)
 
         template = self.env.get_template("ini_template.jinja")
@@ -82,17 +94,12 @@ class CodeGenerator:
         generated_code = template.render(data)
         print(generated_code)
 
+# def get_cartesian(lat=None, lon=None):
+#     lat, lon = np.deg2rad(lat), np.deg2rad(lon)
+#     R = 6371  # radius of the earth
+#     x = R * np.cos(lat) * np.cos(lon)
+#     y = R * np.cos(lat) * np.sin(lon)
+#     z = R * np.sin(lat)
+#     return x, y, z
 
-
-
-
-
-def get_cartesian(lat=None, lon=None):
-    lat, lon = np.deg2rad(lat), np.deg2rad(lon)
-    R = 6371  # radius of the earth
-    x = R * np.cos(lat) * np.cos(lon)
-    y = R * np.cos(lat) * np.sin(lon)
-    z = R * np.sin(lat)
-    return x, y, z
-
-x, y, z = get_cartesian(-15.840068, -47.926633)
+# x, y, z = get_cartesian(-15.840068, -47.926633)

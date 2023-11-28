@@ -16,7 +16,6 @@ def run_simulation(real_time: bool):
     if real_time:
         builder.add_handler(VisualizationHandler())
 
-    
     # Drone locations 
     builder.add_node(ZigZagProtocolMobile, (-23.0, 0.0, 0.0))
     builder.add_node(ZigZagProtocolMobile, (-13.0, -10.0, 0.0))

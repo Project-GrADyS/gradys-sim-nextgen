@@ -8,11 +8,15 @@ if __name__ == "__main__":
     matrix.scale_matrix(10)
     coords = matrix.get_coordinates_list()
 
-    CodeGenerator(
+    code_generator = CodeGenerator(
         # ground_coord=(0, 0, 0),
         sensor_coords=coords,
         mobile_coords=coords,
         # protocol_ground="ZigZagProtocolGround",
         protocol_sensor="ZigZagProtocolSensor",
         protocol_mobile="ZigZagProtocolMobile",
-    ).generate_python_code()
+    )
+    
+    code_generator.generate_python_file()
+
+    code_generator.generate_mission_file()

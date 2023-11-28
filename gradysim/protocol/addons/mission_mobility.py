@@ -133,6 +133,29 @@ class MissionMobilityAddon:
         mobility_command = GotoCoordsMobilityCommand(*self._current_mission[self._current_waypoint])
         self._instance.provider.send_mobility_command(mobility_command)
 
+    def start_mission_with_waypoint_file(self, mission_file_path: str) -> None:
+        """
+        Loads a mission from a text file and afterwards calls the start mission function.
+
+        Args:
+            mission_file_path: Text file of positions the mission will follow.
+        """
+        mission : List[Position] = []
+        
+        try:
+            with open(mission_file_path, 'r') as file:
+                for line in file:
+                    x, y, z = map(float, line.split(sep=','))
+                    mission.append((x, y, z))
+        except FileNotFoundError:
+            print(f"Error: File '{mission_file_path}' not found.")
+            exit(1)
+        except ValueError:
+            print(f"Error: Invalid format in file '{mission_file_path}'. Each line should contain three space-separated coordinates.")
+            exit(1)
+
+        self.start_mission(mission=mission)
+
     def start_mission(self, mission: List[Position]) -> None:
         """
         Starts a mission, the node will travel to each position in the list in order and stop at the last position,
@@ -142,7 +165,7 @@ class MissionMobilityAddon:
         Args:
             mission: Sequence of positions the node will follow.
         """
-        self._current_mission = mission
+        self._current_mission = mission    
         self._is_reversed = False
         self._is_idle = False
         self._current_waypoint = 0
