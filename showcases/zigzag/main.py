@@ -16,12 +16,32 @@ def run_simulation(real_time: bool):
     if real_time:
         builder.add_handler(VisualizationHandler())
 
-    builder.add_node(ZigZagProtocolMobile, (0, 0, 0))
-    builder.add_node(ZigZagProtocolMobile, (20, 20, 0))
-
-    for _ in range(1):
-        builder.add_node(ZigZagProtocolSensor, PositionScheme.random((-5, 5), (-5, 5), (0, 5)))
-
+    
+    # Drone locations 
+    builder.add_node(ZigZagProtocolMobile, (-23.0, 0.0, 0.0))
+    builder.add_node(ZigZagProtocolMobile, (-13.0, -10.0, 0.0))
+    builder.add_node(ZigZagProtocolMobile, (-13.0, 10.0, 0.0))
+    builder.add_node(ZigZagProtocolMobile, (-3.0, -20.0, 0.0))
+    builder.add_node(ZigZagProtocolMobile, (-3.0, 20.0, 0.0))
+    builder.add_node(ZigZagProtocolMobile, (7.0, -20.0, 0.0))
+    builder.add_node(ZigZagProtocolMobile, (7.0, 0.0, 0.0))
+    builder.add_node(ZigZagProtocolMobile, (7.0, 20.0, 0.0))
+    builder.add_node(ZigZagProtocolMobile, (17.0, -20.0, 0.0))
+    builder.add_node(ZigZagProtocolMobile, (17.0, 20.0, 0.0))
+    
+    # Sensor locations 
+    builder.add_node(ZigZagProtocolSensor, (-23.0, 0.0, 0.0))
+    builder.add_node(ZigZagProtocolSensor, (-13.0, -10.0, 0.0))
+    builder.add_node(ZigZagProtocolSensor, (-13.0, 10.0, 0.0))
+    builder.add_node(ZigZagProtocolSensor, (-3.0, -20.0, 0.0))
+    builder.add_node(ZigZagProtocolSensor, (-3.0, 20.0, 0.0))
+    builder.add_node(ZigZagProtocolSensor, (7.0, -20.0, 0.0))
+    builder.add_node(ZigZagProtocolSensor, (7.0, 0.0, 0.0))
+    builder.add_node(ZigZagProtocolSensor, (7.0, 20.0, 0.0))
+    builder.add_node(ZigZagProtocolSensor, (17.0, -20.0, 0.0))
+    builder.add_node(ZigZagProtocolSensor, (17.0, 20.0, 0.0))
+    
+    # Simulation
     simulation = builder.build()
     simulation.start_simulation()
 

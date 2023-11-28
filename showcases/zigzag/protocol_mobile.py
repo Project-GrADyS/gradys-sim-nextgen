@@ -29,6 +29,7 @@ class ZigZagProtocolMobile(IProtocol):
         self.last_stable_telemetry: Telemetry
         self.last_payload: ZigZagMessage = ZigZagMessage()
         self._logger = logging.getLogger(SIMULATION_LOGGER)
+        self.old_mission_is_reversed: bool = False
 
     def initialize(self):
         self.provider.tracked_variables["current_data_load"] = self.current_data_load
@@ -37,9 +38,8 @@ class ZigZagProtocolMobile(IProtocol):
             self, MissionMobilityConfiguration(loop_mission=LoopMission.REVERSE)
         )
 
-        self.mission.start_mission([(150, 150, 5), (150, -150, 5), (-150, -150, 5), (-150, 150, 5)])
+        self.mission.start_mission([(35, 35, 5), (35, -35, 5), (-35, -35, 5), (-35, 35, 5)])
 
-        # self._update_payload()
         self.provider.schedule_timer("", self.provider.current_time() + random.random())
 
     def handle_timer(self, timer: str):
@@ -52,8 +52,8 @@ class ZigZagProtocolMobile(IProtocol):
         match message.message_type:
             case ZigZagMessageType.HEARTBEAT:
                 if not self._is_timedout():
-                    self._reset_parameters()
                     self.tentative_target = message.source_id
+                    self.old_mission_is_reversed = self.mission.is_reversed
                     self._send_message()
 
             case ZigZagMessageType.PAIR_REQUEST:
@@ -63,6 +63,7 @@ class ZigZagProtocolMobile(IProtocol):
                     if self.communication_status != CommunicationStatus.PAIRED:
                         self.tentative_target = message.source_id
                         self.communication_status = CommunicationStatus.PAIRED
+                        self.old_mission_is_reversed = self.mission.is_reversed
                         self._send_message()
 
             case ZigZagMessageType.PAIR_CONFIRM:
@@ -73,15 +74,36 @@ class ZigZagProtocolMobile(IProtocol):
                         if self.communication_status != CommunicationStatus.PAIRED_FINISHED:
                             self._initiate_timeout() 
 
-                            # if self.mission.is_reversed == message.reversed_flag: 
-                            if self.mission.is_reversed != message.reversed_flag or self.provider.get_id() > message.source_id:
-                                print("test5")
-                                reversed = not self.mission.is_reversed
-                                self.mission.set_reversed(reversed)
+                            self.old_mission_is_reversed = self.mission.is_reversed
 
-                                self.communication_status = CommunicationStatus.PAIRED_FINISHED
+                            if not self.mission.is_reversed:
+                                
+                                # Drone flying into mission direction
+                                if message.reversed_flag: 
+                                    # Drone flying in reverse order of mission direction
+                                    reversed = not self.mission.is_reversed
+                                    self.mission.set_reversed(reversed)
+                                else:
+                                    # Drone flying in mission direction
+                                    if self.provider.get_id() > message.source_id:
+                                        reversed = not self.mission.is_reversed
+                                        self.mission.set_reversed(reversed)
 
-                                self._send_message()
+                            else:
+                                # Drone flying in reverse order of mission direction
+                                if message.reversed_flag:
+                                    # Drone flying in reverse order of mission direction
+                                    if self.provider.get_id() > message.source_id:
+                                        reversed = not self.mission.is_reversed
+                                        self.mission.set_reversed(reversed)
+
+                                else:
+                                    # Drone flying in reverse order of mission direction
+                                    reversed = not self.mission.is_reversed
+                                    self.mission.set_reversed(reversed)
+                            
+                            self.communication_status = CommunicationStatus.PAIRED_FINISHED
+                            self._send_message()
 
             case ZigZagMessageType.BEARER:
                 # Only used to exchange information between drone and sensor
@@ -94,19 +116,24 @@ class ZigZagProtocolMobile(IProtocol):
     def _send_message(self):
         message = ZigZagMessage(
             source_id=self.provider.get_id(),
-            reversed_flag=self.mission.is_reversed,
+            reversed_flag=self.old_mission_is_reversed,
         )
 
         if self.provider.get_id() == self.tentative_target:
             return
-
         match self.communication_status:
+
             case CommunicationStatus.FREE:
                 message.message_type = ZigZagMessageType.PAIR_REQUEST
                 message.destination_id = self.tentative_target
 
-            case CommunicationStatus.PAIRED | CommunicationStatus.PAIRED_FINISHED:
+            case CommunicationStatus.PAIRED:
                 message.message_type = ZigZagMessageType.PAIR_CONFIRM
+                message.destination_id = self.tentative_target
+                message.data_length = self.stable_data_load
+
+            case CommunicationStatus.PAIRED_FINISHED:
+                message.message_type = ZigZagMessageType.PAIR_FINISH
                 message.destination_id = self.tentative_target
                 message.data_length = self.stable_data_load
 

@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from typing import List, Tuple
 
 from matplotlib import pyplot as plt
+from matplotlib.colors import Colormap
 
 from gradysim.simulator.event import EventLoop
 from gradysim.simulator.handler.interface import INodeHandler
@@ -26,7 +27,6 @@ class VisualizationConfiguration:
     z_range: Tuple[float, float] = (0, 50)
     """Range of the Z axis of the visualization in meters"""
 
-
 class VisualizationHandler(INodeHandler):
     """
     Adds visualization to the simulation. Shows regularly updated node position in a graphical
@@ -45,7 +45,7 @@ class VisualizationHandler(INodeHandler):
         """
         self._nodes = []
         self._configuration = configuration
-
+        
     @staticmethod
     def get_label() -> str:
         return "visualization"
@@ -71,17 +71,23 @@ class VisualizationHandler(INodeHandler):
         self._ax.set_xlim(*self._configuration.x_range)
         self._ax.set_ylim(*self._configuration.y_range)
         self._ax.set_zlim(*self._configuration.z_range)
-
+    
     def _update_plot(self):
         plt.cla()
         self._ax.scatter(
             [node.position[0] for node in self._nodes],
             [node.position[1] for node in self._nodes],
-            [node.position[2] for node in self._nodes]
+            [node.position[2] for node in self._nodes],
         )
+
         self._ax.set_xlim(*self._configuration.x_range)
         self._ax.set_ylim(*self._configuration.y_range)
         self._ax.set_zlim(*self._configuration.z_range)
+
+        for node in self._nodes:
+            xyz = (node.position[0], node.position[1],node.position[2])
+            self._ax.text(node.position[0], node.position[1],node.position[2], '%s' % (node.id), size=20, zorder=1, color='k')
+        
         plt.draw()
         plt.pause(0.001)
 

@@ -1,0 +1,46 @@
+from gradysim.simulator.handler.communication import CommunicationHandler, CommunicationMedium
+from gradysim.simulator.handler.mobility import MobilityHandler
+from gradysim.simulator.handler.timer import TimerHandler
+from gradysim.simulator.handler.visualization import VisualizationHandler
+from gradysim.simulator.simulation import SimulationBuilder, SimulationConfiguration, PositionScheme
+{% if protocol_sensor -%}
+from protocol_sensor import {{ protocol_sensor }}
+{% endif -%}
+{% if protocol_mobile -%}
+from protocol_mobile import {{ protocol_mobile }}
+{% endif -%}
+{% if protocol_ground -%}
+from protocol_ground import {{ protocol_ground }}
+{% endif %}
+
+def run_simulation(real_time: bool):
+    builder = SimulationBuilder(SimulationConfiguration(duration={{ duration }}, debug={{ debug }}, real_time=real_time))
+    builder.add_handler(CommunicationHandler(CommunicationMedium(transmission_range={{ transmission_range }})))
+    builder.add_handler(TimerHandler())
+    builder.add_handler(MobilityHandler())
+
+    if real_time:
+        builder.add_handler(VisualizationHandler())
+
+    {% if ground_coord -%}
+    builder.add_node({{ protocol_ground }}, {{ ground_coord }})
+    {% endif -%}
+    {% if mobile_coords %}
+    # Drone locations 
+    {% for mobile_coord in mobile_coords -%}
+    builder.add_node({{ protocol_mobile }}, {{ mobile_coord }})
+    {% endfor -%}
+    {% endif -%}
+    {% if sensor_coords %}
+    # Sensor locations 
+    {% for sensor_coord in sensor_coords -%}
+    builder.add_node({{ protocol_sensor }}, {{ sensor_coord }})
+    {% endfor -%}
+    {% endif %}
+    # Simulation
+    simulation = builder.build()
+    simulation.start_simulation()
+
+
+if __name__ == '__main__':
+    run_simulation(True)

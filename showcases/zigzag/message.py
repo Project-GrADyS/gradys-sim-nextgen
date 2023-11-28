@@ -6,6 +6,7 @@ class ZigZagMessageType(int, Enum):
     HEARTBEAT = 0
     PAIR_REQUEST = 1
     PAIR_CONFIRM = 2
+    PAIR_FINISH = 2
     BEARER = 3
 
 
