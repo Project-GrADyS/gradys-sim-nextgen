@@ -2,15 +2,15 @@ from gradysim.simulator.handler.communication import CommunicationHandler, Commu
 from gradysim.simulator.handler.mobility import MobilityHandler
 from gradysim.simulator.handler.timer import TimerHandler
 from gradysim.simulator.handler.visualization import VisualizationHandler
-from gradysim.simulator.simulation import SimulationBuilder, SimulationConfiguration, PositionScheme
+from gradysim.simulator.simulation import SimulationBuilder, SimulationConfiguration
 {% if protocol_sensor -%}
-from protocol_sensor import {{ protocol_sensor }}
+from {{ protocol_sensor_filename }} import {{ protocol_sensor }}
 {% endif -%}
 {% if protocol_mobile -%}
-from protocol_mobile import {{ protocol_mobile }}
+from {{ protocol_mobile_filename }} import {{ protocol_mobile }}
 {% endif -%}
 {% if protocol_ground -%}
-from protocol_ground import {{ protocol_ground }}
+from {{ protocol_ground_filename }} import {{ protocol_ground }}
 {% endif %}
 
 def run_simulation(real_time: bool):

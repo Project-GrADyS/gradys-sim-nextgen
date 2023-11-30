@@ -5,37 +5,74 @@ import numpy as np
 from jinja2 import Environment, FileSystemLoader
 
 from gradysim.protocol.position import Position
+from generate_simulation import AlphabetMatrix
 
 
 class CodeGenerator:
     def __init__(
         self,
+        # Required fields
+        protocol_location,
+        protocol,
+        protocol_ground,
+        protocol_sensor,
+        protocol_mobile,
+        protocol_ground_filename,
+        protocol_sensor_filename,
+        protocol_mobile_filename,
+        # Optional fields
+        pattern: Optional[str] = None,
+        pattern_scale: Optional[int] = None,
         ground_coord: Optional[Position] = None,
         sensor_coords: Optional[list[Position]] = None,
         mobile_coords: Optional[list[Position]] = None,
-        protocol_ground: Optional[str] = None,
-        protocol_sensor: Optional[str] = None,
-        protocol_mobile: Optional[str] = None,
+
+        scene_longitude = -47.926634,
+        scene_latitude = -15.840075,
         duration: int = 180,
         debug: bool = True,
         transmission_range: int = 50,
     ) -> None:
-        self.ground_coord: Position = ground_coord
-        self.sensor_coords: list[Position] = sensor_coords
-        self.mobile_coords: list[Position] = mobile_coords
-
+        self.protocol_location: str = protocol_location 
+        self.protocol: str = protocol
         self.protocol_ground: str = protocol_ground
         self.protocol_sensor: str = protocol_sensor
         self.protocol_mobile: str = protocol_mobile
+        self.protocol_ground_filename: str = protocol_ground_filename
+        self.protocol_sensor_filename: str = protocol_sensor_filename
+        self.protocol_mobile_filename: str = protocol_mobile_filename
 
+        assert (bool(pattern) and bool(pattern_scale) and not bool(ground_coord) and not bool(sensor_coords) and not bool(mobile_coords)) \
+        or (not bool(pattern) and not bool(pattern_scale) and bool(ground_coord) and bool(sensor_coords) and bool(mobile_coords)) , "Assertion failed: Either provie pattern and pattern_scale or coords for ground, sensors and mobile"
+
+        if pattern and pattern_scale:
+            self.pattern: str =  pattern
+            self.pattern_scale : int = pattern_scale
+
+            # Generate coordinates based on defined patern and scale
+            matrix = AlphabetMatrix(5, 5)
+            matrix.place_letter(self.pattern)
+            matrix.scale_matrix(self.pattern_scale)
+            
+            # Generate coords, select first point as ground station 
+            coords = matrix.get_coordinates_list()
+            
+            self.ground_coord: Position = coords[0]
+            self.sensor_coords: list[Position] = coords[1:]
+            self.mobile_coords: list[Position] = coords
+
+        else:
+            self.ground_coord: Position = ground_coord
+            self.sensor_coords: list[Position] = sensor_coords
+            self.mobile_coords: list[Position] = mobile_coords
+
+        self.scene_longitude = scene_longitude
+        self.scene_latitude = scene_latitude
         self.duration: int = duration
         self.debug: bool = debug
         self.transmission_range: int = transmission_range
 
         self.env = Environment(loader=FileSystemLoader(os.getcwd()))
-
-    def add_line(self, line):
-        self.code += line + "\n"
 
     def generate_python_file(self):
         print("Python main file (filename: main.py) \n")
@@ -46,15 +83,22 @@ class CodeGenerator:
             "ground_coord": self.ground_coord,
             "mobile_coords": self.mobile_coords,
             "sensor_coords": self.sensor_coords,
+
             "protocol_ground": self.protocol_ground,
             "protocol_sensor": self.protocol_sensor,
             "protocol_mobile": self.protocol_mobile,
+
+            "protocol_ground_filename" : self.protocol_ground_filename,
+            "protocol_sensor_filename" : self.protocol_sensor_filename,
+            "protocol_mobile_filename" : self.protocol_mobile_filename,
+
             "duration": self.duration,
             "debug": self.debug,
             "transmission_range": self.transmission_range,
         }
 
         generated_code = template.render(data)
+
         print(generated_code + "\n")
 
     def generate_mission_file(self):
@@ -65,8 +109,16 @@ class CodeGenerator:
 
         print("\n")
 
-    def generate_ini_file(self, sections):
-            
+    def generate_ini_file(self):
+
+        def get_cartesian(lat=None, lon=None):
+            lat, lon = np.deg2rad(lat), np.deg2rad(lon)
+            R = 6371  # radius of the earth
+            x = R * np.cos(lat) * np.cos(lon)
+            y = R * np.cos(lat) * np.sin(lon)
+            z = R * np.sin(lat)
+            return x, y, z
+        
         def get_long_lat(x=None, y=None, z=None):
             R = 6371
             lat = np.degrees(np.arcsin(z / R))
@@ -75,31 +127,53 @@ class CodeGenerator:
         
         print("Ini file (filename: omnetpp.ini) \n")
 
-        lat, lon = get_long_lat(x, y, z)
+        # Transform coords to longitude and latitude
+        x, y, z = get_cartesian(self.scene_latitude, self.scene_longitude)
+        
+        ground_pos = (x+self.ground_coord[0], y + self.ground_coord[1], z+self.ground_coord[2])
+        ground_lat, ground_lon = get_long_lat(ground_pos[0], ground_pos[1], ground_pos[2])
+        transformed_ground_coords_to_lat_long = (0, ground_lon, ground_lat)
 
+        transformed_mobile_coords_to_lat_long = []
+        for idx, coord in enumerate(self.mobile_coords):
+            pos = (x+coord[0], y + coord[1], z+coord[2])
+            lat, lon = get_long_lat(pos[0], pos[1], pos[2])
+            transformed_mobile_coords_to_lat_long.append((idx, lon, lat))
+
+        transformed_sensor_coords_to_lat_long = []
+        for coord in self.sensor_coords:
+            pos = (x+coord[0], y + coord[1], z+coord[2])
+            lat, lon = get_long_lat(pos[0], pos[1], pos[2])
+            transformed_sensor_coords_to_lat_long.append((idx, lon, lat))
+        
         template = self.env.get_template("ini_template.jinja")
 
         data = {
-            "ground_coord": self.ground_coord,
-            "mobile_coords": self.mobile_coords,
-            "sensor_coords": self.sensor_coords,
+            # Scene orientation and groundstation 
+            "scene_longitude" : self.scene_longitude,
+            "scene_latitude" : self.scene_latitude,
+        
+            "protocol_location" : self.protocol_location, 
+            "protocol" : self.protocol,
+
+            "protocol_ground_filename": self.protocol_ground_filename,
+            "protocol_sensor_filename": self.protocol_sensor_filename,
+            "protocol_mobile_filename": self.protocol_mobile_filename,
+
             "protocol_ground": self.protocol_ground,
             "protocol_sensor": self.protocol_sensor,
             "protocol_mobile": self.protocol_mobile,
-            "duration": self.duration,
-            "debug": self.debug,
-            "transmission_range": self.transmission_range,
+
+            "ground_information": transformed_ground_coords_to_lat_long,
+            "sensor_information": transformed_sensor_coords_to_lat_long,
+            "mobile_information": transformed_mobile_coords_to_lat_long,
+
+            "sensor_amount": len(transformed_sensor_coords_to_lat_long),
+            "mobile_amount": len(transformed_mobile_coords_to_lat_long),
         }
 
         generated_code = template.render(data)
+        
         print(generated_code)
 
-# def get_cartesian(lat=None, lon=None):
-#     lat, lon = np.deg2rad(lat), np.deg2rad(lon)
-#     R = 6371  # radius of the earth
-#     x = R * np.cos(lat) * np.cos(lon)
-#     y = R * np.cos(lat) * np.sin(lon)
-#     z = R * np.sin(lat)
-#     return x, y, z
 
-# x, y, z = get_cartesian(-15.840068, -47.926633)
