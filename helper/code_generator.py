@@ -1,8 +1,8 @@
 import os
 from typing import Optional
 
-import numpy as np
 from jinja2 import Environment, FileSystemLoader
+import pyproj
 
 from gradysim.protocol.position import Position
 from generate_simulation import AlphabetMatrix
@@ -111,39 +111,35 @@ class CodeGenerator:
 
     def generate_ini_file(self):
 
-        def get_cartesian(lat=None, lon=None):
-            lat, lon = np.deg2rad(lat), np.deg2rad(lon)
-            R = 6371  # radius of the earth
-            x = R * np.cos(lat) * np.cos(lon)
-            y = R * np.cos(lat) * np.sin(lon)
-            z = R * np.sin(lat)
-            return x, y, z
-        
-        def get_long_lat(x=None, y=None, z=None):
-            R = 6371
-            lat = np.degrees(np.arcsin(z / R))
-            lon = np.degrees(np.arctan2(y, x))
-            return lat, lon
+
+        P = pyproj.Proj(proj='utm', zone=22, ellps='WGS84', preserve_units=True)
+        G = pyproj.Geod(ellps='WGS84')
+
+        def LonLat_To_XY(Lon, Lat):
+            return P(Lon, Lat)    
+
+        def XY_To_LonLat(x,y):
+            return P(x, y, inverse=True)    
         
         print("Ini file (filename: omnetpp.ini) \n")
 
         # Transform coords to longitude and latitude
-        x, y, z = get_cartesian(self.scene_latitude, self.scene_longitude)
+        x, y = LonLat_To_XY(self.scene_longitude, self.scene_latitude)
         
-        ground_pos = (x+self.ground_coord[0], y + self.ground_coord[1], z+self.ground_coord[2])
-        ground_lat, ground_lon = get_long_lat(ground_pos[0], ground_pos[1], ground_pos[2])
+        ground_pos = (x+self.ground_coord[0], y + self.ground_coord[1], 0)
+        ground_lon, ground_lat = XY_To_LonLat(ground_pos[0], ground_pos[1]) 
         transformed_ground_coords_to_lat_long = (0, ground_lon, ground_lat)
 
         transformed_mobile_coords_to_lat_long = []
         for idx, coord in enumerate(self.mobile_coords):
-            pos = (x+coord[0], y + coord[1], z+coord[2])
-            lat, lon = get_long_lat(pos[0], pos[1], pos[2])
+            pos = (x+coord[0], y + coord[1], 0) 
+            lon, lat = XY_To_LonLat(pos[0], pos[1])
             transformed_mobile_coords_to_lat_long.append((idx, lon, lat))
 
         transformed_sensor_coords_to_lat_long = []
-        for coord in self.sensor_coords:
-            pos = (x+coord[0], y + coord[1], z+coord[2])
-            lat, lon = get_long_lat(pos[0], pos[1], pos[2])
+        for idx, coord in enumerate(self.sensor_coords):
+            pos = (x+coord[0], y + coord[1], 0)
+            lon, lat = XY_To_LonLat(pos[0], pos[1])
             transformed_sensor_coords_to_lat_long.append((idx, lon, lat))
         
         template = self.env.get_template("ini_template.jinja")
@@ -173,7 +169,7 @@ class CodeGenerator:
         }
 
         generated_code = template.render(data)
-        
+
         print(generated_code)
 
 

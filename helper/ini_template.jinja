@@ -145,7 +145,7 @@ description = "Configure quads, ground stations and sensors for wifi only commun
 *.sensors[{{ information[0] }}].mobility.initialLatitude = {{ information[2] }}deg
 {% endfor %}
 
-[Config Python Experiment]
+[Config PythonExperiment]
 extends = Wifi 
 # Sets the description of the launch configuration.
 # Shown when you launch a simulation and are prompted to select the correct launch configuration.
@@ -155,21 +155,21 @@ description = "Sets up an python experiment with a python configuration"
 # in the simulation.
 *.numUAVs = {{ mobile_amount }}
 
-*.groundStation.protocol.customProtocolLocation = {{ protocol_location }}
-*.quads[*].protocol.customProtocolLocation = {{ protocol_location }}
-*.sensors[*].protocol.customProtocolLocation = {{ protocol_location }}
+*.groundStation.protocol.customProtocolLocation = "{{ protocol_location }}"
+*.quads[*].protocol.customProtocolLocation = "{{ protocol_location }}"
+*.sensors[*].protocol.customProtocolLocation = "{{ protocol_location }}"
 
-*.groundStation.protocol.protocol = {{ protocol }}
-*.quads[*].protocol.protocol = {{ protocol }}
-*.sensors[*].protocol.protocol = {{ protocol }}
+*.groundStation.protocol.protocol = "{{ protocol }}"
+*.quads[*].protocol.protocol = "{{ protocol }}"
+*.sensors[*].protocol.protocol = "{{ protocol }}"
 
-*.groundStation.protocol.protocolFileName = {{ protocol_ground_filename }}
-*.sensors[*].protocol.protocolFileName = {{ protocol_sensor_filename }}
-*.quads[*].protocol.protocolFileName = {{ protocol_mobile_filename }}
+*.groundStation.protocol.protocolFileName = "{{ protocol_ground_filename }}"
+*.sensors[*].protocol.protocolFileName = "{{ protocol_sensor_filename }}"
+*.quads[*].protocol.protocolFileName = "{{ protocol_mobile_filename }}"
 
-*.groundStation.protocol.protocolGround = {{ protocol_ground }}
-*.sensors[*].protocol.protocolSensor = {{ protocol_sensor }}
-*.quads[*].protocol.protocolMobile = {{ protocol_mobile }}
+*.groundStation.protocol.protocolGround = "{{ protocol_ground }}"
+*.sensors[*].protocol.protocolSensor = "{{ protocol_sensor }}"
+*.quads[*].protocol.protocolMobile = "{{ protocol_mobile }}"
 
 # The communbication module automatically filters messages from nodes that are not included in the
 # destAddresses parameter. Be careful not to set the node as a destination address to itself.
@@ -182,12 +182,12 @@ description = "Sets up an python experiment with a python configuration"
             {{ mobile_destination.append(value) or "" }}
         {%- endif -%}
     {%- endfor -%}
-    {%- for information in mobile_information -%}
+    {%- for information in sensor_information -%}
         {%- set value1 = 'sensors[' + information[0]|string + '] ' -%} 
             {{ mobile_destination.append(value1) or "" }}
         {%- endfor -%}
     {{ mobile_destination.append('groundStation') or "" }}  
-*.quads[{{ i }}].app[0].destAddresses = {{ mobile_destination|join("") }}
+*.quads[{{ i }}].app[0].destAddresses = "{{ mobile_destination|join("") }}"
 {%- endfor %}
 
 # Sensor configurations
@@ -196,8 +196,8 @@ description = "Sets up an python experiment with a python configuration"
     {%- set value = 'quads[' + information[0]|string + '] ' -%} 
     {{ sensor_groundstation_destination.append(value) or "" }}
 {%- endfor %}
-*.sensors[*].app[*].destAddresses = {{ sensor_groundstation_destination|join("") }}
+*.sensors[*].app[*].destAddresses = "{{ sensor_groundstation_destination|join("")|trim }}"
 
 # Groundstation configurations
 # Setting the ground station as a sensor because it is a passive listener in this config
-*.groundStation.app[*].destAddresses = {{ sensor_groundstation_destination|join("") }}
+*.groundStation.app[*].destAddresses = "{{ sensor_groundstation_destination|join("")|trim }}"

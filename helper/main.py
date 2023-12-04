@@ -18,9 +18,9 @@ if __name__ == "__main__":
         protocol_mobile_filename="protocol_mobile",
 
         pattern = 'A',
-        pattern_scale = 10
+        pattern_scale = 3
     )
     
     code_generator.generate_ini_file()
-
-    # code_generator.generate_mission_file()
+    code_generator.generate_python_file()
+    code_generator.generate_mission_file()
