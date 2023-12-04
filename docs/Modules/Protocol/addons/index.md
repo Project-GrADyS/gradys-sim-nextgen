@@ -1,3 +1,3 @@
 # Introduction
 
-:::gradysim.protocol.addons
+:::gradysim.protocol.plugin

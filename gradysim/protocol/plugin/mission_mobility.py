@@ -3,7 +3,7 @@ import logging
 from dataclasses import dataclass
 from typing import List, Optional
 
-from gradysim.protocol.addons.dispatcher import create_dispatcher, DispatchReturn
+from gradysim.protocol.plugin.dispatcher import create_dispatcher, DispatchReturn
 from gradysim.protocol.interface import IProtocol
 from gradysim.protocol.messages.mobility import GotoCoordsMobilityCommand, SetSpeedMobilityCommand
 from gradysim.protocol.messages.telemetry import Telemetry
@@ -36,18 +36,18 @@ class MissionMobilityConfiguration:
     """
 
 
-class MissionMobilityAddonException(Exception):
+class MissionMobilityPluginException(Exception):
     pass
 
 
-class MissionMobilityAddon:
+class MissionMobilityPlugin:
     """
-    Use this addon if you want your node to follow a fixed list of positions, or waypoints. The waypoints will be
+    Use this plugin if you want your node to follow a fixed list of positions, or waypoints. The waypoints will be
     followed in order after they are received by the start_mission method. You can stop the mission
     at any time using stop_mission. The current_waypoint, is_reversed and is_idle properties can be used to check
     the current mission status.
 
-    Beware that if any mobility commands are sent by your protocol or any of its addons while a mission is in progress,
+    Beware that if any mobility commands are sent by your protocol or any of its plugin while a mission is in progress,
     the mission is in high risk of breaking. If sending a mobility command is necessary, stop the mission and restart
     it.
     """
@@ -164,18 +164,18 @@ class MissionMobilityAddon:
         Manually sets the index of the waypoint in the mission that should be followed immediately. The mission will
         progress normally after this. If the mission is reversed, it will keep being followed in reverse direction.
         
-        If there is no mission going on, will raise MissionMobilityAddonException.
+        If there is no mission going on, will raise MissionMobilityPluginException.
         
-        If waypoint is outsidef the mission bounds a MissionMobilityAddonException will be raised
+        If waypoint is outsidef the mission bounds a MissionMobilityPluginException will be raised
 
         Args:
             waypoint: Index of the waypoint that should be followed next
         """
         if self._current_mission is None:
-            raise MissionMobilityAddonException("Could not set waypoint: No mission in progress")
+            raise MissionMobilityPluginException("Could not set waypoint: No mission in progress")
         
         if waypoint < 0 or waypoint >= len(self._current_mission):
-            raise MissionMobilityAddonException(f"Could not set waypoint: Waypoint index {waypoint} is not in mission "
+            raise MissionMobilityPluginException(f"Could not set waypoint: Waypoint index {waypoint} is not in mission "
                                                 f"bounds [0, {len(self._current_mission) - 1}]")
 
         self._current_waypoint = waypoint
@@ -189,16 +189,16 @@ class MissionMobilityAddon:
         will turn around and go where it came from.
 
         This method is only relevant when LoopMission.REVERSE is configured, in any other case this will raise
-        MissionMobilityAddonException.
+        MissionMobilityPluginException.
 
         Args:
             reversed: True if the node should reverse and False otherwise
         """
         if self._current_mission is None:
-            raise MissionMobilityAddonException("Could not set reversed: No mission in progress")
+            raise MissionMobilityPluginException("Could not set reversed: No mission in progress")
 
         if self._config.loop_mission != LoopMission.REVERSE:
-            raise MissionMobilityAddonException(f"Could not set reversed: Not supported loop "
+            raise MissionMobilityPluginException(f"Could not set reversed: Not supported loop "
                                                 f"option {self._config.loop_mission.name}. "
                                                 f"Only supported when loop_mission is LoopMission.REVERSE")
 

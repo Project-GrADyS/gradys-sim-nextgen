@@ -1,3 +1,3 @@
 # Mission Mobility
 
-:::gradysim.protocol.addons.mission_mobility
+:::gradysim.protocol.plugin.mission_mobility

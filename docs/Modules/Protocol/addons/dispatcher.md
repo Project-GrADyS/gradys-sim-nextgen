@@ -1,3 +1,3 @@
 # Dispatcher
 
-:::gradysim.protocol.addons.dispatcher
+:::gradysim.protocol.plugin.dispatcher

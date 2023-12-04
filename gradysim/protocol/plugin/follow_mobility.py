@@ -1,39 +1,39 @@
 """
-This module declares two addons for the protocol: a leader and a follower. The leader broadcasts its position and the
+This module declares two plugin for the protocol: a leader and a follower. The leader broadcasts its position and the
 follower follows it.
 
-Beware that this addon controls your protocol's mobility to implement its behaviour, so you should not use any other
-mobility addon with it or implement any mobility behaviour in your protocol. The MobilityLeaderAddon does not affect
-the node's movement and thus should be fine to use with other mobility addons or mobility behaviour.
+Beware that this plugin controls your protocol's mobility to implement its behaviour, so you should not use any other
+mobility plugin with it or implement any mobility behaviour in your protocol. The MobilityLeaderPlugin does not affect
+the node's movement and thus should be fine to use with other mobility plugin or mobility behaviour.
 """
 
 import json
 from dataclasses import dataclass
 from typing import Optional, Dict, Set
 
-from gradysim.protocol.addons.dispatcher import create_dispatcher, DispatchReturn
+from gradysim.protocol.plugin.dispatcher import create_dispatcher, DispatchReturn
 from gradysim.protocol.interface import IProtocol
 from gradysim.protocol.messages.communication import CommunicationCommand, CommunicationCommandType
 from gradysim.protocol.messages.mobility import GotoCoordsMobilityCommand
 from gradysim.protocol.messages.telemetry import Telemetry
 from gradysim.protocol.position import Position
 
-BROADCAST_TIMER_TAG = "FollowMobilityAddon__leader_broadcast_timer"
+BROADCAST_TIMER_TAG = "FollowMobilityPlugin__leader_broadcast_timer"
 """
 The leader will broadcast its position using a timer with this name, make sure it doesn't conflict with other timers
 """
 
-LEADER_TAG = "FollowMobilityAddon__leader"
+LEADER_TAG = "FollowMobilityPlugin__leader"
 """
 The leader will broadcast its position using a packet with this tag, make sure it doesn't conflict with other packets
 """
 
-FOLLOWER_TAG = "FollowMobilityAddon__follower"
+FOLLOWER_TAG = "FollowMobilityPlugin__follower"
 """
 
 """
 
-FOLLOWER_TIMER_TAG = "FollowMobilityAddon__follower_timer"
+FOLLOWER_TIMER_TAG = "FollowMobilityPlugin__follower_timer"
 
 
 class FollowMobilityException(Exception):
@@ -51,7 +51,7 @@ class MobilityLeaderConfiguration:
     """
 
 
-class MobilityLeaderAddon:
+class MobilityLeaderPlugin:
     _position: Position
 
     _last_connection_from_follower: Dict[int, float]
@@ -161,7 +161,7 @@ class MobilityFollowerConfiguration:
     """
 
 
-class MobilityFollowerAddon:
+class MobilityFollowerPlugin:
     _leader: Optional[int] = None
     _leader_position: Optional[Position] = None
 
