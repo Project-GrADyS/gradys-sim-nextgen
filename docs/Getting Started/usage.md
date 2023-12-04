@@ -5,7 +5,7 @@
 Protocols are classes that implements your algorithms main logic. The class is
 called protocol because it defines the behaviour protocol of the node. If you
 are satisfied with the simulation environment provided ready to use by
-**GrADyS-SIM TNG**, this is the only class you need to code. You can use your
+**GrADyS-SIM NextGen**, this is the only class you need to code. You can use your
 protocol on any simulation environment. We will be
 using [prototype mode][prototype-mode]
 to run a protocol within a python environment.
@@ -78,7 +78,7 @@ main features of the simulator: communication. One of the biggest challenges
 of building distributed systems is that they rely on asynchronous communication
 to share information between nodes.
 
-GrADyS-SIM TNG will help you build these kinds of systems by providing support
+GrADyS-SIM NextGen will help you build these kinds of systems by providing support
 for communication between network nodes. Nodes share messages with each other by
 using communication commands that instruct their mobility modules to perform
 actions

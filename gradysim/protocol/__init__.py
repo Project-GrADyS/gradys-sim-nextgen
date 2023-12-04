@@ -1,5 +1,5 @@
 """
-Use this module to create protocols. What GrADyS-SIM TNG calls protocols is the logic that powers network nodes. Each
+Use this module to create protocols. What GrADyS-SIM NextGen calls protocols is the logic that powers network nodes. Each
 network node has a protocol instance that is responsible for the node's behavior. Protocols define how a node reacts
 to its environment and enable it to interact with it.
 

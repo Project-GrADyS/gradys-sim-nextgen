@@ -1,8 +1,8 @@
 # Introduction
 
-## What is GrADyS-SIM TNG?
+## What is GrADyS-SIM NextGen?
 
-GrADyS-SIM TNG is a network simulation framework. You can use this software
+GrADyS-SIM NextGen is a network simulation framework. You can use this software
 to create simulations capable of representing scenarios populated by network
 nodes that coexist in a simulated environment and can send messages to each 
 other. The primary focuses of the simulator are usability and flexibility.  
@@ -32,10 +32,10 @@ act through interfaces provided to them during execution in a technique
 commonly called dependency injection. What this means is that you can re-utilize
 that same code in completely different environments as long as someone has done
 the work of integrating that environment with the interfaces that the protocol
-expects. GrADyS-SIM TNG provides integrations to three environment types which
+expects. GrADyS-SIM NextGen provides integrations to three environment types which
 are the previously mentioned modes.
 
-## Why does GrADyS-SIM TNG exist?
+## Why does GrADyS-SIM NextGen exist?
 
 ![GrADyS and LAC](./assets/gradys_and_lac.png){ align=center }
 
@@ -61,12 +61,12 @@ setting it up is a very involved process thatrequires specific setups to get it 
 perfectly. Even for the people inside our project it is cumbersome to work with so we 
 concluded that some new tool needed to be built to remedy this.
 
-GrADyS-SIM-TNG was envisoned as a low-dependency, light and easy to use simulator that
+GrADyS-SIM-NextGen was envisoned as a low-dependency, light and easy to use simulator that
 would not substitute OMNeT++ but fill the niche of being a tool for quick prototyping 
 before more realistic results would be collected from OMNeT++. An issue we already had
 was translating results from the OMNeT++ simulation to the real world. Introducing a 
 new link in this chain would only make this disconnect between our imlpementation
-environments greather, so GrADyS-SIM TNG would need to somehow generate code that could
+environments greather, so GrADyS-SIM NextGen would need to somehow generate code that could
 be run everywhere, in python, OMNeT++ and the real world. 
 
 These were our motivations to create this tool. We are also taking extra care to make

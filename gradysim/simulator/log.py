@@ -1,6 +1,6 @@
 """
 Logging is an important part of any software. It helps users and developers understand what is happening during the
-execution of the program. When running GrADyS-SIM TNG in prototype-mode logging is automatically configured for you,
+execution of the program. When running GrADyS-SIM NextGen in prototype-mode logging is automatically configured for you,
 users that want to make use of this logging should use `logging.getLogger(SIMULATION_LOGGER)` where SIMULATION_LOGGER
 can be imported from this file.
 
