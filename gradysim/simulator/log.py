@@ -88,5 +88,8 @@ def setup_simulation_formatter(debug: bool, log_file: Optional[Path]) -> Simulat
     return formatter
 
 def node_label(node: Node) -> str:
-    protocol_type_name = node.protocol_encapsulator.protocol.__class__.__name__
+    try:
+        protocol_type_name = node.protocol_encapsulator.protocol.__class__.__name__
+    except AttributeError:
+        protocol_type_name = 'Node'
     return f"{protocol_type_name} {node.id}"
