@@ -1,4 +1,5 @@
 from gradysim.simulator.event import EventLoop
+from gradysim.simulator.log import node_label
 from gradysim.simulator.node import Node
 from gradysim.simulator.handler.interface import INodeHandler
 
@@ -47,4 +48,4 @@ class TimerHandler(INodeHandler):
 
         self._event_loop.schedule_event(timestamp,
                                         lambda: node.protocol_encapsulator.handle_timer(message),
-                                        f"Node {node.id}")
+                                        node_label(node))

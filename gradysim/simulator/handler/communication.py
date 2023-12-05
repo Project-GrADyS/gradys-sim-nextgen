@@ -3,7 +3,7 @@ import random
 from dataclasses import dataclass
 
 from gradysim.simulator.event import EventLoop
-from gradysim.simulator.log import SIMULATION_LOGGER
+from gradysim.simulator.log import SIMULATION_LOGGER, node_label
 from gradysim.protocol.messages.communication import CommunicationCommand, CommunicationCommandType
 from gradysim.simulator.node import Node
 from gradysim.protocol.position import Position
@@ -178,11 +178,11 @@ class CommunicationHandler(INodeHandler):
                 self._event_loop.schedule_event(
                     self._event_loop.current_time,
                     lambda: destination.receive_message(message, source),
-                    f"Node {destination.node.id}"
+                    node_label(destination.node)
                 )
             else:
                 self._event_loop.schedule_event(
                     self._event_loop.current_time + self.communication_medium.delay,
                     lambda: destination.receive_message(message, source),
-                    f"Node {destination.node.id}"
+                    node_label(destination.node)
                 )

@@ -12,6 +12,8 @@ from datetime import timedelta
 from pathlib import Path
 from typing import Optional
 
+from gradysim.simulator.node import Node
+
 SIMULATION_LOGGER = "gradysim-sim"
 """
 Use this logger to have properly formatted logs. Beware that if you use logging in your protocols the logs will only
@@ -84,3 +86,7 @@ def setup_simulation_formatter(debug: bool, log_file: Optional[Path]) -> Simulat
         logger.addHandler(file_handler)
 
     return formatter
+
+def node_label(node: Node) -> str:
+    protocol_type_name = node.protocol_encapsulator.protocol.__class__.__name__
+    return f"{protocol_type_name} {node.id}"
