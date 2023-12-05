@@ -1,4 +1,4 @@
-from gradysim.simulator import TimerHandler
+from gradysim.simulator.handler.timer import TimerHandler
 from gradysim.simulator.simulation import SimulationBuilder, SimulationConfiguration
 from counter_protocol import CounterProtocol
 

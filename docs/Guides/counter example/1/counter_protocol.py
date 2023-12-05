@@ -1,20 +1,16 @@
 import logging
 
 from gradysim.protocol.interface import IProtocol
-from gradysim.simulator import SIMULATION_LOGGER
-from gradysim.protocol import CommunicationCommand, CommunicationCommandType
 from gradysim.protocol.messages.telemetry import Telemetry
+from gradysim.simulator.log import SIMULATION_LOGGER
 
 
 class CounterProtocol(IProtocol):
-    sent: int
-    received: int
+    counter: int
 
     def initialize(self, stage):
-        # We initialize two counters: one for sent and one
-        # for received messages
-        self.sent = 0
-        self.received = 0
+        # We initialize our counter at zero
+        self.counter = 0
 
         # Using the protocol's provider to schedule a timer
         self.provider.schedule_timer(
@@ -24,28 +20,17 @@ class CounterProtocol(IProtocol):
 
     def handle_timer(self, timer: str):
         # Every time the timer fires we increment the counter
-        self.sent += 1
+        self.counter += 1
 
-        # Creating a new communication command that will instruct the mobility module
-        # to broadcast a message
-        command = CommunicationCommand(
-            CommunicationCommandType.BROADCAST,
-            message=""  # Content is irrelevant, we are only counting messages
-        )
-
-        # Sending the command
-        self.provider.send_communication_command(command)
-
-        # Scheduling a new timer
+        # And schedule a new one
         self.provider.schedule_timer(
             "",
             self.provider.current_time() + 1
         )
 
     def handle_packet(self, message: str):
-        # This time we care about received messages, we increment our received
-        # counter every time a new one arrives.
-        self.received += 1
+        # We won't be receiving packets, so we don't care about this
+        pass
 
     def handle_telemetry(self, telemetry: Telemetry):
         # We don't care about mobility, so we are ignoring the received telemetry
@@ -54,5 +39,4 @@ class CounterProtocol(IProtocol):
     def finish(self):
         # We print our final counter value at the end of the simulator
         logger = logging.getLogger(SIMULATION_LOGGER)
-        logger.info(f"Final counter values: "
-                    f"sent={self.sent} ; received={self.received}")
+        logger.info(f"Final counter value: {self.counter}")
