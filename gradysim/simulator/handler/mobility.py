@@ -2,12 +2,13 @@ import math
 from dataclasses import dataclass
 from typing import Dict, Tuple
 
-from gradysim.simulator.event import EventLoop
 from gradysim.protocol.messages.mobility import MobilityCommand, MobilityCommandType
 from gradysim.protocol.messages.telemetry import Telemetry
-from gradysim.simulator.node import Node
 from gradysim.protocol.position import Position, geo_to_cartesian
+from gradysim.simulator.event import EventLoop
 from gradysim.simulator.handler.interface import INodeHandler
+from gradysim.simulator.log import node_label
+from gradysim.simulator.node import Node
 
 
 class MobilityException(Exception):
@@ -111,11 +112,19 @@ class MobilityHandler(INodeHandler):
                         current_position[2] + target_vector[2] * target_vector_multiplier
                     )
             telemetry = Telemetry(current_position=node.position)
-            node.protocol_encapsulator.handle_telemetry(telemetry)
+
+            def make_send_telemetry(node_ref, telemetry_ref):
+                return lambda: node_ref.protocol_encapsulator.handle_telemetry(telemetry_ref)
+
+            self._event_loop.schedule_event(
+                self._event_loop.current_time,
+                make_send_telemetry(node, telemetry),
+                node_label(node)
+            )
 
         self._event_loop.schedule_event(self._event_loop.current_time + self._configuration.update_rate,
                                         self._update_movement,
-                                       "Mobility")
+                                        "Mobility")
 
     def handle_command(self, command: MobilityCommand, node: Node):
         """
