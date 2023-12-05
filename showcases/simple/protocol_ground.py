@@ -1,14 +1,23 @@
-from gradysim.protocol.messages.communication import SendMessageCommand
+import logging
+from gradysim.protocol.addons.statistics import create_statistics, finish_statistics
+from gradysim.protocol.messages.communication import BroadcastMessageCommand, SendMessageCommand
 from gradysim.protocol.messages.telemetry import Telemetry
 from gradysim.protocol.interface import IProtocol
+from gradysim.simulator.log import SIMULATION_LOGGER
 from message import SimpleMessage, SenderType
 
 
 class SimpleProtocolGround(IProtocol):
-    packets: int
+    def __init__(self):
+        self.packets: int = 0
+
+        self._logger = logging.getLogger(SIMULATION_LOGGER)
 
     def initialize(self):
-        self.packets = 0
+        self._logger.debug("Initializing mobile protocol")
+
+        create_statistics(self)
+
         self.provider.tracked_variables["packets"] = self.packets
 
     def handle_timer(self, timer: str):
@@ -26,12 +35,12 @@ class SimpleProtocolGround(IProtocol):
                 sender=SenderType.GROUND_STATION, content=self.packets
             )
             self.provider.send_communication_command(
-                SendMessageCommand(response.to_json(), destination=1)
+                BroadcastMessageCommand(response.to_json())
             )
 
     def handle_telemetry(self, telemetry: Telemetry):
         pass
 
     def finish(self):
-        pass
+        finish_statistics(self)
         
