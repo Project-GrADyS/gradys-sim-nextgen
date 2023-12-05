@@ -1,18 +1,29 @@
+import logging
+from gradysim.protocol.addons.statistics import create_statistics, finish_statistics
 from gradysim.protocol.messages.communication import (
     SendMessageCommand,
 )
 from gradysim.protocol.messages.telemetry import Telemetry
 from gradysim.protocol.interface import IProtocol
+from gradysim.simulator.log import SIMULATION_LOGGER
 from message import ZigZagMessage, ZigZagMessageType
 from utils import CommunicationStatus
 
 
 class ZigZagProtocolSensor(IProtocol):
-    communication_status: CommunicationStatus = CommunicationStatus.FREE
-    tentative_target: int = -1
+    def __init__(self):
+        self.communication_status: CommunicationStatus = CommunicationStatus.FREE
+        self.tentative_target: int = -1
+
+        self._logger = logging.getLogger(SIMULATION_LOGGER)
+
 
     def initialize(self):
-        pass
+        create_statistics(self)
+
+        self._logger.debug("initializing sensor/ground protocol")
+
+        self.provider.tracked_variables["communication_status"] = self.communication_status
 
     def handle_timer(self, timer: str):
         pass
@@ -21,6 +32,7 @@ class ZigZagProtocolSensor(IProtocol):
         message: ZigZagMessage = ZigZagMessage.from_json(message)
 
         if message.message_type == ZigZagMessageType.HEARTBEAT:
+            self._logger.debug("exchanging data in sensor/ground protocol")
             self.tentative_target = message.source_id
 
             message = ZigZagMessage(
@@ -36,8 +48,10 @@ class ZigZagProtocolSensor(IProtocol):
                 )
             )
 
+            self.provider.tracked_variables["communication_status"] = self.communication_status
+
     def handle_telemetry(self, telemetry: Telemetry):
         pass
 
     def finish(self):
-        pass
+        finish_statistics(self)

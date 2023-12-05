@@ -2,7 +2,6 @@ from dataclasses import dataclass
 from typing import List, Tuple
 
 from matplotlib import pyplot as plt
-from matplotlib.colors import Colormap
 
 from gradysim.simulator.event import EventLoop
 from gradysim.simulator.handler.interface import INodeHandler

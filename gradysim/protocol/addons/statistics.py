@@ -130,7 +130,7 @@ class StatisticsProtocolWrapper:
         """
 
         self._statistics_time_list.append(
-            {"SimulationTime": simulation_time, "RealTime": real_time}
+            {"simulation_time": simulation_time, "real_time": real_time}
         )
 
     def update_tracked_variable_statistic(
@@ -145,7 +145,7 @@ class StatisticsProtocolWrapper:
         """
 
         self._statistics_tracked_variables_list.append(
-            {"SimulationTime": simulation_time} | tracked_variables
+            {"simulation_time": simulation_time} | tracked_variables
         )
 
     def create_statistic_files(self) -> None:

@@ -36,10 +36,16 @@ class ZigZagProtocolMobile(IProtocol):
         self._logger = logging.getLogger(SIMULATION_LOGGER)
         self.old_mission_is_reversed: bool = False
 
-        self._statistics = create_statistics(self)
-
     def initialize(self):
+        create_statistics(self)
+
+        self._logger.debug("initializing mobile protocol")
+
+        self.provider.tracked_variables["timeout_set"] = self.timeout_set
+        self.provider.tracked_variables["timeout_end"] = self.timeout_end
         self.provider.tracked_variables["current_data_load"] = self.current_data_load
+        self.provider.tracked_variables["stable_data_load"] = self.current_data_load
+        self.provider.tracked_variables["communication_status"] = self.communication_status
 
         self.mission: MissionMobilityAddon = MissionMobilityAddon(
             self, MissionMobilityConfiguration(loop_mission=LoopMission.REVERSE)
@@ -54,6 +60,7 @@ class ZigZagProtocolMobile(IProtocol):
         self.provider.schedule_timer("", self.provider.current_time() + random.random())
 
     def handle_packet(self, message: str):
+        self._logger.debug("handling packet in mobile protocol")
         message: ZigZagMessage = ZigZagMessage.from_json(message)
 
         match message.message_type:
@@ -113,12 +120,12 @@ class ZigZagProtocolMobile(IProtocol):
                             self._send_message()
 
             case ZigZagMessageType.BEARER:
+                self._logger.debug("exchanging data in mobile protocol")
                 # Only used to exchange information between drone and sensor
                 self.current_data_load = self.current_data_load + message.data_length
                 self.stable_data_load = self.current_data_load
                 self.provider.tracked_variables["current_data_load"] = self.current_data_load
-
-        # self._update_payload()
+                self.provider.tracked_variables["stable_data_load"] = self.stable_data_load
 
     def _send_message(self):
         message = ZigZagMessage(
@@ -128,8 +135,8 @@ class ZigZagProtocolMobile(IProtocol):
 
         if self.provider.get_id() == self.tentative_target:
             return
+        
         match self.communication_status:
-
             case CommunicationStatus.FREE:
                 message.message_type = ZigZagMessageType.PAIR_REQUEST
                 message.destination_id = self.tentative_target
@@ -144,7 +151,7 @@ class ZigZagProtocolMobile(IProtocol):
                 message.destination_id = self.tentative_target
                 message.data_length = self.stable_data_load
 
-        # self.last_payload = message
+        self.provider.tracked_variables["communication_status"] = self.communication_status
 
         if self.tentative_target < 0:
             command = BroadcastMessageCommand(
@@ -174,6 +181,8 @@ class ZigZagProtocolMobile(IProtocol):
             message_type=ZigZagMessageType.HEARTBEAT
         )
 
+        self.provider.tracked_variables["communication_status"] = self.communication_status
+
         command = BroadcastMessageCommand(
             message=message.to_json()
         )
@@ -194,6 +203,10 @@ class ZigZagProtocolMobile(IProtocol):
                     return False
             else:
                 return False
+    
+        self.provider.tracked_variables["timeout_set"] = self.timeout_set
+        self.provider.tracked_variables["timeout_end"] = self.timeout_end
+
         old_timeout_set = self.timeout_set
         is_timedout = __is_timedout()
         if not is_timedout and old_timeout_set:
@@ -203,7 +216,6 @@ class ZigZagProtocolMobile(IProtocol):
            
     def _reset_parameters(self):
         self.timeout_set = False
-        # self.last_target = self.tentative_target
         self.tentative_target = -1
         self.communication_status = CommunicationStatus.FREE
         self.last_stable_telemetry = self.current_telemetry
