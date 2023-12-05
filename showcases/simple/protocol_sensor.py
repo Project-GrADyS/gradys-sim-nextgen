@@ -1,7 +1,7 @@
 import logging
 import random
 from gradysim.protocol.addons.statistics import create_statistics, finish_statistics
-from gradysim.protocol.messages.communication import BroadcastMessageCommand, SendMessageCommand
+from gradysim.protocol.messages.communication import BroadcastMessageCommand
 from gradysim.protocol.messages.telemetry import Telemetry
 from gradysim.protocol.interface import IProtocol
 from gradysim.simulator.log import SIMULATION_LOGGER

@@ -19,10 +19,6 @@ class ZigZagMessage:
     reversed_flag: bool
     message_type: ZigZagMessageType
 
-    def __init__(self, messageType: ZigZagMessageType, content: int) -> None:
-        self.messageType = messageType
-        self.content = content
-
     def __init__(
         self,
         source_id: int = -1,

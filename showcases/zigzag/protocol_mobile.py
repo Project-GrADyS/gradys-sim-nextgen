@@ -1,6 +1,5 @@
 import logging
 import random
-from typing import Any, Dict, List
 from gradysim.protocol.addons.mission_mobility import (
     LoopMission,
     MissionMobilityAddon,
@@ -8,8 +7,6 @@ from gradysim.protocol.addons.mission_mobility import (
 )
 from gradysim.protocol.addons.statistics import create_statistics, finish_statistics
 from gradysim.protocol.messages.communication import BroadcastMessageCommand, SendMessageCommand
-from gradysim.protocol.messages.mobility import GotoCoordsMobilityCommand
-
 from gradysim.protocol.messages.telemetry import Telemetry
 from gradysim.protocol.interface import IProtocol
 from message import ZigZagMessage, ZigZagMessageType

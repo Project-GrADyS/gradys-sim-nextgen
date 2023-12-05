@@ -84,7 +84,6 @@ class VisualizationHandler(INodeHandler):
         self._ax.set_zlim(*self._configuration.z_range)
 
         for node in self._nodes:
-            xyz = (node.position[0], node.position[1],node.position[2])
             self._ax.text(node.position[0], node.position[1],node.position[2], '%s' % (node.id), size=20, zorder=1, color='k')
         
         plt.draw()

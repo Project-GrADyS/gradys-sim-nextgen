@@ -110,10 +110,7 @@ class CodeGenerator:
         print("\n")
 
     def generate_ini_file(self):
-
-
         P = pyproj.Proj(proj='utm', zone=22, ellps='WGS84', preserve_units=True)
-        G = pyproj.Geod(ellps='WGS84')
 
         def LonLat_To_XY(Lon, Lat):
             return P(Lon, Lat)    
