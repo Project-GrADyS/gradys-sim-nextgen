@@ -1,5 +1,3 @@
-## Architecture
-
-![Simulator architecture](../../assets/simulator_architecture.svg)
+# Event
 
 :::gradysim.simulator.event
