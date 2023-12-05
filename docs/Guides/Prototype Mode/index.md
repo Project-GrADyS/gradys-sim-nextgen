@@ -29,7 +29,7 @@ add new components to the simulator if you which to do it. The simulator is
 extended through the creation of handlers. Handlers are merely classes with a
 reference to the event-loop and nodes in the simulation. They use these 
 references to implement some functionality. Check out the 
-[Handler](/Modules/Simulator/handlers) section to learn more about handlers.
+[Handler](../../Modules/Simulator/handlers/index.md) section to learn more about handlers.
 
 Protocols do not directly have access to any of the simulator's components. 
 They indirectly interact with the simulator through the 
@@ -47,7 +47,7 @@ concepts:
   actions that occur in a specific timestamp. Check out the [Event][event]
   section to learn more about events.
 - Handler: Extensible interface to implement new functionality in the 
-  simulator. Check out the [Handler](/Modules/Simulator/handlers) section to 
+  simulator. Check out the [Handler](../../Modules/Simulator/handlers/index.md) section to 
   learn more about handlers.
 
 ## Architecture
