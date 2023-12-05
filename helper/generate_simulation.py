@@ -66,3 +66,55 @@ class AlphabetMatrix:
         self.matrix[row + 4][col + 4] = "*"
 
         self._create_coordinates_list()
+
+    def place_B(self, row=0, col=0):
+        for i in range(5):
+            self.matrix[row + i][col] = "*"
+            self.matrix[row + i][col + 4] = "*"
+        self.matrix[row][col + 1] = "*"
+        self.matrix[row + 2][col + 1] = "*"
+        self.matrix[row + 4][col + 1] = "*"
+        self.matrix[row + 1][col + 2] = "*"
+        self.matrix[row + 3][col + 2] = "*"
+        self.matrix[row + 2][col + 3] = "*"
+
+        self._create_coordinates_list()
+
+
+    def place_S(self, row=0, col=0):
+        self.matrix[row][col + 1] = "*"
+        self.matrix[row][col + 2] = "*"
+        self.matrix[row][col + 3] = "*"
+        self.matrix[row + 1][col] = "*"
+        self.matrix[row + 2][col] = "*"
+        self.matrix[row + 2][col + 1] = "*"
+        self.matrix[row + 2][col + 2] = "*"
+        self.matrix[row + 3][col + 3] = "*"
+        self.matrix[row + 4][col + 1] = "*"
+        self.matrix[row + 4][col + 2] = "*"
+        self.matrix[row + 4][col + 3] = "*"
+
+        self._create_coordinates_list()
+
+    def place_X(self, row=0, col=0):
+        self.matrix[row][col] = "*"
+        self.matrix[row][col + 4] = "*"
+        self.matrix[row + 1][col + 1] = "*"
+        self.matrix[row + 1][col + 3] = "*"
+        self.matrix[row + 2][col + 2] = "*"
+        self.matrix[row + 3][col + 1] = "*"
+        self.matrix[row + 3][col + 3] = "*"
+        self.matrix[row + 4][col] = "*"
+        self.matrix[row + 4][col + 4] = "*"
+
+        self._create_coordinates_list()
+
+    def place_Z(self, row=0, col=0):
+        for i in range(5):
+            self.matrix[row][col + i] = "*"
+            self.matrix[row + 4][col + i] = "*"
+        self.matrix[row + 1][col + 3] = "*"
+        self.matrix[row + 2][col + 2] = "*"
+        self.matrix[row + 3][col + 1] = "*"
+
+        self._create_coordinates_list()

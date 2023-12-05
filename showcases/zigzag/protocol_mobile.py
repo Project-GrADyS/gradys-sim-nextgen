@@ -1,10 +1,12 @@
 import logging
 import random
+from typing import Any, Dict, List
 from gradysim.protocol.addons.mission_mobility import (
     LoopMission,
     MissionMobilityAddon,
     MissionMobilityConfiguration,
 )
+from gradysim.protocol.addons.statistics import create_statistics, finish_statistics
 from gradysim.protocol.messages.communication import BroadcastMessageCommand, SendMessageCommand
 from gradysim.protocol.messages.mobility import GotoCoordsMobilityCommand
 
@@ -20,16 +22,21 @@ class ZigZagProtocolMobile(IProtocol):
         self.timeout_end: int = 0
         self.timeout_set: bool = False
         self.timeout_duration: int = 5
+
         self.communication_status: CommunicationStatus = CommunicationStatus.FREE
+
         self.tentative_target: int = -1
-        self.last_target: int = -1
+
         self.current_data_load: int = 0
         self.stable_data_load: int = self.current_data_load
+
         self.current_telemetry: Telemetry
         self.last_stable_telemetry: Telemetry
-        self.last_payload: ZigZagMessage = ZigZagMessage()
+       
         self._logger = logging.getLogger(SIMULATION_LOGGER)
         self.old_mission_is_reversed: bool = False
+
+        self._statistics = create_statistics(self)
 
     def initialize(self):
         self.provider.tracked_variables["current_data_load"] = self.current_data_load
@@ -137,7 +144,7 @@ class ZigZagProtocolMobile(IProtocol):
                 message.destination_id = self.tentative_target
                 message.data_length = self.stable_data_load
 
-        self.last_payload = message
+        # self.last_payload = message
 
         if self.tentative_target < 0:
             command = BroadcastMessageCommand(
@@ -158,7 +165,7 @@ class ZigZagProtocolMobile(IProtocol):
             self.last_stable_telemetry = telemetry
 
     def finish(self):
-        pass
+        finish_statistics(self)
 
     def _send_heartbeat(self):
         message = ZigZagMessage(
@@ -196,7 +203,7 @@ class ZigZagProtocolMobile(IProtocol):
            
     def _reset_parameters(self):
         self.timeout_set = False
-        self.last_target = self.tentative_target
+        # self.last_target = self.tentative_target
         self.tentative_target = -1
         self.communication_status = CommunicationStatus.FREE
         self.last_stable_telemetry = self.current_telemetry

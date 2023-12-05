@@ -1,6 +1,4 @@
 from code_generator import CodeGenerator
-from generate_simulation import AlphabetMatrix
-
 
 if __name__ == "__main__":
 
