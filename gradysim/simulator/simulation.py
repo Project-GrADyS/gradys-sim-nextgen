@@ -9,7 +9,7 @@ from typing import Type, Optional, Dict, Tuple
 from gradysim.protocol.interface import IProtocol
 from gradysim.encapsulator.python import PythonEncapsulator
 from gradysim.simulator.event import EventLoop
-from gradysim.simulator.log import SIMULATION_LOGGER, setup_simulation_formatter
+from gradysim.simulator.log import SIMULATION_LOGGER, setup_simulation_formatter, node_label
 from gradysim.simulator.handler.interface import INodeHandler
 from gradysim.simulator.node import Node
 from gradysim.protocol.position import Position
@@ -120,7 +120,7 @@ class Simulator:
         self._logger.info("[--------- Simulation started ---------]")
         start_time = time.time()
         for node in self._nodes.values():
-            self._formatter.scope_event(0, 0, f"Node {node.id} Initialization")
+            self._formatter.scope_event(0, 0, f"{node_label(node)} Initialization")
             node.protocol_encapsulator.initialize(1)
 
         last_timestamp = 0
@@ -150,7 +150,7 @@ class Simulator:
         total_time = time.time() - start_time
 
         for node in self._nodes.values():
-            self._formatter.scope_event(0, 0, f"Node {node.id} Finalization")
+            self._formatter.scope_event(0, 0, f"{node_label(node)} Finalization")
             node.protocol_encapsulator.finish()
 
         for handler in self._handlers.values():

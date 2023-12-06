@@ -13,5 +13,5 @@ modules from the ```gradysim``` module. With this installation you will be
 able to create [protocols][building-our-first-protocol] and run them in
 [prototype-mode][prototype-mode].
 
-After setting this up check out the [usage][usage] section to learn about 
+After setting this up check out the [Creating a Protocol][creating-a-protocol] section to learn about 
 how the simulator works.

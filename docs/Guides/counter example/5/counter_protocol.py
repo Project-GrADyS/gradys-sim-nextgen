@@ -2,10 +2,10 @@ import logging
 import random
 
 from gradysim.protocol.interface import IProtocol
-from gradysim.simulator import SIMULATION_LOGGER
-from gradysim.protocol import CommunicationCommand, CommunicationCommandType
+from gradysim.protocol.messages.communication import BroadcastMessageCommand
 from gradysim.protocol.messages.mobility import GotoCoordsMobilityCommand
 from gradysim.protocol.messages.telemetry import Telemetry
+from gradysim.simulator.log import SIMULATION_LOGGER
 
 
 class CounterProtocol(IProtocol):
@@ -36,8 +36,7 @@ class CounterProtocol(IProtocol):
 
             # Creating a new communication command that will instruct the mobility module
             # to broadcast a message
-            command = CommunicationCommand(
-                CommunicationCommandType.BROADCAST,
+            command = BroadcastMessageCommand(
                 message=""  # Content is irrelevant, we are only counting messages
             )
 

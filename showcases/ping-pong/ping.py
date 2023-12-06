@@ -5,7 +5,7 @@ from gradysim.protocol.interface import IProtocol
 from gradysim.simulator.log import SIMULATION_LOGGER
 from gradysim.protocol.messages.communication import CommunicationCommand, CommunicationCommandType
 from gradysim.protocol.messages.telemetry import Telemetry
-from gradysim.protocol.addons.random_mobility import RandomMobilityAddon
+from gradysim.protocol.plugin.random_mobility import RandomMobilityPlugin
 
 
 class PingProtocol(IProtocol):
@@ -14,7 +14,7 @@ class PingProtocol(IProtocol):
 
     def __init__(self):
         self._logger = logging.getLogger(SIMULATION_LOGGER)
-        self._movement = RandomMobilityAddon(self)
+        self._movement = RandomMobilityPlugin(self)
 
     def initialize(self, stage: int):
         self.provider.schedule_timer("", self.provider.current_time() + random.random() + 2)

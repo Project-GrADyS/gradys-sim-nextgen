@@ -178,7 +178,9 @@ class TestMobility(unittest.TestCase):
                 nonlocal received
                 received += 1
 
-        builder = SimulationBuilder(SimulationConfiguration(max_iterations=5))
+        builder = SimulationBuilder(SimulationConfiguration(
+            max_iterations=10 # 5 mobility iterations and 5 handle_telemetry calls
+        ))
         builder.add_node(DummyProtocol, (0, 0, 0))
         builder.add_handler(MobilityHandler())
         simulation = builder.build()

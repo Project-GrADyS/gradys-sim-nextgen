@@ -19,7 +19,14 @@ The instructions on how to use this mode and the full list of features are avail
 in the documentation for the simulation module [here](../Modules/Simulator/index.md).
 
 ## Integrated mode
-Write
+Integrated mode uses the OMNeT++ network simulator to execute the user-defined 
+protocols in a realistic network simulation environment. The OMNeT++ simulation
+and integration are hosted in a different repository accesible 
+[here](https://github.com/brunoolivieri/gradys-simulations). There you will find
+installation instructions and a guide on how to use it.
 
 ## Experiment mode
-Not implemented
+The idea behing this mode is allowing the user to run their protocols integrated
+with an actual real vehicle running Ardupilot.
+
+This mode has not been implemented yet. Check back later for updates!

@@ -2,11 +2,11 @@
 This module contains a function that creates a dispatcher which wraps a protocol instance and it's methods. Implements
  a call chain for each of the protocol interface's methods.
 
- Use this module through the **create_dispatcher**][gradysim.protocol.addons.dispatcher.create_dispatcher] method,
+ Use this module through the **create_dispatcher**][gradysim.protocol.plugin.dispatcher.create_dispatcher] method,
 **never** instantiate the ProtocolWrapper directly.
 
-This module is useful if you want to implement an addon on or some other functionality that relies on overriding the
-protocol's methods. Protocols using this addon will still be compatible with all execution modes as only the protocol
+This module is useful if you want to implement an plugin on or some other functionality that relies on overriding the
+protocol's methods. Protocols using this plugin will still be compatible with all execution modes as only the protocol
 itself is tampered with and not any of the layers that allow it to run on different environments.
 
 Beware that this module uses monkey patching and may result in broken protocols if someone else tries to tamper with
@@ -46,7 +46,7 @@ def _wrap_functionality(protocol: IProtocol, functionality: str, queue: List[Cal
 class ProtocolWrapper:
     """
     Do not use this class directly, instead use
-    [create_dispatcher][gradysim.protocol.addons.dispatcher.create_dispatcher].
+    [create_dispatcher][gradysim.protocol.plugin.dispatcher.create_dispatcher].
 
     Wraps the protocol's calls into a call chain. Instead of going directly to the protocol's methods calls to the
     protocol interface will be passed down a chain of registered handlers. The protocol's own method is at the end
@@ -64,7 +64,7 @@ class ProtocolWrapper:
     def __init__(self, protocol: IProtocol):
         """
         Instantiates a protocol wrapper. Should not be instantiated directly, create a dispatcher using the
-        [create_dispatcher][gradysim.protocol.addons.dispatcher.create_dispatcher] method.
+        [create_dispatcher][gradysim.protocol.plugin.dispatcher.create_dispatcher] method.
 
         **Do not instantiate this class directly**
 
@@ -200,7 +200,7 @@ def create_dispatcher(protocol: IProtocol) -> ProtocolWrapper:
     Beware that this module uses monkey patching and may result in broken protocols if someone else tries to tamper with
     the protocol's methods.
 
-    If you want to implement an addon or some other behaviour that requires overriding protocol's
+    If you want to implement an plugin or some other behaviour that requires overriding protocol's
     methods you should use this function
 
     Args:

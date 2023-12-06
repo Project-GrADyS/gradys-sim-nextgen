@@ -1,3 +1,3 @@
 # Follow Mobility
 
-:::gradysim.protocol.addons.follow_mobility
+:::gradysim.protocol.plugin.follow_mobility
