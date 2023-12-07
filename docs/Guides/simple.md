@@ -69,7 +69,7 @@ class containing the desired fields. GrADyS-SIM NextGen doesn't impose any
 
 ```py title="Message declaration"
 --8<--
-docs/Guides/simple example/protocol.py:19:22
+docs/Guides/simple example/simple_protocol.py:19:22
 --8<--
 ```
 
@@ -83,9 +83,9 @@ This creates an infinite loop which with a periodicity of 1 second increments th
 
 ```py title="Sensor initialization and timer"
 --8<--
-docs/Guides/simple example/protocol.py:33:34
-docs/Guides/simple example/protocol.py:36:41
-docs/Guides/simple example/protocol.py:43:46
+docs/Guides/simple example/simple_protocol.py:33:34
+docs/Guides/simple example/simple_protocol.py:36:41
+docs/Guides/simple example/simple_protocol.py:43:46
 --8<--
 ```
 
@@ -97,15 +97,15 @@ and zero out the `self.packet_count` counter.
 
 ```py title="Sensor interactions"
 --8<--
-docs/Guides/simple example/protocol.py:48:49
-docs/Guides/simple example/protocol.py:51:64
+docs/Guides/simple example/simple_protocol.py:48:49
+docs/Guides/simple example/simple_protocol.py:51:64
 --8<--
 ```
 
 ??? example "Full sensor code"
     ```py
     --8<--
-    docs/Guides/simple example/protocol.py:30:70
+    docs/Guides/simple example/simple_protocol.py:30:70
     --8<--
     ```
 
@@ -120,17 +120,17 @@ delivered.
 
 ```py title="Ground station initialization and interactions"
 --8<--
-docs/Guides/simple example/protocol.py:151:151
-docs/Guides/simple example/protocol.py:153:154
-docs/Guides/simple example/protocol.py:158:159
-docs/Guides/simple example/protocol.py:161:172
+docs/Guides/simple example/simple_protocol.py:151:151
+docs/Guides/simple example/simple_protocol.py:153:154
+docs/Guides/simple example/simple_protocol.py:158:159
+docs/Guides/simple example/simple_protocol.py:161:172
 --8<--
 ```
 
 ??? example "Full ground station code"
     ```py
     --8<--
-    docs/Guides/simple example/protocol.py:147:179
+    docs/Guides/simple example/simple_protocol.py:147:179
     --8<--
     ```
 
@@ -144,11 +144,11 @@ broadcasts the message.
 
 ```py title="UAV initialization and timer"
 --8<--
-docs/Guides/simple example/protocol.py:100:100
-docs/Guides/simple example/protocol.py:102:102
-docs/Guides/simple example/protocol.py:110:110
-docs/Guides/simple example/protocol.py:111:112
-docs/Guides/simple example/protocol.py:115:123
+docs/Guides/simple example/simple_protocol.py:100:100
+docs/Guides/simple example/simple_protocol.py:102:102
+docs/Guides/simple example/simple_protocol.py:110:110
+docs/Guides/simple example/simple_protocol.py:111:112
+docs/Guides/simple example/simple_protocol.py:115:123
 --8<--
 ```
 
@@ -162,13 +162,13 @@ the ground.
 
 ```py title="List of missions"
 --8<--
-docs/Guides/simple example/protocol.py:73:90
+docs/Guides/simple example/simple_protocol.py:73:90
 --8<--
 ```
 
 ```py title="UAV mission initalization"
 --8<--
-docs/Guides/simple example/protocol.py:104:108
+docs/Guides/simple example/simple_protocol.py:104:108
 --8<--
 ```
 
@@ -179,17 +179,17 @@ delivered our packets to it, and we should discard them. The snippet below shows
 
 ```py title="UAV interactions"
 --8<--
-docs/Guides/simple example/protocol.py:128:129
-docs/Guides/simple example/protocol.py:131:133
-docs/Guides/simple example/protocol.py:136:136
-docs/Guides/simple example/protocol.py:138:138
+docs/Guides/simple example/simple_protocol.py:128:129
+docs/Guides/simple example/simple_protocol.py:131:133
+docs/Guides/simple example/simple_protocol.py:136:136
+docs/Guides/simple example/simple_protocol.py:138:138
 --8<--
 ```
 
 ??? example "Full UAV code"
     ```py
     --8<--
-    docs/Guides/simple example/protocol.py:73:145
+    docs/Guides/simple example/simple_protocol.py:73:145
     --8<--
     ```
 
@@ -207,7 +207,7 @@ any execution-mode. We will create a prototype-mode simulation to test it.
 
 ```py title="Execution code for prototype-mode"
 --8<--
-docs/Guides/simple example/execution.py
+docs/Guides/simple example/simple_execution.py
 --8<--
 ```
 

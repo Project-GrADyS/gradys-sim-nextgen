@@ -3,7 +3,7 @@ from gradysim.simulator.handler.mobility import MobilityHandler
 from gradysim.simulator.handler.timer import TimerHandler
 from gradysim.simulator.handler.visualization import VisualizationHandler, VisualizationConfiguration
 from gradysim.simulator.simulation import SimulationBuilder, SimulationConfiguration
-from protocol import SimpleSensorProtocol, SimpleGroundStationProtocol, SimpleUAVProtocol
+from simple_protocol import SimpleSensorProtocol, SimpleGroundStationProtocol, SimpleUAVProtocol
 
 # Configuring simulation
 config = SimulationConfiguration(
