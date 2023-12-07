@@ -42,7 +42,7 @@ class ZigZagProtocolMobile(IProtocol):
         self.provider.tracked_variables["timeout_end"] = self.timeout_end
         self.provider.tracked_variables["current_data_load"] = self.current_data_load
         self.provider.tracked_variables["stable_data_load"] = self.current_data_load
-        self.provider.tracked_variables["communication_status"] = self.communication_status
+        self.provider.tracked_variables["communication_status"] = self.communication_status.name
 
         self.mission: MissionMobilityAddon = MissionMobilityAddon(
             self, MissionMobilityConfiguration(loop_mission=LoopMission.REVERSE)
@@ -148,7 +148,7 @@ class ZigZagProtocolMobile(IProtocol):
                 message.destination_id = self.tentative_target
                 message.data_length = self.stable_data_load
 
-        self.provider.tracked_variables["communication_status"] = self.communication_status
+        self.provider.tracked_variables["communication_status"] = self.communication_status.name
 
         if self.tentative_target < 0:
             command = BroadcastMessageCommand(
@@ -178,7 +178,7 @@ class ZigZagProtocolMobile(IProtocol):
             message_type=ZigZagMessageType.HEARTBEAT
         )
 
-        self.provider.tracked_variables["communication_status"] = self.communication_status
+        self.provider.tracked_variables["communication_status"] = self.communication_status.name
 
         command = BroadcastMessageCommand(
             message=message.to_json()

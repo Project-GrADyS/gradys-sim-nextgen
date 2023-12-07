@@ -103,6 +103,9 @@ class CodeGenerator:
 
     def generate_mission_file(self):
         print("Mission file (filename: mission.txt) \n")
+    
+        if self.ground_coord:
+            print(f"{self.ground_coord[0]},{self.ground_coord[1]},{self.ground_coord[2]}")
 
         for sensor_coord in self.sensor_coords:
             print(f"{sensor_coord[0]},{sensor_coord[1]},{sensor_coord[2]}")

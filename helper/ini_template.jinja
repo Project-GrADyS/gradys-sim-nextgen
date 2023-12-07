@@ -103,6 +103,11 @@ description = "Configure quads, ground stations and sensors for wifi only commun
 *.quads[*].mobility.homeY = 0
 *.quads[*].mobility.homeZ = 0
 
+{% for information in mobile_information -%}
+*.quads[{{ information[0] }}].mobility.initialLongitude = {{ information[1] }}deg
+*.quads[{{ information[0] }}].mobility.initialLatitude = {{ information[2] }}deg
+{% endfor -%}
+
 ## Ground station setup
 *.groundStation.numApps = 1
 

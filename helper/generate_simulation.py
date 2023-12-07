@@ -118,3 +118,11 @@ class AlphabetMatrix:
         self.matrix[row + 3][col + 1] = "*"
 
         self._create_coordinates_list()
+    
+    def place_Test(self, row=0, col=0):
+        self.matrix[row][col] = "*"
+        self.matrix[row + 4][col] = "*"
+        self.matrix[row + 4][col + 4] = "*"
+
+        self._create_coordinates_list()
+
