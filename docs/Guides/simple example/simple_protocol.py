@@ -7,7 +7,6 @@ from gradysim.protocol.interface import IProtocol
 from gradysim.protocol.messages.communication import SendMessageCommand, BroadcastMessageCommand
 from gradysim.protocol.messages.telemetry import Telemetry
 from gradysim.protocol.plugin.mission_mobility import MissionMobilityPlugin, MissionMobilityConfiguration, LoopMission
-from gradysim.simulator.log import SIMULATION_LOGGER
 
 
 class SimpleSender(enum.Enum):
@@ -32,7 +31,7 @@ class SimpleSensorProtocol(IProtocol):
     packet_count: int
 
     def initialize(self, stage: int) -> None:
-        self._log = logging.getLogger(SIMULATION_LOGGER)
+        self._log = logging.getLogger()
         self.packet_count = 0
 
         self._generate_packet()
@@ -98,7 +97,7 @@ class SimpleUAVProtocol(IProtocol):
     _mission: MissionMobilityPlugin
 
     def initialize(self, stage: int) -> None:
-        self._log = logging.getLogger(SIMULATION_LOGGER)
+        self._log = logging.getLogger()
         self.packet_count = 0
 
         self._mission = MissionMobilityPlugin(self, MissionMobilityConfiguration(
@@ -149,7 +148,7 @@ class SimpleGroundStationProtocol(IProtocol):
     packet_count: int
 
     def initialize(self, stage: int) -> None:
-        self._log = logging.getLogger(SIMULATION_LOGGER)
+        self._log = logging.getLogger()
         self.packet_count = 0
 
     def handle_timer(self, timer: str) -> None:

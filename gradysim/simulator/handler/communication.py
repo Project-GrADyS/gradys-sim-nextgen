@@ -3,7 +3,7 @@ import random
 from dataclasses import dataclass
 
 from gradysim.simulator.event import EventLoop
-from gradysim.simulator.log import SIMULATION_LOGGER, node_label
+from gradysim.simulator.log import node_label
 from gradysim.protocol.messages.communication import CommunicationCommand, CommunicationCommandType
 from gradysim.simulator.node import Node
 from gradysim.protocol.position import Position
@@ -28,7 +28,7 @@ class CommunicationDestination:
             node: Node owning the destination
         """
         self.node = node
-        self._logger = logging.getLogger(SIMULATION_LOGGER)
+        self._logger = logging.getLogger()
 
     def receive_message(self, message: str, source: 'CommunicationSource') -> None:
         """
@@ -54,7 +54,7 @@ class CommunicationSource:
             node: Node owning the source
         """
         self.node = node
-        self._logger = logging.getLogger(SIMULATION_LOGGER)
+        self._logger = logging.getLogger()
 
     def hand_over_message(self, message: str, endpoint: CommunicationDestination) -> None:
         """

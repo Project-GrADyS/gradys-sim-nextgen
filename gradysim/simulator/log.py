@@ -1,8 +1,6 @@
 """
 Logging is an important part of any software. It helps users and developers understand what is happening during the
-execution of the program. When running GrADyS-SIM NextGen in prototype-mode logging is automatically configured for you,
-users that want to make use of this logging should use `logging.getLogger(SIMULATION_LOGGER)` where SIMULATION_LOGGER
-can be imported from this file.
+execution of the program. When running GrADyS-SIM NextGen in prototype-mode logging is automatically configured for you.
 
 The logger annotates the output with timing information and execution context to improve understanding.
 """
@@ -13,14 +11,6 @@ from pathlib import Path
 from typing import Optional
 
 from gradysim.simulator.node import Node
-
-SIMULATION_LOGGER = "gradysim-sim"
-"""
-Use this logger to have properly formatted logs. Beware that if you use logging in your protocols the logs will only
-be properly formatted when you are running in prototype-mode.
-
-Use with `logging.getLogger(SIMULATION_LOGGER)`
-"""
 
 
 class SimulationFormatter(logging.Formatter):
@@ -59,7 +49,7 @@ class SimulationFormatter(logging.Formatter):
 def setup_simulation_formatter(debug: bool, log_file: Optional[Path]) -> SimulationFormatter:
     """
     Sets up the logger for the simulation. Called before the simulation starts to configure
-    the `SIMULATION_LOGGER` logger.
+    the logger.
 
     Args:
         debug: Include DEBUG level logs
@@ -68,7 +58,7 @@ def setup_simulation_formatter(debug: bool, log_file: Optional[Path]) -> Simulat
     Returns:
         The formatter instance. Is returned because it needs to be updated with current simulation information.
     """
-    logger = logging.getLogger(SIMULATION_LOGGER)
+    logger = logging.getLogger()
 
     if debug:
         logger.setLevel(logging.DEBUG)

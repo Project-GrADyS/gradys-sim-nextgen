@@ -11,7 +11,7 @@ from gradysim.protocol.interface import IProtocol
 from gradysim.protocol.position import Position
 from gradysim.simulator.event import EventLoop
 from gradysim.simulator.handler.interface import INodeHandler
-from gradysim.simulator.log import SIMULATION_LOGGER, setup_simulation_formatter, node_label
+from gradysim.simulator.log import setup_simulation_formatter, node_label
 from gradysim.simulator.node import Node
 
 _FORCE_FAST_EXECUTION = False
@@ -107,7 +107,7 @@ class Simulator:
         self._iteration = 0
 
         self._formatter = setup_simulation_formatter(configuration.debug, configuration.log_file)
-        self._logger = logging.getLogger(SIMULATION_LOGGER)
+        self._logger = logging.getLogger()
 
     def create_node(self, position: Position, protocol: Type[IProtocol]) -> Node:
         """

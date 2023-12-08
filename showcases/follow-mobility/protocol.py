@@ -6,14 +6,13 @@ from gradysim.protocol.plugin.mission_mobility import MissionMobilityPlugin, Mis
 from gradysim.protocol.interface import IProtocol
 from gradysim.protocol.messages.mobility import SetSpeedMobilityCommand
 from gradysim.protocol.messages.telemetry import Telemetry
-from gradysim.simulator.log import SIMULATION_LOGGER
 
 
 class FollowerProtocol(IProtocol):
     follower: MobilityFollowerPlugin
 
     def __init__(self):
-        self._logger = logging.getLogger(SIMULATION_LOGGER)
+        self._logger = logging.getLogger()
 
     def initialize(self, stage: int) -> None:
         self.follower = MobilityFollowerPlugin(self)
@@ -48,7 +47,7 @@ class LeaderProtocol(IProtocol):
     leader: MobilityLeaderPlugin
 
     def __init__(self):
-        self._logger = logging.getLogger(SIMULATION_LOGGER)
+        self._logger = logging.getLogger()
 
     def initialize(self, stage: int) -> None:
         self.leader = MobilityLeaderPlugin(self)
