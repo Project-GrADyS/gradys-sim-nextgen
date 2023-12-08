@@ -39,6 +39,7 @@ class PythonProvider(IProvider):
         self.communication_handler = communication_handler
         self.timer_handler = timer_handler
         self.mobility_handler = mobility_handler
+        self.tracked_variables = {}
         self._logger = logging.getLogger()
 
     def send_communication_command(self, command: CommunicationCommand) -> None:
