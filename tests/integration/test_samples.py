@@ -33,9 +33,10 @@ _FORCE_FAST_EXECUTION = True
     ('docs/Guides/counter example/4', 'counter_execution'),
     ('docs/Guides/counter example/5', 'counter_execution'),
     ('docs/Guides/counter example/6', 'counter_execution'),
-    ('docs/Guides/simple example/', 'simple_execution'),
+    ('docs/Guides/simple example/', 'main'),
 ])
 def test_sample(sample_path: str, main_script: str):
     with simulation._ForceFastExecution():
         with SetupAsLocal(pathlib.Path(sample_path)):
-            importlib.import_module(main_script)
+            module = importlib.import_module(main_script)
+            module.main()

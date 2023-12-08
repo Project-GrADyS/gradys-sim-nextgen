@@ -58,6 +58,11 @@ class. This class presents a simple API for instantiating python simulations.
 ``` py title="counter_execution.py"
 --8<-- "docs/Guides/counter example/1/counter_execution.py"
 ```
+!!!danger
+    This pattern of defining a main function and running it only if the file is being executed directly is required if
+    you are using the VisualizationHandler as it will spawn a new process to run the visualization thread. We will use
+    the visualization handler later so we are preparing for it. Read more about this in 
+    [the handler's documentation][gradysim.simulator.handler.visualization.VisualizationHandler]. 
 
 Running the file above we will notice the following output on our terminal:
 

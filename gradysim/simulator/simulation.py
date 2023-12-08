@@ -145,6 +145,10 @@ class Simulator:
         """
         self._logger.info("[--------- Simulation started ---------]")
         start_time = time.time()
+
+        for handler in self._handlers.values():
+            handler.initialize()
+
         for node in self._nodes.values():
             self._formatter.scope_event(0, 0, f"{node_label(node)} Initialization")
             node.protocol_encapsulator.initialize(1)

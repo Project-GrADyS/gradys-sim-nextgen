@@ -207,9 +207,14 @@ any execution-mode. We will create a prototype-mode simulation to test it.
 
 ```py title="Execution code for prototype-mode"
 --8<--
-docs/Guides/simple example/simple_execution.py
+docs/Guides/simple example/main.py
 --8<--
 ```
+
+!!!danger
+    This pattern of defining a main function and running it only if the file is being executed directly is required if
+    you are using the VisualizationHandler as it will spawn a new process to run the visualization thread. Read more
+    about this in [the handler's documentation][gradysim.simulator.handler.visualization.VisualizationHandler]. 
 
 The code above configures a python simulation that will run for 200 seconds. Four sensors are added to the
 simulation at specific deployment locations around a 300x300 meter area centered around (0,0). Four UAVs are 
