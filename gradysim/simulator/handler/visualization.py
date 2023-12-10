@@ -4,6 +4,11 @@ representation of the simulation. This graphical representation is web-based and
 through [this link](https://thlamz.github.io/gradysim-nextgen-visualization/). When the simulation starts running
 a WebSocket server is started which the browser connects to. The browser then displays the simulation in a 3D
 environment. The visualization is updated regularly with the current node positions and other information.
+
+!!!danger
+    The visualization handler uses a separate process to run the WebSocket server, this means that on Windows your
+    script will be rerun when the new process starts. This means that any code that should not be run multiple times
+    should be put in the `if __name__ == "__main__"` block.
 """
 
 import asyncio
