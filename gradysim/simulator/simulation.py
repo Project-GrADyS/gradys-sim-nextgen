@@ -24,21 +24,13 @@ class _ForceFastExecution:
     faster. Use it as a context with the `with` keyword
     """
 
-    def __init__(self):
-        import matplotlib
-        self.matplotlib = matplotlib
-        self.current_backend = self.matplotlib.get_backend()
-
     def __enter__(self):
         global _FORCE_FAST_EXECUTION
         _FORCE_FAST_EXECUTION = True
 
-        self.matplotlib.use('Agg')
-
     def __exit__(self, _exc_type, _exc_val, _exc_tb):
         global _FORCE_FAST_EXECUTION
         _FORCE_FAST_EXECUTION = False
-        self.matplotlib.use(self.current_backend)
 
 
 @dataclass
