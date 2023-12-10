@@ -85,6 +85,10 @@ class VisualizationHandler(INodeHandler):
     Adds visualization to the simulation. Shows regularly updated node position and other simulation information
     in a graphical representation of the simulation. The graphical representation is web-based and can be accessed
     via a browser through [this link](https://thlamz.github.io/gradysim-nextgen-visualization/).
+
+    The visualization handler uses a separate process to run the WebSocket server, this means that on Windows your
+    script will be rerun when the new process starts. This means that any code that should not be run multiple times
+    should be put in the `if __name__ == "__main__"` block.
     """
     _event_loop: EventLoop
     _nodes: List[Node]

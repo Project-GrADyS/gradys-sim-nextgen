@@ -232,6 +232,16 @@ lot of times it is useful to properly see what's happening in the simulation.
 The `VisualizationHandler` was created for this purpose. All we need to do to
 use it is add this handler to our execution. 
 
+The visualization handler works by starting a websocket server on a separate process
+that will serve data about the visualization status to a web page client. This web
+page can be automatically opened by the handler by setting the `open_browser` parameter
+to `True` on the handler's configuration. The web page will show the nodes' position and
+some other basic information about the simulation. 
+
+The web page interface can be accessed anytime on 
+[this URL](https://thlamz.github.io/gradysim-nextgen-visualization/). The visualization
+will automatically connect to the websocket server once you start the simulation.
+
 ``` py title="counter_execution.py"
 --8<-- "docs/Guides/counter example/5/counter_execution.py"
 ```
@@ -239,7 +249,9 @@ use it is add this handler to our execution.
 When we execute this example a window will open showing the node's position in
 real-time while the simulation is running.
 
-![execution gif](../assets/visualization.gif)
+<video controls loop>
+    <source src="../../assets/counter_example_visualization.webm" type="video/webm">
+</video>
 
 ## Making sure your protocol works
 One of the main points of even creating simulations is validating your 
