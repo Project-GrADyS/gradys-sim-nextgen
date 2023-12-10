@@ -26,7 +26,7 @@ def main():
     medium = CommunicationMedium(
         transmission_range=30
     )
-    builder.add_handler(CommunicationHandler())
+    builder.add_handler(CommunicationHandler(medium))
 
     builder.add_handler(MobilityHandler())
 

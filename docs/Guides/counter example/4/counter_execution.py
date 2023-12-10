@@ -24,7 +24,7 @@ def main():
         transmission_range=30
     )
 
-    builder.add_handler(CommunicationHandler())
+    builder.add_handler(CommunicationHandler(medium))
 
     # Adding mobility handler
     builder.add_handler(MobilityHandler())
