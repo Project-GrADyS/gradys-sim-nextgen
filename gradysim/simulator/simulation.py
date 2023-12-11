@@ -6,13 +6,31 @@ from datetime import timedelta
 from pathlib import Path
 from typing import Type, Optional, Dict, Tuple
 
-from gradysim.protocol.interface import IProtocol
 from gradysim.encapsulator.python import PythonEncapsulator
-from gradysim.simulator.event import EventLoop
-from gradysim.simulator.log import SIMULATION_LOGGER, setup_simulation_formatter, node_label
-from gradysim.simulator.handler.interface import INodeHandler
-from gradysim.simulator.node import Node
+from gradysim.protocol.interface import IProtocol
 from gradysim.protocol.position import Position
+from gradysim.simulator.event import EventLoop
+from gradysim.simulator.handler.interface import INodeHandler
+from gradysim.simulator.log import setup_simulation_formatter, label_node
+from gradysim.simulator.node import Node
+
+_FORCE_FAST_EXECUTION = False
+
+
+class _ForceFastExecution:
+    """
+    This class is only used for integration testing purposes, you shouldn't need to use it ever. It is used to force
+    the simulation to run as fast as possible. This is useful for integration testing because it makes the tests run
+    faster. Use it as a context with the `with` keyword
+    """
+
+    def __enter__(self):
+        global _FORCE_FAST_EXECUTION
+        _FORCE_FAST_EXECUTION = True
+
+    def __exit__(self, _exc_type, _exc_val, _exc_tb):
+        global _FORCE_FAST_EXECUTION
+        _FORCE_FAST_EXECUTION = False
 
 
 @dataclass
@@ -81,7 +99,7 @@ class Simulator:
         self._iteration = 0
 
         self._formatter = setup_simulation_formatter(configuration.debug, configuration.log_file)
-        self._logger = logging.getLogger(SIMULATION_LOGGER)
+        self._logger = logging.getLogger()
 
     def create_node(self, position: Position, protocol: Type[IProtocol]) -> Node:
         """
@@ -119,8 +137,12 @@ class Simulator:
         """
         self._logger.info("[--------- Simulation started ---------]")
         start_time = time.time()
+
+        for handler in self._handlers.values():
+            handler.initialize()
+
         for node in self._nodes.values():
-            self._formatter.scope_event(0, 0, f"{node_label(node)} Initialization")
+            self._formatter.scope_event(0, 0, f"{label_node(node)} Initialization")
             node.protocol_encapsulator.initialize()
 
         last_timestamp = 0
@@ -128,7 +150,7 @@ class Simulator:
         while not self._is_simulation_done():
             event = self._event_loop.pop_event()
 
-            if self._configuration.real_time:
+            if self._configuration.real_time and not _FORCE_FAST_EXECUTION:
                 sleep_duration = event.timestamp - (last_timestamp + event_duration)
                 if sleep_duration > 0:
                     time.sleep(sleep_duration)
@@ -150,7 +172,7 @@ class Simulator:
         total_time = time.time() - start_time
 
         for node in self._nodes.values():
-            self._formatter.scope_event(0, 0, f"{node_label(node)} Finalization")
+            self._formatter.scope_event(0, 0, f"{label_node(node)} Finalization")
             node.protocol_encapsulator.finish()
 
         for handler in self._handlers.values():

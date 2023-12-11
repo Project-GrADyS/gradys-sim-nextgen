@@ -32,6 +32,13 @@ class INodeHandler(ABC):
         """
         pass
 
+    def initialize(self) -> None:
+        """
+        This is called after the simulation is initialized. Useful if the handler implements some functionality
+        that depends on running code at the beginning of the simulation.
+        """
+        pass
+
     def after_simulation_step(self, iteration: int, timestamp: float) -> None:
         """
         This callback function is called after every simulation step. Useful if the handler implements some 

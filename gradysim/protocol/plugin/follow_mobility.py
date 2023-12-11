@@ -42,7 +42,7 @@ class FollowMobilityException(Exception):
 
 @dataclass
 class MobilityLeaderConfiguration:
-    broadcast_interval: float = 0.5
+    broadcast_interval: float = 0.02
     """The interval at which the leader broadcasts its position"""
 
     follower_timeout: float = 5
