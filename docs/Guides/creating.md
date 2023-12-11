@@ -253,6 +253,12 @@ real-time while the simulation is running.
     <source src="../../assets/counter_example_visualization.webm" type="video/webm">
 </video>
 
+!!!warning
+    Take a look at the 
+    [visualization handler's documentation][gradysim.simulator.handler.visualization.VisualizationHandler] for a better
+    and more up-to-date overview of the visualization interface's capabilities. The video presented above may not 
+    reflect the current state of the visualization interface, as it is constantly being improved.
+
 ## Making sure your protocol works
 One of the main points of even creating simulations is validating your 
 implementations. Looking at the console output and visualization are good ways
