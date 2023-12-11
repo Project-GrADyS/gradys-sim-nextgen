@@ -24,7 +24,7 @@ import websockets
 from gradysim.protocol.position import Position
 from gradysim.simulator.event import EventLoop
 from gradysim.simulator.handler.interface import INodeHandler
-from gradysim.simulator.log import node_label
+from gradysim.simulator.log import label_node
 from gradysim.simulator.node import Node
 
 
@@ -128,7 +128,7 @@ class VisualizationHandler(INodeHandler):
             "x_range": self._configuration.x_range,
             "y_range": self._configuration.y_range,
             "z_range": self._configuration.z_range,
-            "nodes": [node_label(node) for node in self._nodes],
+            "nodes": [label_node(node) for node in self._nodes],
         }
 
         # Initialize with precise CPU timestamp of simulation's start

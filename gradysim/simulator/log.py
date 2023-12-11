@@ -77,7 +77,7 @@ def setup_simulation_formatter(debug: bool, log_file: Optional[Path]) -> Simulat
 
     return formatter
 
-def node_label(node: Node) -> str:
+def label_node(node: Node) -> str:
     try:
         protocol_type_name = node.protocol_encapsulator.protocol.__class__.__name__
     except AttributeError:

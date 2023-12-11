@@ -11,7 +11,7 @@ from gradysim.protocol.interface import IProtocol
 from gradysim.protocol.position import Position
 from gradysim.simulator.event import EventLoop
 from gradysim.simulator.handler.interface import INodeHandler
-from gradysim.simulator.log import setup_simulation_formatter, node_label
+from gradysim.simulator.log import setup_simulation_formatter, label_node
 from gradysim.simulator.node import Node
 
 _FORCE_FAST_EXECUTION = False
@@ -142,7 +142,7 @@ class Simulator:
             handler.initialize()
 
         for node in self._nodes.values():
-            self._formatter.scope_event(0, 0, f"{node_label(node)} Initialization")
+            self._formatter.scope_event(0, 0, f"{label_node(node)} Initialization")
             node.protocol_encapsulator.initialize(1)
 
         last_timestamp = 0
@@ -172,7 +172,7 @@ class Simulator:
         total_time = time.time() - start_time
 
         for node in self._nodes.values():
-            self._formatter.scope_event(0, 0, f"{node_label(node)} Finalization")
+            self._formatter.scope_event(0, 0, f"{label_node(node)} Finalization")
             node.protocol_encapsulator.finish()
 
         for handler in self._handlers.values():

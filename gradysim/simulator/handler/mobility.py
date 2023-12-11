@@ -7,7 +7,7 @@ from gradysim.protocol.messages.telemetry import Telemetry
 from gradysim.protocol.position import Position, geo_to_cartesian
 from gradysim.simulator.event import EventLoop
 from gradysim.simulator.handler.interface import INodeHandler
-from gradysim.simulator.log import node_label
+from gradysim.simulator.log import label_node
 from gradysim.simulator.node import Node
 
 
@@ -119,7 +119,7 @@ class MobilityHandler(INodeHandler):
             self._event_loop.schedule_event(
                 self._event_loop.current_time,
                 make_send_telemetry(node, telemetry),
-                node_label(node)
+                label_node(node)
             )
 
         self._event_loop.schedule_event(self._event_loop.current_time + self._configuration.update_rate,
