@@ -1,4 +1,8 @@
 class AlphabetMatrix:
+    """
+    This class creates a matrix and fills it with a predefined pattern. For the given pattern
+    coordiates are created.
+    """
     def __init__(self, rows: int, cols: int) -> None:
         self.rows: int = rows
         self.cols: int = cols
@@ -80,6 +84,12 @@ class AlphabetMatrix:
 
         self._create_coordinates_list()
 
+    def place_L(self, row=0, col=0):
+        self.matrix[row][col] = "*"
+        self.matrix[row + 4][col] = "*"
+        self.matrix[row + 4][col + 4] = "*"
+
+        self._create_coordinates_list()
 
     def place_S(self, row=0, col=0):
         self.matrix[row][col + 1] = "*"
@@ -118,11 +128,3 @@ class AlphabetMatrix:
         self.matrix[row + 3][col + 1] = "*"
 
         self._create_coordinates_list()
-    
-    def place_Test(self, row=0, col=0):
-        self.matrix[row][col] = "*"
-        self.matrix[row + 4][col] = "*"
-        self.matrix[row + 4][col + 4] = "*"
-
-        self._create_coordinates_list()
-

@@ -20,6 +20,13 @@ from gradysim.protocol.messages.telemetry import Telemetry
 
 
 def handle_timer_srt(protocol: IProtocol, timer: str) -> DispatchReturn:
+    """'
+    Starts collection of statistics when a timer with a name 'statistics' is scheduled 
+
+    Args:
+        protocol: Protocol for which statistics should be collected
+        timer: The name of the scheduled timer if existent
+    """
     if timer == "statistics":
         _statistics_protocol_wrappers[protocol].update_srt_statistic(
             protocol.provider.current_time(), time.time()
@@ -34,6 +41,13 @@ def handle_timer_srt(protocol: IProtocol, timer: str) -> DispatchReturn:
 
 
 def handle_packet_tv(protocol: IProtocol, message: str) -> DispatchReturn:
+    """'
+    Starts collection of tracked variables which are updated in handle packet
+
+    Args:
+        protocol: Protocol for which statistics should be collected
+        message: Contains the message information  
+    """
     _statistics_protocol_wrappers[protocol].update_tracked_variable_statistic(
         protocol.provider.current_time(), protocol.provider.tracked_variables
     )

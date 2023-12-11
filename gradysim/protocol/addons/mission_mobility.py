@@ -132,6 +132,14 @@ class MissionMobilityAddon:
     def start_mission_with_waypoint_file(self, mission_file_path: str) -> None:
         """
         Loads a mission from a text file and afterwards calls the start mission function.
+        
+        The file should have the following format:
+
+        -8.0,-4.0,0.0
+        4.0,-4.0,0.0
+        4.0,8.0,0.0
+
+        The coordinates are listed in the x,y,z order and seperated by a , .
 
         Args:
             mission_file_path: Text file of positions the mission will follow.
