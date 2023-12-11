@@ -34,7 +34,6 @@ def handle_timer_srt(protocol: IProtocol, timer: str) -> DispatchReturn:
 
 
 def handle_packet_tv(protocol: IProtocol, message: str) -> DispatchReturn:
-    print(protocol.provider.tracked_variables)
     _statistics_protocol_wrappers[protocol].update_tracked_variable_statistic(
         protocol.provider.current_time(), protocol.provider.tracked_variables
     )
