@@ -16,7 +16,6 @@ import pandas as pd
 from gradysim.protocol.addons.dispatcher import create_dispatcher, DispatchReturn
 
 from gradysim.protocol.interface import IProtocol
-from gradysim.protocol.messages.telemetry import Telemetry
 
 
 def handle_timer_srt(protocol: IProtocol, timer: str) -> DispatchReturn:

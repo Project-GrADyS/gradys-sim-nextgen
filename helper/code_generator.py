@@ -2,7 +2,6 @@ import os
 from typing import Optional
 
 from jinja2 import Environment, FileSystemLoader
-import pyproj
 
 from gradysim.protocol.position import Position
 from generate_simulation import AlphabetMatrix
