@@ -30,7 +30,7 @@ class DispatchAddonTestCase(unittest.TestCase):
 
         protocol = DummyProtocol()
         create_dispatcher(protocol)
-        protocol.initialize(0)
+        protocol.initialize()
         self.assertEqual(protocol.variable, 1)
         protocol.handle_timer("timer")
         self.assertEqual(protocol.variable, 2)
@@ -97,7 +97,7 @@ class DispatchAddonTestCase(unittest.TestCase):
         dispatcher.register_handle_telemetry(handle_telemetry)
         dispatcher.register_finish(finish)
 
-        protocol.initialize(0)
+        protocol.initialize()
         self.assertEqual(protocol.variable, 1)
         self.assertEqual(counter, 1)
 
@@ -179,7 +179,7 @@ class DispatchAddonTestCase(unittest.TestCase):
         dispatcher.unregister_handle_telemetry(handle_telemetry)
         dispatcher.unregister_finish(finish)
 
-        protocol.initialize(0)
+        protocol.initialize()
         self.assertEqual(protocol.variable, 1)
         self.assertEqual(counter, 0)
 
@@ -255,7 +255,7 @@ class DispatchAddonTestCase(unittest.TestCase):
         dispatcher.register_handle_telemetry(handle_telemetry)
         dispatcher.register_finish(finish)
 
-        protocol.initialize(0)
+        protocol.initialize()
         self.assertEqual(protocol.variable, 1)
         self.assertEqual(counter, 1)
 
