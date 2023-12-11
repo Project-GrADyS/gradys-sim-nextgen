@@ -54,6 +54,7 @@ class _TrackedVariableContainer(dict):
         self.callback = setter_callback
 
     def __setitem__(self, key, value):
+        super().__setitem__(key, value)
         self.callback(key, value)
 
 

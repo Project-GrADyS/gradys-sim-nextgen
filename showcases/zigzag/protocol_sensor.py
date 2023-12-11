@@ -19,20 +19,20 @@ class ZigZagProtocolSensor(IProtocol):
 
 
     def initialize(self):
-        self._logger.debug("initializing sensor/ground protocol")
+        self._logger.debug("Initializing sensor/ground protocol")
 
         create_statistics(self)
 
-        self.provider.tracked_variables["communication_status"] = self.communication_status
+        self.provider.tracked_variables["communication_status"] = self.communication_status.name
 
     def handle_timer(self, timer: str):
         pass
-
+    
     def handle_packet(self, message: str):
         message: ZigZagMessage = ZigZagMessage.from_json(message)
 
         if message.message_type == ZigZagMessageType.HEARTBEAT:
-            self._logger.debug("exchanging data in sensor/ground protocol")
+            self._logger.debug("Exchanging data in sensor/ground protocol")
             self.tentative_target = message.source_id
 
             message = ZigZagMessage(
@@ -48,7 +48,7 @@ class ZigZagProtocolSensor(IProtocol):
                 )
             )
 
-            self.provider.tracked_variables["communication_status"] = self.communication_status
+            self.provider.tracked_variables["communication_status"] = self.communication_status.name
 
     def handle_telemetry(self, telemetry: Telemetry):
         pass

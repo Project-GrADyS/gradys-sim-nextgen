@@ -57,7 +57,7 @@ class ZigZagProtocolMobile(IProtocol):
         self.provider.schedule_timer("", self.provider.current_time() + random.random())
 
     def handle_packet(self, message: str):
-        self._logger.debug("handling packet in mobile protocol")
+        self._logger.debug("Handling packet in mobile protocol")
         message: ZigZagMessage = ZigZagMessage.from_json(message)
 
         match message.message_type:
@@ -117,7 +117,7 @@ class ZigZagProtocolMobile(IProtocol):
                             self._send_message()
 
             case ZigZagMessageType.BEARER:
-                self._logger.debug("exchanging data in mobile protocol")
+                self._logger.debug("Exchanging data in mobile protocol")
                 # Only used to exchange information between drone and sensor
                 self.current_data_load = self.current_data_load + message.data_length
                 self.stable_data_load = self.current_data_load

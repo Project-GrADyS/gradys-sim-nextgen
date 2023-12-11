@@ -18,43 +18,23 @@ from gradysim.protocol.addons.dispatcher import create_dispatcher, DispatchRetur
 from gradysim.protocol.interface import IProtocol
 from gradysim.protocol.messages.telemetry import Telemetry
 
-# Wrapper methods for handler
-def initialize_srt(protocol: IProtocol) -> DispatchReturn:
-    _statistics_protocol_wrappers[protocol].update_srt_statistic(
-        protocol.provider.current_time(), time.time()
-    )
-    return DispatchReturn.CONTINUE
-
 
 def handle_timer_srt(protocol: IProtocol, timer: str) -> DispatchReturn:
-    _statistics_protocol_wrappers[protocol].update_srt_statistic(
-        protocol.provider.current_time(), time.time()
-    )
-    return DispatchReturn.CONTINUE
+    if timer == "statistics":
+        _statistics_protocol_wrappers[protocol].update_srt_statistic(
+            protocol.provider.current_time(), time.time()
+        )
 
+        protocol.provider.schedule_timer("statistics", protocol.provider.current_time() + 0.001)
+        
+        return DispatchReturn.INTERRUPT
 
-def handle_packet_srt(protocol: IProtocol, message: str) -> DispatchReturn:
-    _statistics_protocol_wrappers[protocol].update_srt_statistic(
-        protocol.provider.current_time(), time.time()
-    )
-    return DispatchReturn.CONTINUE
-
-
-def handle_telemetry_srt(protocol: IProtocol, telemetry: Telemetry) -> DispatchReturn:
-    _statistics_protocol_wrappers[protocol].update_srt_statistic(
-        protocol.provider.current_time(), time.time()
-    )
-    return DispatchReturn.CONTINUE
-
-
-def finish_srt(protocol: IProtocol) -> DispatchReturn:
-    _statistics_protocol_wrappers[protocol].update_srt_statistic(
-        protocol.provider.current_time(), time.time()
-    )
-    return DispatchReturn.CONTINUE
+    else:
+        return DispatchReturn.CONTINUE
 
 
 def handle_packet_tv(protocol: IProtocol, message: str) -> DispatchReturn:
+    print(protocol.provider.tracked_variables)
     _statistics_protocol_wrappers[protocol].update_tracked_variable_statistic(
         protocol.provider.current_time(), protocol.provider.tracked_variables
     )
@@ -86,9 +66,12 @@ class StatisticsProtocolWrapper:
         """
 
         self._dispatcher = create_dispatcher(protocol)
-
+        
+        self._id = 'cpp_with_visualization' #express, 
         self._statistics_time_list = []
         self._statistics_tracked_variables_list = []
+
+        protocol.provider.schedule_timer("statistics", protocol.provider.current_time() + 0.001)
 
     def register(self):
         """
@@ -96,11 +79,7 @@ class StatisticsProtocolWrapper:
         """
 
         # Simulation and real time
-        self._dispatcher.register_initialize(initialize_srt)
         self._dispatcher.register_handle_timer(handle_timer_srt)
-        self._dispatcher.register_handle_telemetry(handle_packet_srt)
-        self._dispatcher.register_handle_packet(handle_telemetry_srt)
-        self._dispatcher.register_finish(finish_srt)
 
         # Tracked variables
         self._dispatcher.register_handle_packet(handle_packet_tv)
@@ -111,11 +90,7 @@ class StatisticsProtocolWrapper:
         """
 
         # Simulation and real time
-        self._dispatcher.unregister_initialize(initialize_srt)
         self._dispatcher.unregister_handle_timer(handle_timer_srt)
-        self._dispatcher.unregister_handle_telemetry(handle_packet_srt)
-        self._dispatcher.unregister_handle_packet(handle_telemetry_srt)
-        self._dispatcher.unregister_finish(finish_srt)
 
         # Tracked variables
         self._dispatcher.unregister_handle_packet(handle_packet_tv)
@@ -155,12 +130,12 @@ class StatisticsProtocolWrapper:
 
         statistics_srt = pd.DataFrame(self._statistics_time_list)
         statistics_srt.to_csv(
-            f"statistics_simulation_real_time_{type(self._dispatcher._protocol).__name__}_{self._dispatcher._protocol.provider.get_id()}.csv"
+            f"simulation_real_time_{self._id}_{type(self._dispatcher._protocol).__name__}_{self._dispatcher._protocol.provider.get_id()}.csv"
         )
 
         statistics_tv = pd.DataFrame(self._statistics_tracked_variables_list)
         statistics_tv.to_csv(
-            f"statistics_tracked_variables_{type(self._dispatcher._protocol).__name__}_{self._dispatcher._protocol.provider.get_id()}.csv"
+            f"tracked_variables_{self._id}_{type(self._dispatcher._protocol).__name__}_{self._dispatcher._protocol.provider.get_id()}.csv"
         )
 
 

@@ -1,0 +1,208 @@
+[General]
+description = "Setup visualisation, scene origin, sensors"
+
+cmdenv-status-frequency = 10s
+cmdenv-output-file = "${resultdir}/${runnumber}.out"
+
+allow-object-stealing-on-deletion=true
+
+## Visualizer settings
+*.visualizer.osgVisualizer.typename = "IntegratedOsgVisualizer"
+*.visualizer.osgVisualizer.sceneVisualizer.typename = "SceneOsgEarthVisualizer"
+*.visualizer.osgVisualizer.sceneVisualizer.mapFile = "map.earth"
+
+*.visualizer.*.sceneVisualizer.sceneImageSize = 10000m
+*.visualizer.*.sceneVisualizer.sceneMinX = -100000m
+*.visualizer.*.sceneVisualizer.sceneMinY = -10000m
+*.visualizer.*.sceneVisualizer.sceneMinZ = -10000m
+*.visualizer.*.sceneVisualizer.sceneMaxX = 10000m
+*.visualizer.*.sceneVisualizer.sceneMaxY = 10000m
+*.visualizer.*.sceneVisualizer.sceneMaxZ = 10000m
+
+## Enables visualisation of links, network routes, network nodes
+*.visualizer.*.physicalLinkVisualizer.lineShift = 0
+*.visualizer.*.dataLinkVisualizer.lineShift = 0
+*.visualizer.*.networkRouteVisualizer.lineShift = 0
+*.visualizer.*.networkNodeVisualizer.displayModuleName = true
+
+## Enables visualization of drone load
+*.visualizer.*.statisticVisualizer.signalName = "dataLoad"
+*.visualizer.*.statisticVisualizer.format = "(%v)"
+*.visualizer.*.statisticVisualizer.textColor = "red"
+*.visualizer.*.statisticVisualizer.font = "Courier New, 12px, bold"
+*.visualizer.*.statisticVisualizer.opacity = 1
+
+## Enables visualization of mobility
+*.visualizer.*.mobilityVisualizer.displayMobility = true
+*.visualizer.*.mobilityVisualizer.displayPositions = true
+*.visualizer.*.mobilityVisualizer.displayOrientations = true
+*.visualizer.*.mobilityVisualizer.displayVelocities = true
+*.visualizer.*.mobilityVisualizer.displayMovementTrails = true
+*.visualizer.*.mobilityVisualizer.animationSpeed = 10
+
+## Environment
+*.environment.ground.typename = "FlatGround"
+*.quads[*].osgModel = "3d/drone.ive.10.scale.0,0,90.rot"
+**.mobility.initFromDisplayString = false
+
+## Campo
+*.coordinateSystem.sceneLongitude = {{ scene_longitude }}deg
+*.coordinateSystem.sceneLatitude = {{ scene_latitude }}deg
+*.coordinateSystem.sceneHeading = 0deg # scene orientation
+
+## Mobility constraint area for quads, sensors and ground stations
+## To specify for quads, sensors or ground stations seperately do the following
+## *.{QUADS|SENSORS|GROUNDSTATIONS}[*].mobility.constraintAreaMinX = -10000m
+*.*[*].mobility.constraintAreaMinX = -10000m
+*.*[*].mobility.constraintAreaMinY = -10000m 
+*.*[*].mobility.constraintAreaMinZ = -10000m
+*.*[*].mobility.constraintAreaMaxX = 10000m
+*.*[*].mobility.constraintAreaMaxY = 10000m
+*.*[*].mobility.constraintAreaMaxZ = 10000m
+
+## Display communication range / interference range from wifi for all quads, sensors and ground stations
+## To specify for quads, sensors or ground stations seperately do the following
+## *.{QUADS|SENSORS|GROUNDSTATIONS}[*].wlan[*].radio.displayCommunicationRange = true
+*.*[*].wlan[*].radio.displayCommunicationRange = true
+*.*[*].wlan[0].radio.displayInterferenceRange = false
+
+## Set sensor settings 
+*.sensor*.wlan[0].radio.energyConsumer.typename = "SensorStateBasedEpEnergyConsumer"
+*.sensor*.wlan[0].radio.energyConsumer.offPowerConsumption = 0mW
+*.sensor*.wlan[0].radio.energyConsumer.sleepPowerConsumption = 1mW
+*.sensor*.wlan[0].radio.energyConsumer.switchingPowerConsumption = 1mW
+*.sensor*.wlan[0].radio.energyConsumer.receiverIdlePowerConsumption = 2mW
+*.sensor*.wlan[0].radio.energyConsumer.receiverBusyPowerConsumption = 5mW
+*.sensor*.wlan[0].radio.energyConsumer.receiverReceivingPowerConsumption = 10mW
+*.sensor*.wlan[0].radio.energyConsumer.transmitterIdlePowerConsumption = 2mW
+*.sensor*.wlan[0].radio.energyConsumer.transmitterTransmittingPowerConsumption = 100mW
+*.sensor*.energyStorage.typename = "IdealEpEnergyStorage"
+
+[Config Wifi]
+network = GradysNetwork
+description = "Configure quads, ground stations and sensors for wifi only communication"
+
+## Quad setup:
+*.quads[*].numApps = 1
+
+*.quads[*].app[0].typename = "UdpCommunicationApp"
+*.quads[*].app[0].localPort = 1000
+*.quads[*].app[0].destPort = 1000
+*.quads[*].app[0].sendInterval = 1s
+*.quads[*].app[0].startTime = 1s
+*.quads[*].app[0].stopTime = -1s
+*.quads[*].app[0].messageLength = 1454Byte
+
+*.quads[*].protocol.typename = "PythonDroneProtocol"
+
+*.quads[*].mobility.typename = "PythonDroneMobility"
+*.quads[*].mobility.waypointProximity = 1m
+*.quads[*].mobility.speed = 10mps
+*.quads[*].mobility.homeX = 0
+*.quads[*].mobility.homeY = 0
+*.quads[*].mobility.homeZ = 0
+
+{% for information in mobile_information -%}
+*.quads[{{ information[0] }}].mobility.initialX = {{ information[1] }}m
+*.quads[{{ information[0] }}].mobility.initialY = {{ information[2] }}m
+*.quads[{{ information[0] }}].mobility.initialZ = {{ information[3] }}m
+{% endfor -%}
+
+## Ground station setup
+*.groundStation.numApps = 1
+
+*.groundStation.app[0].typename = "UdpCommunicationApp"
+*.groundStation.app[0].destPort = 1000
+*.groundStation.app[0].localPort = 1000
+*.groundStation.app[0].sendInterval = 1s
+*.groundStation.app[0].messageLength = 1454Byte
+*.groundStation.app[0].startTime = 1s
+
+*.groundStation.protocol.typename = "PythonGroundProtocol"
+
+*.groundStation.mobility.typename = "StationaryMobility"
+*.groundStation.mobility.initialAltitude = 0m
+
+*.groundStation.mobility.initialX = {{ ground_information[1] }}m
+*.groundStation.mobility.initialY = {{ ground_information[2] }}m
+*.groundStation.mobility.initialZ = {{ ground_information[3] }}m
+
+## Sensor setup
+*.numSensors = {{ sensor_amount }}
+
+*.sensors[*].numApps = 1
+
+*.sensors[*].app[0].typename = "UdpCommunicationApp"
+*.sensors[*].app[0].destPort = 1000
+*.sensors[*].app[0].localPort = 1000
+*.sensors[*].app[0].sendInterval = 8s
+*.sensors[*].app[0].startTime = exponential(1s)
+*.sensors[*].app[0].messageLength = 1454Byte
+
+*.sensors[0..{{ sensor_amount }}].protocol.typename = "PythonSensorProtocol"
+
+*.sensors[*].mobility.typename = "StationaryMobility"  
+*.sensors[*].mobility.initialAltitude = 0m
+
+{% for information in sensor_information -%}
+*.sensors[{{ information[0] }}].mobility.initialX = {{ information[1] }}m
+*.sensors[{{ information[0] }}].mobility.initialY = {{ information[2] }}m
+*.sensors[{{ information[0] }}].mobility.initialZ = {{ information[3] }}m
+{% endfor %}
+
+[Config PythonExperiment]
+extends = Wifi 
+# Sets the description of the launch configuration.
+# Shown when you launch a simulation and are prompted to select the correct launch configuration.
+description = "Sets up an python experiment with a python configuration"
+# UAV Configurations
+# This parameter is declared in the mobilityDrones.ned network and defines the number of UAVs
+# in the simulation.
+*.numUAVs = {{ mobile_amount }}
+
+*.groundStation.protocol.customProtocolLocation = "{{ protocol_location }}"
+*.quads[*].protocol.customProtocolLocation = "{{ protocol_location }}"
+*.sensors[*].protocol.customProtocolLocation = "{{ protocol_location }}"
+
+*.groundStation.protocol.protocol = "{{ protocol }}"
+*.quads[*].protocol.protocol = "{{ protocol }}"
+*.sensors[*].protocol.protocol = "{{ protocol }}"
+
+*.groundStation.protocol.protocolFileName = "{{ protocol_ground_filename }}"
+*.sensors[*].protocol.protocolFileName = "{{ protocol_sensor_filename }}"
+*.quads[*].protocol.protocolFileName = "{{ protocol_mobile_filename }}"
+
+*.groundStation.protocol.protocolGround = "{{ protocol_ground }}"
+*.sensors[*].protocol.protocolSensor = "{{ protocol_sensor }}"
+*.quads[*].protocol.protocolMobile = "{{ protocol_mobile }}"
+
+# The communbication module automatically filters messages from nodes that are not included in the
+# destAddresses parameter. Be careful not to set the node as a destination address to itself.
+
+{% for i in range(mobile_amount) %}
+    {%- set mobile_destination = [] -%}
+    {%- for information in mobile_information -%}
+        {%- if information[0] != i -%}
+            {%- set value = 'quads[' + information[0]|string + '] ' -%} 
+            {{ mobile_destination.append(value) or "" }}
+        {%- endif -%}
+    {%- endfor -%}
+    {%- for information in sensor_information -%}
+        {%- set value1 = 'sensors[' + information[0]|string + '] ' -%} 
+            {{ mobile_destination.append(value1) or "" }}
+        {%- endfor -%}
+    {{ mobile_destination.append('groundStation') or "" }}  
+*.quads[{{ i }}].app[0].destAddresses = "{{ mobile_destination|join("") }}"
+{%- endfor %}
+
+# Sensor configurations
+{%- set sensor_groundstation_destination = [] -%}
+{% for information in mobile_information %}   
+    {%- set value = 'quads[' + information[0]|string + '] ' -%} 
+    {{ sensor_groundstation_destination.append(value) or "" }}
+{%- endfor %}
+*.sensors[*].app[*].destAddresses = "{{ sensor_groundstation_destination|join("")|trim }}"
+
+# Groundstation configurations
+# Setting the ground station as a sensor because it is a passive listener in this config
+*.groundStation.app[*].destAddresses = "{{ sensor_groundstation_destination|join("")|trim }}"
