@@ -1,5 +1,5 @@
 """
-A common use case of network simulations is to simulate a network of mobile nodes whose mobility is random. This addon
+A common use case of network simulations is to simulate a network of mobile nodes whose mobility is random. This plugin
 provides a simple way to implement random mobility in your protocol.
 """
 import logging
@@ -7,7 +7,7 @@ import random
 from dataclasses import dataclass
 from typing import Tuple, Optional, Callable
 
-from gradysim.protocol.addons.dispatcher import DispatchReturn, create_dispatcher
+from gradysim.protocol.plugin.dispatcher import DispatchReturn, create_dispatcher
 from gradysim.simulator.log import SIMULATION_LOGGER
 from gradysim.protocol.messages.mobility import MobilityCommand, MobilityCommandType
 from gradysim.protocol.messages.telemetry import Telemetry
@@ -18,7 +18,7 @@ from gradysim.protocol.interface import IProtocol
 @dataclass
 class RandomMobilityConfig:
     """
-    Configuration class for the [RandomMobilityAddon][gradysim.protocol.addons.random_mobility.RandomMobilityAddon] class.
+    Configuration class for the [RandomMobilityPlugin][gradysim.protocol.plugin.random_mobility.RandomMobilityPlugin] class.
     """
 
     x_range: Tuple[float, float] = (-50, 50)
@@ -37,27 +37,27 @@ class RandomMobilityConfig:
     """
 
 
-class RandomMobilityAddon:
+class RandomMobilityPlugin:
     """
-    Addon for random mobility. This addon will assist you in implementing random movement behaviour in your
+    Plugin for random mobility. This plugin will assist you in implementing random movement behaviour in your
     protocol.
 
-    This addon should be initialized by your protocol. To use it you should call the
-    [initiate_random_trip][gradysim.protocol.addons.random_mobility.RandomMobilityAddon.initiate_random_trip] method to start
+    This plugin should be initialized by your protocol. To use it you should call the
+    [initiate_random_trip][gradysim.protocol.plugin.random_mobility.RandomMobilityPlugin.initiate_random_trip] method to start
     a random trip. This method will make the node travel to a random waypoint and then draw a new waypoint when the
     node reaches it. This process will repeat until you call the
-    [finish_random_trip][gradysim.protocol.addons.random_mobility.RandomMobilityAddon.finish_random_trip] method.
+    [finish_random_trip][gradysim.protocol.plugin.random_mobility.RandomMobilityPlugin.finish_random_trip] method.
 
     If you only want to make the node travel to a random waypoint once, you can use the
-    [travel_to_random_waypoint][gradysim.protocol.addons.random_mobility.RandomMobilityAddon.travel_to_random_waypoint] method.
+    [travel_to_random_waypoint][gradysim.protocol.plugin.random_mobility.RandomMobilityPlugin.travel_to_random_waypoint] method.
     """
     def __init__(self, protocol: IProtocol, config: RandomMobilityConfig = RandomMobilityConfig()):
         """
-        Initializes the addon
+        Initializes the plugin
 
         Args:
-            protocol: The protocol instance to which this addon will be attached
-            config: Configuration for the addon, if not specified, the default configuration will be used
+            protocol: The protocol instance to which this plugin will be attached
+            config: Configuration for the plugin, if not specified, the default configuration will be used
         """
         self._instance = protocol
         self._config = config
@@ -84,7 +84,7 @@ class RandomMobilityAddon:
             *random_waypoint
         )
 
-        self._logger.info(f"RandomMobilityAddon: traveling to waypoint {random_waypoint}")
+        self._logger.info(f"RandomMobilityPlugin: traveling to waypoint {random_waypoint}")
 
         self._instance.provider.send_mobility_command(command)
         return random_waypoint
@@ -98,7 +98,7 @@ class RandomMobilityAddon:
         Initiates a random trip. This means this node will draw a random waypoint, travel to it and repeat
         this process until finish_random_trip is called.
         """
-        self._logger.info("RandomMobilityAddon: Initiating a random trip")
+        self._logger.info("RandomMobilityPlugin: Initiating a random trip")
         self._current_target = self.travel_to_random_waypoint()
 
         def patched_handle_telemetry(instance: IProtocol, telemetry: Telemetry):
@@ -116,7 +116,7 @@ class RandomMobilityAddon:
         """
         Finishes an ongoing random trip. If no trip is ongoing, this method does nothing.
         """
-        self._logger.info("RandomMobilityAddon: Finishing a random trip")
+        self._logger.info("RandomMobilityPlugin: Finishing a random trip")
         if self._trip_ongoing:
             self._dispatcher.unregister_handle_telemetry(self._patched_handle_telemetry)
             self._patched_handle_telemetry = None

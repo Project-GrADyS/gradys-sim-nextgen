@@ -84,7 +84,7 @@ class IProtocol(ABC):
     The IProvider interface accessible through the `provider` attribute provides the protocol with the necessary tools
     to interact with the environment.
 
-    Protocols that follow this interface can run in any of the [execution-modes][] supported by GrADyS-SIM TNG.
+    Protocols that follow this interface can run in any of the [execution-modes][] supported by GrADyS-SIM NextGen.
     """
 
     provider: IProvider

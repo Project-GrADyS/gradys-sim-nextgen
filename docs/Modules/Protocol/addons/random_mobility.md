@@ -1,3 +1,3 @@
 # Random Mobility
 
-:::gradysim.protocol.addons.random_mobility
+:::gradysim.protocol.plugin.random_mobility

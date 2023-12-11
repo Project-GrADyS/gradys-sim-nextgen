@@ -1,11 +1,15 @@
-# Usage
+# Creating a protocol
+
+!!!info
+    This guide will walk you through the process of creating a protocol and
+    executing it using the simulator using **prototype-mode**.
 
 ## Understanding a protocol
 
 Protocols are classes that implements your algorithms main logic. The class is
 called protocol because it defines the behaviour protocol of the node. If you
 are satisfied with the simulation environment provided ready to use by
-**GrADyS-SIM TNG**, this is the only class you need to code. You can use your
+**GrADyS-SIM NextGen**, this is the only class you need to code. You can use your
 protocol on any simulation environment. We will be
 using [prototype mode][prototype-mode]
 to run a protocol within a python environment.
@@ -39,7 +43,7 @@ places, schedule timers and more.
 ## Building our first protocol
 
 ``` py title="counter_protocol.py"
---8<-- "docs/Getting Started/counter example/1/counter_protocol.py"
+--8<-- "docs/Guides/counter example/1/counter_protocol.py"
 ```
 
 The protocol above is very simple. All it does is use the _provider_ methods
@@ -47,12 +51,12 @@ available to the protocol to schedule a timer that fires every second. When this
 timer fires the protocol increments a counter and sets the timer again.
 
 Now that we have created a protocol, we just have to execute it. As mentioned we
-will be using [prototype mode](execution.md#prototype-mode) for this example. Creating a simulation is 
+will be using [prototype mode](../Getting%20Started/execution.md#prototype-mode) for this example. Creating a simulation is 
 preferably done through the [SimulationBuilder][gradysim.simulator.simulation.SimulationBuilder] 
 class. This class presents a simple API for instantiating python simulations.
 
 ``` py title="counter_execution.py"
---8<-- "docs/Getting Started/counter example/1/counter_execution.py"
+--8<-- "docs/Guides/counter example/1/counter_execution.py"
 ```
 
 Running the file above we will notice the following output on our terminal:
@@ -78,24 +82,26 @@ main features of the simulator: communication. One of the biggest challenges
 of building distributed systems is that they rely on asynchronous communication
 to share information between nodes.
 
-GrADyS-SIM TNG will help you build these kinds of systems by providing support
+GrADyS-SIM NextGen will help you build these kinds of systems by providing support
 for communication between network nodes. Nodes share messages with each other by
 using communication commands that instruct their mobility modules to perform
 actions
 like broadcasting a message, sending one to a specific node or others.
 
 ``` py title="counter_protocol.py"
---8<-- "docs/Getting Started/counter example/2/counter_protocol.py"
+--8<-- "docs/Guides/counter example/2/counter_protocol.py"
 ```
 
 To demonstrate communication we are now creating a simulation populated by 
 several network nodes. All of these nodes are periodically sending messages to 
 all the other ones. Each node keeps track of how many messages it has received 
-and sent. The result of executing this protocol is the following:
+and sent.
 
 ``` py title="counter_execution.py"
---8<-- "docs/Getting Started/counter example/2/counter_execution.py"
+--8<-- "docs/Guides/counter example/2/counter_execution.py"
 ```
+
+ The result of executing this protocol is the following:
 
 ``` title="Console output"
 INFO     [--------- Simulation started ---------]
@@ -129,7 +135,7 @@ communication, like adding delay, limiting the range of communication and adding
 failures.
 
 ``` py title="counter_execution.py"
---8<-- "docs/Getting Started/counter example/3/counter_execution.py"
+--8<-- "docs/Guides/counter example/3/counter_execution.py"
 ```
 
 ``` title="Console output"
@@ -177,7 +183,7 @@ by sending mobility commands using their`IProvider` instance. If a mobility
 handler is present these commands will be translated to movement.
 
 ``` py title="counter_protocol.py"
---8<-- "docs/Getting Started/counter example/4/counter_protocol.py"
+--8<-- "docs/Guides/counter example/4/counter_protocol.py"
 ```
 
 As you can see we have modified our protocol to add a second timer. Since we
@@ -187,7 +193,7 @@ location every 5 seconds. When a new command is issued the previous target
 gets overriden.
 
 ``` py title="counter_execution.py"
---8<-- "docs/Getting Started/counter example/4/counter_execution.py"
+--8<-- "docs/Guides/counter example/4/counter_execution.py"
 ```
 
 We configured the `MobilityHandler` and set our communication medium to a short
@@ -222,7 +228,7 @@ The `VisualizationHandler` was created for this purpose. All we need to do to
 use it is add this handler to our execution. 
 
 ``` py title="counter_execution.py"
---8<-- "docs/Getting Started/counter example/5/counter_execution.py"
+--8<-- "docs/Guides/counter example/5/counter_execution.py"
 ```
 
 When we execute this example a window will open showing the node's position in
@@ -241,7 +247,7 @@ write assertions (basically functions that return a boolean) that get validated
 at runtime. Assertions can be evaluated on a individual level or simulation-wide.
 
 ``` py title="counter_execution.py"
---8<-- "docs/Getting Started/counter example/6/counter_execution.py"
+--8<-- "docs/Guides/counter example/6/counter_execution.py"
 ```
 
 ``` title="Console output"

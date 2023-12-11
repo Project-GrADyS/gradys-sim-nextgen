@@ -1,6 +1,6 @@
 import unittest
 
-from gradysim.protocol.addons.follow_mobility import MobilityLeaderAddon, MobilityFollowerAddon
+from gradysim.protocol.plugin.follow_mobility import MobilityLeaderPlugin, MobilityFollowerPlugin
 from gradysim.protocol.interface import IProtocol
 from gradysim.protocol.messages.mobility import GotoCoordsMobilityCommand, SetSpeedMobilityCommand
 from gradysim.protocol.messages.telemetry import Telemetry
@@ -13,10 +13,10 @@ from gradysim.simulator.simulation import SimulationBuilder, SimulationConfigura
 
 
 class DummyLeaderProtocol(IProtocol):
-    leader: MobilityLeaderAddon
+    leader: MobilityLeaderPlugin
 
     def initialize(self) -> None:
-        self.leader = MobilityLeaderAddon(self)
+        self.leader = MobilityLeaderPlugin(self)
 
         # Setting target far away and speed high
         destination_command = GotoCoordsMobilityCommand(100, 100, 100)
@@ -39,10 +39,10 @@ class DummyLeaderProtocol(IProtocol):
 
 
 class DummyFollowProtocol(IProtocol):
-    follower: MobilityFollowerAddon
+    follower: MobilityFollowerPlugin
 
     def initialize(self) -> None:
-        self.follower = MobilityFollowerAddon(self)
+        self.follower = MobilityFollowerPlugin(self)
 
         # Setting speed lower than leader
         speed_command = SetSpeedMobilityCommand(0.1)

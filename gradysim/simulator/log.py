@@ -1,6 +1,6 @@
 """
 Logging is an important part of any software. It helps users and developers understand what is happening during the
-execution of the program. When running GrADyS-SIM TNG in prototype-mode logging is automatically configured for you,
+execution of the program. When running GrADyS-SIM NextGen in prototype-mode logging is automatically configured for you,
 users that want to make use of this logging should use `logging.getLogger(SIMULATION_LOGGER)` where SIMULATION_LOGGER
 can be imported from this file.
 
@@ -11,6 +11,8 @@ import logging
 from datetime import timedelta
 from pathlib import Path
 from typing import Optional
+
+from gradysim.simulator.node import Node
 
 SIMULATION_LOGGER = "gradysim-sim"
 """
@@ -84,3 +86,10 @@ def setup_simulation_formatter(debug: bool, log_file: Optional[Path]) -> Simulat
         logger.addHandler(file_handler)
 
     return formatter
+
+def node_label(node: Node) -> str:
+    try:
+        protocol_type_name = node.protocol_encapsulator.protocol.__class__.__name__
+    except AttributeError:
+        protocol_type_name = 'Node'
+    return f"{protocol_type_name} {node.id}"

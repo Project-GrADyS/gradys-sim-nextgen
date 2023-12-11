@@ -1,8 +1,8 @@
 # Introduction
 
-## What is GrADyS-SIM TNG?
+## What is GrADyS-SIM NextGen?
 
-GrADyS-SIM TNG is a network simulation framework. You can use this software
+GrADyS-SIM NextGen is a network simulation framework. You can use this software
 to create simulations capable of representing scenarios populated by network
 nodes that coexist in a simulated environment and can send messages to each 
 other. The primary focuses of the simulator are usability and flexibility.  
@@ -32,10 +32,10 @@ act through interfaces provided to them during execution in a technique
 commonly called dependency injection. What this means is that you can re-utilize
 that same code in completely different environments as long as someone has done
 the work of integrating that environment with the interfaces that the protocol
-expects. GrADyS-SIM TNG provides integrations to three environment types which
+expects. GrADyS-SIM NextGen provides integrations to three environment types which
 are the previously mentioned modes.
 
-## Why does GrADyS-SIM TNG exist?
+## History
 
 ![GrADyS and LAC](./assets/gradys_and_lac.png){ align=center }
 
@@ -61,17 +61,41 @@ setting it up is a very involved process thatrequires specific setups to get it 
 perfectly. Even for the people inside our project it is cumbersome to work with so we 
 concluded that some new tool needed to be built to remedy this.
 
-GrADyS-SIM-TNG was envisoned as a low-dependency, light and easy to use simulator that
-would not substitute OMNeT++ but fill the niche of being a tool for quick prototyping 
-before more realistic results would be collected from OMNeT++. An issue we already had
-was translating results from the OMNeT++ simulation to the real world. Introducing a 
-new link in this chain would only make this disconnect between our imlpementation
-environments greather, so GrADyS-SIM TNG would need to somehow generate code that could
-be run everywhere, in python, OMNeT++ and the real world. 
-
 These were our motivations to create this tool. We are also taking extra care to make
 sure this won't be a tool only for the GrADyS project, but for anyone with similar
 interests to ours. This means creating a very general implementation that can be 
 used to implement all kinds of different ideas, instead of something focused only
 on our area of research.
 
+GrADyS-SIM-NextGen was envisoned as a low-dependency, light and easy to use simulator that
+would not substitute OMNeT++ but fill the niche of being a tool for quick prototyping 
+before more realistic results would be collected from OMNeT++. An issue we already had
+was translating results from the OMNeT++ simulation to the real world. Introducing a 
+new link in this chain would only make this disconnect between our imlpementation
+environments greather, so GrADyS-SIM NextGen would need to somehow generate code that could
+be run everywhere, in python, OMNeT++ and the real world. 
+
+## What should I expect from GrADyS-SIM NextGen?
+
+GrADyS-SIM NextGen is a tool for implementing and simulating decentralized 
+algorithms. It shines in simulating environment populated by nodes capable of
+communication and movement. In this dynamic environment you can implement
+algorithms that coordinate the movement of these nodes and the communication
+between them in order to achieve some goal. 
+
+The simulator will help you to implement your algorithm's logic, testing it,
+validating it and understanding it. You will be able to see how your algorithm
+performs in situations analogous to the ones it would find in the real-world.
+This process will help you create more resilient, robust and efficient 
+algorithms that perform well within the constraints of the real world.
+
+GrADyS-SIM NextGen is a low-dependency, light and easy to use simulator. It was
+built with simplicity of use as a primary goal. If you want quick prototyping
+and testing of your algorithms, this is the tool for you. We also provide more
+complex tools that can be used to simulate more realistic scenarios, but they
+are not as easy to use as the prototype-mode simulator. The algorithm logic you
+implement in this simulator, which we tend to call "protocols", can be reused
+in any of our provided simulation environments and even in the real-world, 
+although this feature is not ready yet. All of this with no code adaptation
+necessary as the protocols run isolated to the code that make each of the
+environments work.

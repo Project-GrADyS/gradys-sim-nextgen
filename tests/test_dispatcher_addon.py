@@ -1,11 +1,11 @@
 import unittest
 
-from gradysim.protocol.addons.dispatcher import create_dispatcher, DispatchReturn
+from gradysim.protocol.plugin.dispatcher import create_dispatcher, DispatchReturn
 from gradysim.protocol.interface import IProtocol
 from gradysim.protocol.messages.telemetry import Telemetry
 
 
-class DispatchAddonTestCase(unittest.TestCase):
+class DispatchPluginTestCase(unittest.TestCase):
     def test_dispatcher_still_calls_default(self):
         class DummyProtocol(IProtocol):
             variable: int

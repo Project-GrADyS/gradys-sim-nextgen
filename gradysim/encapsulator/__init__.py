@@ -1,5 +1,5 @@
 """
-The encapsulator module is a middle-man between protocols and environments. One of GrADyS-SIM TNG's features is the
+The encapsulator module is a middle-man between protocols and environments. One of GrADyS-SIM NextGen's features is the
 construction of protocols that can be used in different environments without changes to their code. These environments
 are called execution modes. Protocols are wrapped in encapsulators that handle the effects of the environment on the
 protocol and are injected with provider instances that provide them with the necessary tools to interact with the

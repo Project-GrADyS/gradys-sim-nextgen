@@ -1,8 +1,8 @@
 from counter_protocol import CounterProtocol
-from gradysim.simulator import CommunicationHandler, CommunicationMedium
+from gradysim.simulator.handler.communication import CommunicationMedium, CommunicationHandler
 from gradysim.simulator.handler.mobility import MobilityHandler
-from gradysim.simulator import TimerHandler
-from gradysim.simulator import VisualizationHandler
+from gradysim.simulator.handler.timer import TimerHandler
+from gradysim.simulator.handler.visualization import VisualizationHandler
 from gradysim.simulator.simulation import SimulationBuilder, SimulationConfiguration
 
 # To enhance our viewing experience we are setting the simulator

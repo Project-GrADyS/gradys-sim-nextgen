@@ -1,9 +1,9 @@
 import logging
 
 from gradysim.protocol.interface import IProtocol
-from gradysim.simulator.log import SIMULATION_LOGGER
-from gradysim.protocol import CommunicationCommand, CommunicationCommandType
+from gradysim.protocol.messages.communication import CommunicationCommand, CommunicationCommandType
 from gradysim.protocol.messages.telemetry import Telemetry
+from gradysim.simulator.log import SIMULATION_LOGGER
 
 
 class CounterProtocol(IProtocol):

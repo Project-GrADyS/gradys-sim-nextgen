@@ -1,8 +1,8 @@
 import logging
 import random
 
-from gradysim.protocol.addons.follow_mobility import MobilityFollowerAddon, MobilityLeaderAddon
-from gradysim.protocol.addons.mission_mobility import MissionMobilityAddon, MissionMobilityConfiguration, LoopMission
+from gradysim.protocol.plugin.follow_mobility import MobilityFollowerPlugin, MobilityLeaderPlugin
+from gradysim.protocol.plugin.mission_mobility import MissionMobilityPlugin, MissionMobilityConfiguration, LoopMission
 from gradysim.protocol.interface import IProtocol
 from gradysim.protocol.messages.mobility import SetSpeedMobilityCommand
 from gradysim.protocol.messages.telemetry import Telemetry
@@ -10,13 +10,13 @@ from gradysim.simulator.log import SIMULATION_LOGGER
 
 
 class FollowerProtocol(IProtocol):
-    follower: MobilityFollowerAddon
+    follower: MobilityFollowerPlugin
 
     def __init__(self):
         self._logger = logging.getLogger(SIMULATION_LOGGER)
 
     def initialize(self) -> None:
-        self.follower = MobilityFollowerAddon(self)
+        self.follower = MobilityFollowerPlugin(self)
 
         self.follower.set_relative_position((
             random.uniform(-5, 5),
@@ -45,15 +45,15 @@ class FollowerProtocol(IProtocol):
 
 
 class LeaderProtocol(IProtocol):
-    leader: MobilityLeaderAddon
+    leader: MobilityLeaderPlugin
 
     def __init__(self):
         self._logger = logging.getLogger(SIMULATION_LOGGER)
 
     def initialize(self) -> None:
-        self.leader = MobilityLeaderAddon(self)
+        self.leader = MobilityLeaderPlugin(self)
 
-        mission = MissionMobilityAddon(self, MissionMobilityConfiguration(loop_mission=LoopMission.RESTART))
+        mission = MissionMobilityPlugin(self, MissionMobilityConfiguration(loop_mission=LoopMission.RESTART))
         mission.start_mission([
             (20, 20, 5),
             (20, -20, 5),

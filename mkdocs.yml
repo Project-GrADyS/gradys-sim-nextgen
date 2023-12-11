@@ -1,4 +1,4 @@
-site_name: GrADyS-SIM TNG
+site_name: GrADyS-SIM NextGen
 theme:
   name: material
   features:
@@ -19,6 +19,9 @@ markdown_extensions:
   - pymdownx.snippets
   - pymdownx.superfences
   - attr_list
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
 
 plugins:
   - search
