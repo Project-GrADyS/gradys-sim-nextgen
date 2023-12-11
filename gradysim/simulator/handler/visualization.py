@@ -24,6 +24,7 @@ import websockets
 from gradysim.protocol.position import Position
 from gradysim.simulator.event import EventLoop
 from gradysim.simulator.handler.interface import INodeHandler
+from gradysim.simulator.log import node_label
 from gradysim.simulator.node import Node
 
 
@@ -69,7 +70,7 @@ class _InitializationInformation(TypedDict):
     x_range: Tuple[float, float]
     y_range: Tuple[float, float]
     z_range: Tuple[float, float]
-    nodes: List[int]
+    nodes: List[str]
 
 
 class _VisualizationInformation(TypedDict):
@@ -127,7 +128,7 @@ class VisualizationHandler(INodeHandler):
             "x_range": self._configuration.x_range,
             "y_range": self._configuration.y_range,
             "z_range": self._configuration.z_range,
-            "nodes": [node.id for node in self._nodes],
+            "nodes": [node_label(node) for node in self._nodes],
         }
 
         # Initialize with precise CPU timestamp of simulation's start
@@ -154,9 +155,11 @@ class VisualizationHandler(INodeHandler):
         self._information["tracked_variables"] = \
             [node.protocol_encapsulator.protocol.provider.tracked_variables.copy() for node in self._nodes]
 
-        self._event_loop.schedule_event(self._event_loop.current_time + self._configuration.information_collection_interval,
-                                        self._report_information,
-                                        "Visualization")
+        self._event_loop.schedule_event(
+            self._event_loop.current_time + self._configuration.information_collection_interval,
+            self._report_information,
+            "Visualization"
+        )
 
 
 def _visualization_thread(config: VisualizationConfiguration,
