@@ -8,7 +8,6 @@ from dataclasses import dataclass
 from typing import Tuple, Optional, Callable
 
 from gradysim.protocol.plugin.dispatcher import DispatchReturn, create_dispatcher
-from gradysim.simulator.log import SIMULATION_LOGGER
 from gradysim.protocol.messages.mobility import MobilityCommand, MobilityCommandType
 from gradysim.protocol.messages.telemetry import Telemetry
 from gradysim.protocol.position import Position, squared_distance
@@ -61,7 +60,7 @@ class RandomMobilityPlugin:
         """
         self._instance = protocol
         self._config = config
-        self._logger = logging.getLogger(SIMULATION_LOGGER)
+        self._logger = logging.getLogger()
 
         self._dispatcher = create_dispatcher(protocol)
 

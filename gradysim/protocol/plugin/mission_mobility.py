@@ -8,7 +8,6 @@ from gradysim.protocol.interface import IProtocol
 from gradysim.protocol.messages.mobility import GotoCoordsMobilityCommand, SetSpeedMobilityCommand
 from gradysim.protocol.messages.telemetry import Telemetry
 from gradysim.protocol.position import Position, squared_distance
-from gradysim.simulator.log import SIMULATION_LOGGER
 
 
 class LoopMission(enum.Enum):
@@ -58,7 +57,7 @@ class MissionMobilityPlugin:
         self._dispatcher = create_dispatcher(protocol)
         self._instance = protocol
         self._config = configuration
-        self._logger = logging.getLogger(SIMULATION_LOGGER)
+        self._logger = logging.getLogger()
 
         self._initialize_telemetry_handling()
 

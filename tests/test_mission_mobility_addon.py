@@ -58,12 +58,12 @@ class TestMissionMobilityPlugin(unittest.TestCase):
             (10, 10, 10)
         ])
 
-        self.assertEquals(self.mission.current_waypoint, 0)
+        self.assertEqual(self.mission.current_waypoint, 0)
         self.assertFalse(self.mission.is_idle)
         self.assertFalse(self.mission.is_reversed)
 
-        self.assertEquals(self.commands_sent[MobilityCommandType.GOTO_COORDS], 1)
-        self.assertEquals(self.commands_sent[MobilityCommandType.SET_SPEED], 1)
+        self.assertEqual(self.commands_sent[MobilityCommandType.GOTO_COORDS], 1)
+        self.assertEqual(self.commands_sent[MobilityCommandType.SET_SPEED], 1)
 
     def test_mission_stop(self):
         self.mission.start_mission([
@@ -77,7 +77,7 @@ class TestMissionMobilityPlugin(unittest.TestCase):
 
     def test_idle_before_start(self):
         self.assertTrue(self.mission.is_idle)
-        self.assertEquals(len(self.commands_sent), 0)
+        self.assertEqual(len(self.commands_sent), 0)
 
     def test_waypoint_reached(self):
         self.mission.start_mission([
@@ -87,8 +87,8 @@ class TestMissionMobilityPlugin(unittest.TestCase):
 
         self.protocol.handle_telemetry(Telemetry((10, 10, 10)))
 
-        self.assertEquals(self.mission.current_waypoint, 1)
-        self.assertEquals(self.commands_sent[MobilityCommandType.GOTO_COORDS], 2)
+        self.assertEqual(self.mission.current_waypoint, 1)
+        self.assertEqual(self.commands_sent[MobilityCommandType.GOTO_COORDS], 2)
 
     def test_mission_finishes(self):
         self.mission.start_mission([
@@ -114,8 +114,8 @@ class TestMissionMobilityPlugin(unittest.TestCase):
         self.protocol.handle_telemetry(Telemetry((20, 20, 20)))
         self.protocol.handle_telemetry(Telemetry((30, 30, 30)))
 
-        self.assertEquals(self.mission.current_waypoint, 0)
-        self.assertEquals(self.commands_sent[MobilityCommandType.GOTO_COORDS], 4)
+        self.assertEqual(self.mission.current_waypoint, 0)
+        self.assertEqual(self.commands_sent[MobilityCommandType.GOTO_COORDS], 4)
 
     def test_mission_reverses(self):
         self.mission = MissionMobilityPlugin(self.protocol,
@@ -130,8 +130,8 @@ class TestMissionMobilityPlugin(unittest.TestCase):
         self.protocol.handle_telemetry(Telemetry((20, 20, 20)))
         self.protocol.handle_telemetry(Telemetry((30, 30, 30)))
 
-        self.assertEquals(self.mission.current_waypoint, 1)
-        self.assertEquals(self.commands_sent[MobilityCommandType.GOTO_COORDS], 4)
+        self.assertEqual(self.mission.current_waypoint, 1)
+        self.assertEqual(self.commands_sent[MobilityCommandType.GOTO_COORDS], 4)
 
     def test_set_reverse(self):
         self.mission = MissionMobilityPlugin(self.protocol,
@@ -146,9 +146,9 @@ class TestMissionMobilityPlugin(unittest.TestCase):
         self.protocol.handle_telemetry(Telemetry((10, 10, 10)))
         self.mission.set_reversed(True)
 
-        self.assertEquals(self.mission.current_waypoint, 0)
+        self.assertEqual(self.mission.current_waypoint, 0)
         self.assertTrue(self.mission.is_reversed)
-        self.assertEquals(self.commands_sent[MobilityCommandType.GOTO_COORDS], 3)
+        self.assertEqual(self.commands_sent[MobilityCommandType.GOTO_COORDS], 3)
 
     def test_set_waypoint(self):
         self.mission.start_mission([
@@ -158,8 +158,8 @@ class TestMissionMobilityPlugin(unittest.TestCase):
         ])
 
         self.mission.set_current_waypoint(2)
-        self.assertEquals(self.mission.current_waypoint, 2)
-        self.assertEquals(self.commands_sent[MobilityCommandType.GOTO_COORDS], 2)
+        self.assertEqual(self.mission.current_waypoint, 2)
+        self.assertEqual(self.commands_sent[MobilityCommandType.GOTO_COORDS], 2)
 
     def test_set_waypoint_reversed(self):
         self.mission = MissionMobilityPlugin(self.protocol,

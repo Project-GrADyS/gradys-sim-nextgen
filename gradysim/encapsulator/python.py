@@ -14,7 +14,6 @@ from gradysim.protocol.messages.mobility import MobilityCommand
 from gradysim.simulator.handler.timer import TimerHandler
 from gradysim.protocol.messages.telemetry import Telemetry
 from gradysim.simulator.handler.mobility import MobilityHandler
-from gradysim.simulator.log import SIMULATION_LOGGER
 from gradysim.simulator.node import Node
 from gradysim.simulator.handler.communication import CommunicationHandler
 
@@ -40,7 +39,8 @@ class PythonProvider(IProvider):
         self.communication_handler = communication_handler
         self.timer_handler = timer_handler
         self.mobility_handler = mobility_handler
-        self._logger = logging.getLogger(SIMULATION_LOGGER)
+        self.tracked_variables = {}
+        self._logger = logging.getLogger()
 
     def send_communication_command(self, command: CommunicationCommand) -> None:
         """

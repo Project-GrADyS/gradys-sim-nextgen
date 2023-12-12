@@ -58,6 +58,11 @@ class. This class presents a simple API for instantiating python simulations.
 ``` py title="counter_execution.py"
 --8<-- "docs/Guides/counter example/1/counter_execution.py"
 ```
+!!!danger
+    This pattern of defining a main function and running it only if the file is being executed directly is required if
+    you are using the VisualizationHandler as it will spawn a new process to run the visualization thread. We will use
+    the visualization handler later so we are preparing for it. Read more about this in 
+    [the handler's documentation][gradysim.simulator.handler.visualization.VisualizationHandler]. 
 
 Running the file above we will notice the following output on our terminal:
 
@@ -227,6 +232,16 @@ lot of times it is useful to properly see what's happening in the simulation.
 The `VisualizationHandler` was created for this purpose. All we need to do to
 use it is add this handler to our execution. 
 
+The visualization handler works by starting a websocket server on a separate process
+that will serve data about the visualization status to a web page client. This web
+page can be automatically opened by the handler by setting the `open_browser` parameter
+to `True` on the handler's configuration. The web page will show the nodes' position and
+some other basic information about the simulation. 
+
+The web page interface can be accessed anytime on 
+[this URL](https://thlamz.github.io/gradysim-nextgen-visualization/). The visualization
+will automatically connect to the websocket server once you start the simulation.
+
 ``` py title="counter_execution.py"
 --8<-- "docs/Guides/counter example/5/counter_execution.py"
 ```
@@ -234,7 +249,15 @@ use it is add this handler to our execution.
 When we execute this example a window will open showing the node's position in
 real-time while the simulation is running.
 
-![execution gif](../assets/visualization.gif)
+<video controls loop>
+    <source src="../../assets/counter_example_visualization.webm" type="video/webm">
+</video>
+
+!!!warning
+    Take a look at the 
+    [visualization handler's documentation][gradysim.simulator.handler.visualization.VisualizationHandler] for a better
+    and more up-to-date overview of the visualization interface's capabilities. The video presented above may not 
+    reflect the current state of the visualization interface, as it is constantly being improved.
 
 ## Making sure your protocol works
 One of the main points of even creating simulations is validating your 

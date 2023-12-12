@@ -3,7 +3,6 @@ import logging
 from gradysim.protocol.interface import IProtocol
 from gradysim.protocol.messages.communication import CommunicationCommand, CommunicationCommandType
 from gradysim.protocol.messages.telemetry import Telemetry
-from gradysim.simulator.log import SIMULATION_LOGGER
 
 
 class CounterProtocol(IProtocol):
@@ -53,6 +52,5 @@ class CounterProtocol(IProtocol):
 
     def finish(self):
         # We print our final counter value at the end of the simulator
-        logger = logging.getLogger(SIMULATION_LOGGER)
-        logger.info(f"Final counter values: "
-                    f"sent={self.sent} ; received={self.received}")
+        logging.info(f"Final counter values: "
+                     f"sent={self.sent} ; received={self.received}")
