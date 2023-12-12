@@ -3,7 +3,6 @@ from gradysim.protocol.addons.statistics import create_statistics, finish_statis
 from gradysim.protocol.messages.communication import BroadcastMessageCommand
 from gradysim.protocol.messages.telemetry import Telemetry
 from gradysim.protocol.interface import IProtocol
-from gradysim.simulator.log import SIMULATION_LOGGER
 from message import SimpleMessage, SenderType
 
 
@@ -11,7 +10,7 @@ class SimpleProtocolGround(IProtocol):
     def __init__(self):
         self.packets: int = 0
 
-        self._logger = logging.getLogger(SIMULATION_LOGGER)
+        self._logger = logging.getLogger()
 
     def initialize(self):
         self._logger.debug("Initializing mobile protocol")
