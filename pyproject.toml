@@ -27,5 +27,5 @@ dependencies = [
 ]
 
 [project.urls]
-"Homepage" = "https://github.com/Thlamz/GrADyS-SIM-NextGen"
-"Documentation" = 'https://thlamz.github.io/gradys-sim-nextgen/'
+"Homepage" = "https://github.com/Project-GrADyS/gradys-sim-nextgen"
+"Documentation" = 'https://project-gradys.github.io/gradys-sim-nextgen/'

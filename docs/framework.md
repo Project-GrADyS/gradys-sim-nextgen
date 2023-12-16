@@ -123,7 +123,7 @@ inside the OMNeT++ simulation which provides a more realistic network model.
 
 !!!info
     The OMNeT++ GrADyS-SIM Simulator is hosted in a separate repository. You
-    can find it [here](https://github.com/brunoolivieri/gradys-simulations). 
+    can find it [here](https://github.com/Project-GrADyS/gradys-simulations). 
     There you will find installation instructions and a guide on how to use it
     to run your protocols in the integrated-mode. For a more in depth look you
     can read this [technical report](https://arxiv.org/abs/2202.08134) 
@@ -155,7 +155,7 @@ protocols in a more realistic environment.
 !!!info
     The integration with Ardupilot's SITL Simulator is hosted in a separate 
     repository. You can find it 
-    [here](https://github.com/brunoolivieri/gradys-simulations). There you will
+    [here](https://github.com/Project-GrADyS/gradys-simulations). There you will
     also find instructions in how to use it. In the past this project was hosted
     in a separate repository. You can find it 
     [here](https://github.com/Thlamz/MAVSIMNET).
