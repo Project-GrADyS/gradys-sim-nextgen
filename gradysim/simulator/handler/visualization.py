@@ -1,7 +1,7 @@
 """
 This handler adds visualization to the simulation. It shows regularly updated node positions in a graphical
 representation of the simulation. This graphical representation is web-based and can be accessed via a browser
-through [this link](https://thlamz.github.io/gradysim-nextgen-visualization/). When the simulation starts running
+through [this link](https://project-gradys.github.io/gradysim-nextgen-visualization/). When the simulation starts running
 a WebSocket server is started which the browser connects to. The browser then displays the simulation in a 3D
 environment. The visualization is updated regularly with the current node positions and other information.
 
@@ -85,7 +85,7 @@ class VisualizationHandler(INodeHandler):
     """
     Adds visualization to the simulation. Shows regularly updated node position and other simulation information
     in a graphical representation of the simulation. The graphical representation is web-based and can be accessed
-    via a browser through [this link](https://thlamz.github.io/gradysim-nextgen-visualization/).
+    via a browser through [this link](https://project-gradys.github.io/gradysim-nextgen-visualization/).
 
     The visualization handler uses a separate process to run the WebSocket server, this means that on Windows your
     script will be rerun when the new process starts. This means that any code that should not be run multiple times
@@ -195,7 +195,7 @@ def _visualization_thread(config: VisualizationConfiguration,
     async def main():
         async with websockets.serve(register, config.host, config.port):
             if config.open_browser:
-                webbrowser.open("https://thlamz.github.io/gradysim-nextgen-visualization/")
+                webbrowser.open("https://project-gradys.github.io/gradysim-nextgen-visualization/")
 
             await update_information()
 
