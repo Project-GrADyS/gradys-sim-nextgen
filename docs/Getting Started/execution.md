@@ -22,7 +22,7 @@ in the documentation for the simulation module [here](../Modules/Simulator/index
 Integrated mode uses the OMNeT++ network simulator to execute the user-defined 
 protocols in a realistic network simulation environment. The OMNeT++ simulation
 and integration are hosted in a different repository accesible 
-[here](https://github.com/brunoolivieri/gradys-simulations). There you will find
+[here](https://github.com/Project-GrADyS/gradys-simulations). There you will find
 installation instructions and a guide on how to use it.
 
 ## Experiment mode

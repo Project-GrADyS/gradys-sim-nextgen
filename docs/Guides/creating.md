@@ -239,7 +239,7 @@ to `True` on the handler's configuration. The web page will show the nodes' posi
 some other basic information about the simulation. 
 
 The web page interface can be accessed anytime on 
-[this URL](https://thlamz.github.io/gradysim-nextgen-visualization/). The visualization
+[this URL](https://project-gradys.github.io/gradys-sim-nextgen-visualization/). The visualization
 will automatically connect to the websocket server once you start the simulation.
 
 ``` py title="counter_execution.py"
