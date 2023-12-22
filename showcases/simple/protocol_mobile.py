@@ -1,11 +1,11 @@
 import logging
 import random
-from gradysim.protocol.addons.mission_mobility import (
+from gradysim.protocol.plugin.mission_mobility import (
     LoopMission,
-    MissionMobilityAddon,
+    MissionMobilityPlugin,
     MissionMobilityConfiguration,
 )
-from gradysim.protocol.addons.statistics import create_statistics, finish_statistics
+from gradysim.protocol.plugin.statistics import create_statistics, finish_statistics
 from gradysim.protocol.messages.communication import BroadcastMessageCommand
 
 from gradysim.protocol.messages.telemetry import Telemetry
@@ -25,7 +25,7 @@ class SimpleProtocolMobile(IProtocol):
 
         create_statistics(self)
 
-        self.mission: MissionMobilityAddon = MissionMobilityAddon(
+        self.mission: MissionMobilityPlugin= MissionMobilityPlugin(
             self, MissionMobilityConfiguration(loop_mission=LoopMission.RESTART)
         )
 

@@ -2,7 +2,7 @@
 This module contains a function that creates statistics which wraps a protocol instance and it's methods. Implements
 a call chain for each of the protocol interface's methods.
 
-Use this module through the **create_statistics**][gradysim.protocol.addons.statistics.create_statistics] method,
+Use this module through the **create_statistics**][gradysim.protocol.plugin.statistics.create_statistics] method,
 **never** instantiate the StatisticsProtocolWrapper directly.
 
 Beware that this module uses monkey patching and may result in broken protocols if someone else tries to tamper with
@@ -13,7 +13,7 @@ import time
 from typing import Any, Dict, List
 
 import pandas as pd
-from gradysim.protocol.addons.dispatcher import create_dispatcher, DispatchReturn
+from gradysim.protocol.plugin.dispatcher import create_dispatcher, DispatchReturn
 
 from gradysim.protocol.interface import IProtocol
 
@@ -31,7 +31,11 @@ def handle_timer_srt(protocol: IProtocol, timer: str) -> DispatchReturn:
             protocol.provider.current_time(), time.time()
         )
 
-        protocol.provider.schedule_timer("statistics", protocol.provider.current_time() + 0.001)
+        _statistics_protocol_wrappers[protocol].update_tracked_variable_statistic(
+            protocol.provider.current_time(), protocol.provider.tracked_variables
+        )
+
+        protocol.provider.schedule_timer("statistics", protocol.provider.current_time() + 0.1)
         
         return DispatchReturn.INTERRUPT
 
@@ -56,7 +60,7 @@ def handle_packet_tv(protocol: IProtocol, message: str) -> DispatchReturn:
 class StatisticsProtocolWrapper:
     """'
     Do not use this class directly, instead use
-    [create_statistics][gradysim.protocol.addons.statistics.create_statistics].
+    [create_statistics][gradysim.protocol.plugin.statistics.create_statistics].
 
     Wraps the protocol's calls into a call chain. Instead of going directly to the protocol's methods calls to the
     protocol interface will be passed down a chain of registered handlers. The protocol's own method is at the end
@@ -66,10 +70,10 @@ class StatisticsProtocolWrapper:
     _statistics_time_list: List[Dict[str, Any]]
     _statistics_tracked_variables_list: List[Dict[str, Any]]
 
-    def __init__(self, protocol: IProtocol):
+    def __init__(self, protocol: IProtocol, file_name_part: str):
         """
         Instantiates a protocol wrapper. Should not be instantiated directly, create a statistics using the
-        [create_statistics][gradysim.protocol.addons.statistics.create_statistics] method.
+        [create_statistics][gradysim.protocol.plugin.statistics.create_statistics] method.
 
         **Do not instantiate this class directly**
 
@@ -79,11 +83,11 @@ class StatisticsProtocolWrapper:
 
         self._dispatcher = create_dispatcher(protocol)
         
-        self._id = 'cpp_with_visualization' #express, 
+        self._id = file_name_part 
         self._statistics_time_list = []
         self._statistics_tracked_variables_list = []
 
-        protocol.provider.schedule_timer("statistics", protocol.provider.current_time() + 0.001)
+        protocol.provider.schedule_timer("statistics", protocol.provider.current_time() + 0.1)
 
     def register(self):
         """
@@ -154,7 +158,7 @@ class StatisticsProtocolWrapper:
 _statistics_protocol_wrappers: Dict[IProtocol, StatisticsProtocolWrapper] = {}
 
 
-def create_statistics(protocol: IProtocol) -> StatisticsProtocolWrapper:
+def create_statistics(protocol: IProtocol, file_name_part: str = "") -> StatisticsProtocolWrapper:
     """
     Creates statistics which wraps a protocol instance and it's methods. Implements a call chain for each of the
     protocol interface's methods. The class returned from this function can be used to add functions to the call chain
@@ -165,7 +169,7 @@ def create_statistics(protocol: IProtocol) -> StatisticsProtocolWrapper:
     Beware that this module uses monkey patching and may result in broken protocols if someone else tries to tamper with
     the protocol's methods.
 
-    If you want to implement an addon or some other behaviour that requires overriding protocol's
+    If you want to implement an plugin or some other behaviour that requires overriding protocol's
     methods you should use this function
 
     Args:
@@ -177,7 +181,7 @@ def create_statistics(protocol: IProtocol) -> StatisticsProtocolWrapper:
 
     global _statistics_protocol_wrappers
     if protocol not in _statistics_protocol_wrappers:
-        _statistics_protocol_wrappers[protocol] = StatisticsProtocolWrapper(protocol)
+        _statistics_protocol_wrappers[protocol] = StatisticsProtocolWrapper(protocol, file_name_part)
 
     _statistics_protocol_wrappers[protocol].register()
 
