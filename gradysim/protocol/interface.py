@@ -111,7 +111,7 @@ class IProtocol(ABC):
         return protocol
 
     @abstractmethod
-    def initialize(self, stage: int) -> None:
+    def initialize(self) -> None:
         """
         This is the first function called when the simulator begins. The initialize()
         methods for each network node are called in arbitrary order so don't rely on other

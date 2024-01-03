@@ -34,10 +34,10 @@ class CommunicationCommand:
 
 
 class SendMessageCommand(CommunicationCommand):
-    def __init__(self, message: str, destination: int):
+    def __init__(self, message: str, destination: Optional[int]):
         self.command_type = CommunicationCommandType.SEND
-        self.destination = destination
         self.message = message
+        self.destination = destination
 
 
 class BroadcastMessageCommand(CommunicationCommand):

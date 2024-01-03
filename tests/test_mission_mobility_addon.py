@@ -14,7 +14,7 @@ class TestMissionMobilityPlugin(unittest.TestCase):
     def setUp(self) -> None:
         class DummyProtocol(IProtocol):
 
-            def initialize(self, stage: int) -> None:
+            def initialize(self) -> None:
                 pass
 
             def handle_timer(self, timer: str) -> None:

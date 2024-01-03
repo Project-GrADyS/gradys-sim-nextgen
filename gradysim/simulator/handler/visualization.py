@@ -111,7 +111,7 @@ class VisualizationHandler(INodeHandler):
         self._information = manager.dict()
 
         self._configuration = configuration
-
+        
     @staticmethod
     def get_label() -> str:
         return "visualization"

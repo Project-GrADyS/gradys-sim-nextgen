@@ -15,7 +15,7 @@ from gradysim.simulator.simulation import SimulationBuilder, SimulationConfigura
 class DummyLeaderProtocol(IProtocol):
     leader: MobilityLeaderPlugin
 
-    def initialize(self, stage: int) -> None:
+    def initialize(self) -> None:
         self.leader = MobilityLeaderPlugin(self)
 
         # Setting target far away and speed high
@@ -41,7 +41,7 @@ class DummyLeaderProtocol(IProtocol):
 class DummyFollowProtocol(IProtocol):
     follower: MobilityFollowerPlugin
 
-    def initialize(self, stage: int) -> None:
+    def initialize(self) -> None:
         self.follower = MobilityFollowerPlugin(self)
 
         # Setting speed lower than leader

@@ -15,11 +15,11 @@ class PingProtocol(IProtocol):
         self._logger = logging.getLogger()
         self._movement = RandomMobilityPlugin(self)
 
-    def initialize(self, stage: int):
+    def initialize(self):
         self.provider.schedule_timer("", self.provider.current_time() + random.random() + 2)
         self._movement.initiate_random_trip()
 
-    def handle_timer(self, timer: dict):
+    def handle_timer(self, timer: str):
         command = CommunicationCommand(
             CommunicationCommandType.BROADCAST,
             "ping"

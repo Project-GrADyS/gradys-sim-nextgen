@@ -13,7 +13,7 @@ class DispatchPluginTestCase(unittest.TestCase):
             def __init__(self):
                 self.variable = 0
 
-            def initialize(self, stage: int):
+            def initialize(self):
                 self.variable += 1
 
             def handle_timer(self, timer: str):
@@ -30,7 +30,7 @@ class DispatchPluginTestCase(unittest.TestCase):
 
         protocol = DummyProtocol()
         create_dispatcher(protocol)
-        protocol.initialize(0)
+        protocol.initialize()
         self.assertEqual(protocol.variable, 1)
         protocol.handle_timer("timer")
         self.assertEqual(protocol.variable, 2)
@@ -48,7 +48,7 @@ class DispatchPluginTestCase(unittest.TestCase):
             def __init__(self):
                 self.variable = 0
 
-            def initialize(self, stage: int):
+            def initialize(self):
                 self.variable += 1
 
             def handle_timer(self, timer: str):
@@ -68,7 +68,7 @@ class DispatchPluginTestCase(unittest.TestCase):
 
         counter = 0
 
-        def initialize(_instance: IProtocol, stage: int):
+        def initialize(_instance: IProtocol):
             nonlocal counter
             counter += 1
 
@@ -97,7 +97,7 @@ class DispatchPluginTestCase(unittest.TestCase):
         dispatcher.register_handle_telemetry(handle_telemetry)
         dispatcher.register_finish(finish)
 
-        protocol.initialize(0)
+        protocol.initialize()
         self.assertEqual(protocol.variable, 1)
         self.assertEqual(counter, 1)
 
@@ -124,7 +124,7 @@ class DispatchPluginTestCase(unittest.TestCase):
             def __init__(self):
                 self.variable = 0
 
-            def initialize(self, stage: int):
+            def initialize(self):
                 self.variable += 1
 
             def handle_timer(self, timer: str):
@@ -144,7 +144,7 @@ class DispatchPluginTestCase(unittest.TestCase):
 
         counter = 0
 
-        def initialize(_instance: IProtocol, stage: int):
+        def initialize(_instance: IProtocol):
             nonlocal counter
             counter += 1
 
@@ -179,7 +179,7 @@ class DispatchPluginTestCase(unittest.TestCase):
         dispatcher.unregister_handle_telemetry(handle_telemetry)
         dispatcher.unregister_finish(finish)
 
-        protocol.initialize(0)
+        protocol.initialize()
         self.assertEqual(protocol.variable, 1)
         self.assertEqual(counter, 0)
 
@@ -206,7 +206,7 @@ class DispatchPluginTestCase(unittest.TestCase):
             def __init__(self):
                 self.variable = 0
 
-            def initialize(self, stage: int):
+            def initialize(self):
                 self.variable += 1
 
             def handle_timer(self, timer: str):
@@ -226,7 +226,7 @@ class DispatchPluginTestCase(unittest.TestCase):
 
         counter = 0
 
-        def initialize(_instance: IProtocol, stage: int):
+        def initialize(_instance: IProtocol):
             nonlocal counter
             counter += 1
 
@@ -255,7 +255,7 @@ class DispatchPluginTestCase(unittest.TestCase):
         dispatcher.register_handle_telemetry(handle_telemetry)
         dispatcher.register_finish(finish)
 
-        protocol.initialize(0)
+        protocol.initialize()
         self.assertEqual(protocol.variable, 1)
         self.assertEqual(counter, 1)
 

@@ -143,11 +143,11 @@ class PythonEncapsulator(IEncapsulator):
         """
         self.protocol = protocol.instantiate(self.provider)
 
-    def initialize(self, stage: int) -> None:
+    def initialize(self) -> None:
         """
         Redirects the call to the protocol
         """
-        self.protocol.initialize(stage)
+        self.protocol.initialize()
 
     def handle_timer(self, timer: str) -> None:
         """

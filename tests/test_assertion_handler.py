@@ -33,7 +33,7 @@ class TestAssertionHandler(unittest.TestCase):
 
         class DummyProtocol(IProtocol):
 
-            def initialize(self, stage: int):
+            def initialize(self):
                 pass
 
             def handle_timer(self, timer: str):
@@ -60,7 +60,7 @@ class TestAssertionHandler(unittest.TestCase):
         class DummyProtocol(IProtocol):
             variable = True
 
-            def initialize(self, stage: int):
+            def initialize(self):
                 pass
 
             def handle_timer(self, timer: str):
@@ -90,7 +90,7 @@ class TestAssertionHandler(unittest.TestCase):
         class DummyProtocol(IProtocol):
             variable = True
 
-            def initialize(self, stage: int):
+            def initialize(self):
                 self.provider.schedule_timer("", 1)
                 self.provider.schedule_timer("", 1)
                 self.provider.schedule_timer("", 1)

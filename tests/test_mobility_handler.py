@@ -24,7 +24,7 @@ class DummyEncapsulator(IEncapsulator):
     def encapsulate(self, protocol: Type[IProtocol]):
         pass
 
-    def initialize(self, stage: int):
+    def initialize(self):
         pass
 
     def handle_timer(self, timer: str):
@@ -162,7 +162,7 @@ class TestMobility(unittest.TestCase):
         received = 0
 
         class DummyProtocol(IProtocol):
-            def initialize(self, stage: int):
+            def initialize(self):
                 pass
 
             def handle_timer(self, timer: str):

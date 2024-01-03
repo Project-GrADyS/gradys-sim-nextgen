@@ -7,7 +7,7 @@ from gradysim.protocol.messages.telemetry import Telemetry
 class CounterProtocol(IProtocol):
     counter: int
 
-    def initialize(self, stage):
+    def initialize(self):
         # We initialize our counter at zero
         self.counter = 0
 
