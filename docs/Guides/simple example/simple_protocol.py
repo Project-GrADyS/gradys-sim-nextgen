@@ -9,6 +9,7 @@ from gradysim.protocol.messages.telemetry import Telemetry
 from gradysim.protocol.plugin.mission_mobility import MissionMobilityPlugin, MissionMobilityConfiguration, LoopMission
 
 
+
 class SimpleSender(enum.Enum):
     SENSOR = 0
     UAV = 1
