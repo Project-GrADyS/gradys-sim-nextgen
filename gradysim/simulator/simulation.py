@@ -4,7 +4,7 @@ import time
 from dataclasses import dataclass
 from datetime import timedelta
 from pathlib import Path
-from typing import Type, Optional, Dict, Tuple
+from typing import Type, Optional, Dict, Tuple, Union
 
 from gradysim.encapsulator.python import PythonEncapsulator
 from gradysim.protocol.interface import IProtocol
@@ -50,10 +50,12 @@ class SimulationConfiguration:
     If `None`, no limit is set.
     """
 
-    real_time: bool = False
+    real_time: Union[bool, float] = False
     """
     Setting this to true will put the simulation in real-time mode. This means that the simulation will run synchronized
-    with real-world time. One simulation second will approximately equal to one real-world second.
+    with real-world time. One simulation second will approximately equal to one real-world second. If set to a float
+    will run at that many times real-time. For example, setting this to 2 will make the simulation run twice as fast as
+    real-time. The float value must be greater than 0.
     """
 
     debug: bool = False
@@ -95,6 +97,9 @@ class Simulator:
 
         self._free_id = 0
         self._configuration = configuration
+
+        if self._configuration.real_time < 0:
+            raise ValueError("Real time must be greater than 0")
 
         self._iteration = 0
 
@@ -151,7 +156,7 @@ class Simulator:
             event = self._event_loop.pop_event()
 
             if self._configuration.real_time and not _FORCE_FAST_EXECUTION:
-                sleep_duration = event.timestamp - (last_timestamp + event_duration)
+                sleep_duration = (event.timestamp - (last_timestamp + event_duration)) / self._configuration.real_time
                 if sleep_duration > 0:
                     time.sleep(sleep_duration)
 
