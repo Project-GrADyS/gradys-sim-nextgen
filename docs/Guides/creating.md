@@ -64,6 +64,17 @@ class. This class presents a simple API for instantiating python simulations.
     the visualization handler later so we are preparing for it. Read more about this in 
     [the handler's documentation][gradysim.simulator.handler.visualization.VisualizationHandler]. 
 
+!!!info
+    A [Simulator][gradysim.simulator.simulation.Simulator] instance is returned 
+    from the `build` method of the 
+    [SimulationBuilder][gradysim.simulator.simulation.SimulationBuilder] class. 
+    This instance is used to run the simulation. Both the 
+    [Simulator.start_simulation][gradysim.simulator.simulation.Simulator.start_simulation]
+    and the [Simulator.start_simulation][gradysim.simulator.simulation.Simulator.step_simulation]
+    methods can be used to run the simulation. The first method will run the
+    simulation until it ends, while the second will run it for a single iteration
+    and return True if the simulation is not done.
+
 Running the file above we will notice the following output on our terminal:
 
 ``` title="Console output"

@@ -27,6 +27,7 @@ _FORCE_FAST_EXECUTION = True
 @pytest.mark.parametrize("sample_path, main_script", [
     ('showcases/follow-mobility', 'main'),
     ('showcases/ping-pong', 'main'),
+    ('showcases/ping-pong', 'main_stepped'),
     ('docs/Guides/counter example/1', 'counter_execution'),
     ('docs/Guides/counter example/2', 'counter_execution'),
     ('docs/Guides/counter example/3', 'counter_execution'),

@@ -102,9 +102,13 @@ class Simulator:
             raise ValueError("Real time must be greater than 0")
 
         self._iteration = 0
+        self._current_timestamp = 0
 
         self._formatter = setup_simulation_formatter(configuration.debug, configuration.log_file)
         self._logger = logging.getLogger()
+
+        self._initialized = False
+        self._finalized = False
 
     def create_node(self, position: Position, protocol: Type[IProtocol]) -> Node:
         """
@@ -134,6 +138,65 @@ class Simulator:
         self._nodes[new_node.id] = new_node
         return new_node
 
+    def _initialize_simulation(self) -> None:
+        self._initialized = True
+
+        for handler in self._handlers.values():
+            handler.initialize()
+
+        for node in self._nodes.values():
+            self._formatter.scope_event(0, 0, f"{label_node(node)} Initialization")
+            node.protocol_encapsulator.initialize()
+
+    def _finalize_simulation(self) -> None:
+        if self._finalized:
+            return
+
+        for node in self._nodes.values():
+            self._formatter.scope_event(self._iteration, 0, f"{label_node(node)} Finalization")
+            node.protocol_encapsulator.finish()
+
+        for handler in self._handlers.values():
+            handler.finalize()
+
+        self._formatter.clear_iteration()
+        self._finalized = True
+
+    def step_simulation(self) -> bool:
+        """
+        Performs a single step in the simulation. This method is useful if you want to run the simulation in a
+        non-blocking way. This method will run a single event from the event loop and then return, updating
+        the internal simulation state.
+
+        Returns:
+            False if the simulation is done, True otherwise
+        """
+        if not self._initialized:
+            self._initialize_simulation()
+
+        if self._is_simulation_done():
+            self._finalize_simulation()
+            return False
+
+
+        event = self._event_loop.pop_event()
+        self._formatter.scope_event(self._iteration, event.timestamp, event.context)
+
+        event.callback()
+
+        for handler in self._handlers.values():
+            handler.after_simulation_step(self._iteration, event.timestamp)
+
+        self._iteration += 1
+        self._current_timestamp = event.timestamp
+
+        is_done = self._is_simulation_done()
+
+        if is_done:
+            self._finalize_simulation()
+
+        return not is_done
+
     def start_simulation(self) -> None:
         """
         Call this method to start the simulation. It is a blocking call and runs until either no event is left in the
@@ -143,51 +206,27 @@ class Simulator:
         self._logger.info("[--------- Simulation started ---------]")
         start_time = time.time()
 
-        for handler in self._handlers.values():
-            handler.initialize()
+        last_step_duration = 0
+        is_running = True
+        while is_running:
+            next_event = self._event_loop.peek_event()
 
-        for node in self._nodes.values():
-            self._formatter.scope_event(0, 0, f"{label_node(node)} Initialization")
-            node.protocol_encapsulator.initialize()
-
-        last_timestamp = 0
-        event_duration = 0
-        while not self._is_simulation_done():
-            event = self._event_loop.pop_event()
-
-            if self._configuration.real_time and not _FORCE_FAST_EXECUTION:
-                sleep_duration = (event.timestamp - (last_timestamp + event_duration)) / self._configuration.real_time
+            if next_event is not None and self._configuration.real_time and not _FORCE_FAST_EXECUTION:
+                time_until_next_event = (next_event.timestamp - (self._current_timestamp + last_step_duration))
+                sleep_duration = time_until_next_event / self._configuration.real_time
                 if sleep_duration > 0:
                     time.sleep(sleep_duration)
 
-            self._formatter.scope_event(self._iteration, event.timestamp, event.context)
+            step_start = time.time()
+            is_running = self.step_simulation()
+            last_step_duration = time.time() - step_start
 
-            event_start = time.time()
-            event.callback()
-            event_duration = time.time() - event_start
-
-            for handler in self._handlers.values():
-                handler.after_simulation_step(self._iteration, event.timestamp)
-
-            self._iteration += 1
-            last_timestamp = event.timestamp
-
-        self._formatter.clear_iteration()
         self._logger.info("[--------- Simulation finished ---------]")
         total_time = time.time() - start_time
 
-        for node in self._nodes.values():
-            self._formatter.scope_event(0, 0, f"{label_node(node)} Finalization")
-            node.protocol_encapsulator.finish()
-
-        for handler in self._handlers.values():
-            handler.finalize()
-
-        self._formatter.clear_iteration()
-
         self._logger.info(f"Real time elapsed: {timedelta(seconds=total_time)}\t"
                           f"Total iterations: {self._iteration}\t"
-                          f"Simulation time: {timedelta(seconds=last_timestamp)}")
+                          f"Simulation time: {timedelta(seconds=self._current_timestamp)}")
 
     def _is_simulation_done(self):
         if len(self._event_loop) == 0:
