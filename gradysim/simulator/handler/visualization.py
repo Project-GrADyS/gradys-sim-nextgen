@@ -97,7 +97,7 @@ class VisualizationHandler(INodeHandler):
     in a graphical representation of the simulation. The graphical representation is web-based and can be accessed
     via a browser through [this link](https://project-gradys.github.io/gradys-sim-nextgen-visualization/).
 
-    The visualization handler uses a separate process to run the WebSocket server, this means that on Windows your
+    The visualization handler uses a separate process to run the WebSocket server, on Windows your
     script will be rerun when the new process starts. This means that any code that should not be run multiple times
     should be put in the `if __name__ == "__main__"` block.
     """
