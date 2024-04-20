@@ -13,11 +13,12 @@ environment. The visualization is updated regularly with the current node positi
 
 import asyncio
 import json
+import logging
 import multiprocessing
 import time
 import webbrowser
 from dataclasses import dataclass
-from typing import List, Tuple, TypedDict
+from typing import List, Tuple, TypedDict, Literal
 
 import websockets
 
@@ -81,6 +82,15 @@ class _VisualizationInformation(TypedDict):
     tracked_variables: List[dict]
 
 
+class _VisualizationState(TypedDict):
+    # Set by the visualization thread, pauses the simulation if set to True
+    paused: bool
+
+
+class _VisualizationMessage(TypedDict):
+    interaction: Literal["pause/resume"]
+
+
 class VisualizationHandler(INodeHandler):
     """
     Adds visualization to the simulation. Shows regularly updated node position and other simulation information
@@ -94,6 +104,7 @@ class VisualizationHandler(INodeHandler):
     _event_loop: EventLoop
     _nodes: List[Node]
     _information: _VisualizationInformation
+    _visualization_state: _VisualizationState
     _information_thread: multiprocessing.Process
     _start_time: float
 
@@ -109,9 +120,13 @@ class VisualizationHandler(INodeHandler):
         # Current simulation information shared with the visualization server
         manager = multiprocessing.Manager()
         self._information = manager.dict()
+        self._visualization_state = manager.dict()
+        self._visualization_state["paused"] = False
 
         self._configuration = configuration
-        
+
+        self._logger = logging.getLogger()
+
     @staticmethod
     def get_label() -> str:
         return "visualization"
@@ -138,7 +153,8 @@ class VisualizationHandler(INodeHandler):
         self._information_thread = multiprocessing.Process(target=_visualization_thread,
                                                            args=(self._configuration,
                                                                  initialization_information,
-                                                                 self._information,))
+                                                                 self._information,
+                                                                 self._visualization_state))
         self._information_thread.start()
 
     def finalize(self) -> None:
@@ -155,6 +171,14 @@ class VisualizationHandler(INodeHandler):
         self._information["tracked_variables"] = \
             [node.protocol_encapsulator.protocol.provider.tracked_variables.copy() for node in self._nodes]
 
+        if self._visualization_state["paused"]:
+            logging.info("Visualization paused by user")
+
+            while self._visualization_state["paused"]:
+                time.sleep(0.1)
+
+            logging.info("Visualization resumed by user")
+
         self._event_loop.schedule_event(
             self._event_loop.current_time + self._configuration.information_collection_interval,
             self._report_information,
@@ -164,7 +188,8 @@ class VisualizationHandler(INodeHandler):
 
 def _visualization_thread(config: VisualizationConfiguration,
                           init_data: _InitializationInformation,
-                          information: _VisualizationInformation) -> None:
+                          information: _VisualizationInformation,
+                          state: _VisualizationState) -> None:
     """
     Visualization server thread that runs the WebSocket server and broadcasts the simulation information to
     connected clients.
@@ -183,6 +208,12 @@ def _visualization_thread(config: VisualizationConfiguration,
         websocket_connections.add(websocket)
         try:
             await websocket.send(json.dumps(init_data.copy()))
+
+            async for message in websocket:
+                data: _VisualizationMessage = json.loads(message)
+                if data["interaction"] == "pause/resume":
+                    state["paused"] = not state["paused"]
+
             await websocket.wait_closed()
         finally:
             websocket_connections.remove(websocket)
