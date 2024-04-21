@@ -31,7 +31,7 @@ class SimpleSensorProtocol(IProtocol):
     _log: logging.Logger
     packet_count: int
 
-    def initialize(self, stage: int) -> None:
+    def initialize(self) -> None:
         self._log = logging.getLogger()
         self.packet_count = 0
 
@@ -97,7 +97,7 @@ class SimpleUAVProtocol(IProtocol):
 
     _mission: MissionMobilityPlugin
 
-    def initialize(self, stage: int) -> None:
+    def initialize(self) -> None:
         self._log = logging.getLogger()
         self.packet_count = 0
 
@@ -148,7 +148,7 @@ class SimpleGroundStationProtocol(IProtocol):
     _log: logging.Logger
     packet_count: int
 
-    def initialize(self, stage: int) -> None:
+    def initialize(self) -> None:
         self._log = logging.getLogger()
         self.packet_count = 0
 

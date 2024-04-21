@@ -41,3 +41,4 @@ def test_sample(sample_path: str, main_script: str):
         with SetupAsLocal(pathlib.Path(sample_path)):
             module = importlib.import_module(main_script)
             module.main()
+            assert True
