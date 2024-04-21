@@ -3,6 +3,20 @@
 !!!info
     This guide will step through the complete implementation of a protocol and execution in **prototype-mode**.
 
+??? example "Full code of the protocols implemented in this guide"
+    ```py
+    --8<--
+    docs/Guides/simple example/simple_protocol.py
+    --8<--
+    ```
+
+??? example "Full code needed to execute this example"
+    ```py
+    --8<--
+    docs/Guides/simple example/main.py
+    --8<--
+    ```
+
 ## Scenario description
 We have sensors spread around some location. These sensors collect information about their local 
 environment which is of interest to us. The deployment location has no communication infrastructure and is hard to 
@@ -70,6 +84,24 @@ class containing the desired fields. GrADyS-SIM NextGen doesn't impose any
 ```py title="Message declaration"
 --8<--
 docs/Guides/simple example/simple_protocol.py:19:22
+--8<--
+```
+
+To identify the types of agents in our simulation we will use the `SimpleSender`
+enum shown below. 
+
+```py title="SimpleSender enum"
+--8<--
+docs/Guides/simple example/simple_protocol.py:13:17
+--8<--
+```
+
+To help us with logging a `report_message` function is defined. It receives
+a SimpleMessage and appropriately logs it.
+
+```py title="Message logging"
+--8<--
+docs/Guides/simple example/simple_protocol.py:19:23
 --8<--
 ```
 
