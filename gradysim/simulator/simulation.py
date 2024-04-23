@@ -95,7 +95,6 @@ class Simulator:
         for handler in self._handlers.values():
             handler.inject(self._event_loop)
 
-        self._free_id = 0
         self._configuration = configuration
 
         if self._configuration.real_time < 0:
@@ -110,7 +109,7 @@ class Simulator:
         self._initialized = False
         self._finalized = False
 
-    def create_node(self, position: Position, protocol: Type[IProtocol]) -> Node:
+    def create_node(self, position: Position, protocol: Type[IProtocol], identifier: int) -> Node:
         """
         Creates a new simulation node, encapsulating it. You shouldn't call this method directly, prefer to use the
         [SimulationBuilder][gradysim.simulator.simulation.SimulationBuilder] API.
@@ -118,12 +117,13 @@ class Simulator:
         Args:
             position: Position where the node should be placed
             protocol: Type of protocol this node will run
+            identifier: Identifier of the node
 
         Returns:
             The encapsulated node
         """
         new_node = Node()
-        new_node.id = self._free_id
+        new_node.id = identifier
         new_node.position = position
 
         encapsulator = PythonEncapsulator(new_node, **self._handlers)
@@ -134,9 +134,20 @@ class Simulator:
         for handler in self._handlers.values():
             handler.register_node(new_node)
 
-        self._free_id += 1
         self._nodes[new_node.id] = new_node
         return new_node
+
+    def get_node(self, identifier: int) -> Node:
+        """
+        Gets a node by its identifier
+
+        Args:
+            identifier: Identifier of the node
+
+        Returns:
+            The encapsulated node
+        """
+        return self._nodes[identifier]
 
     def _initialize_simulation(self) -> None:
         self._initialized = True
@@ -174,7 +185,7 @@ class Simulator:
         if not self._initialized:
             self._initialize_simulation()
 
-        if self._is_simulation_done():
+        if self.is_simulation_done():
             self._finalize_simulation()
             return False
 
@@ -190,7 +201,7 @@ class Simulator:
         self._iteration += 1
         self._current_timestamp = event.timestamp
 
-        is_done = self._is_simulation_done()
+        is_done = self.is_simulation_done()
 
         if is_done:
             self._finalize_simulation()
@@ -228,7 +239,14 @@ class Simulator:
                           f"Total iterations: {self._iteration}\t"
                           f"Simulation time: {timedelta(seconds=self._current_timestamp)}")
 
-    def _is_simulation_done(self):
+    def is_simulation_done(self):
+        """
+        Checks if the simulation is done. The simulation is done if any of the termination conditions are met or
+        if there are no mode events
+
+        Returns:
+            True if the simulation is done, False otherwise
+        """
         if len(self._event_loop) == 0:
             return True
 
@@ -309,7 +327,7 @@ class SimulationBuilder:
         self._handlers[handler.get_label()] = handler
         return self
 
-    def add_node(self, protocol: Type[IProtocol], position: Position) -> 'SimulationBuilder':
+    def add_node(self, protocol: Type[IProtocol], position: Position) -> int:
         """
         Adds a new node to the simulation
 
@@ -318,10 +336,10 @@ class SimulationBuilder:
             position: Position of the node inside the simulation
 
         Returns:
-            The simulator builder instance. This is useful for method chaining
+            The id of the node created
         """
         self._nodes_to_add.append((position, protocol))
-        return self
+        return len(self._nodes_to_add) - 1
 
     def build(self) -> Simulator:
         """
@@ -335,7 +353,7 @@ class SimulationBuilder:
             self._handlers,
             self._configuration
         )
-        for node_to_add in self._nodes_to_add:
-            simulator.create_node(*node_to_add)
+        for index, node_to_add in enumerate(self._nodes_to_add):
+            simulator.create_node(node_to_add[0], node_to_add[1], index)
 
         return simulator
