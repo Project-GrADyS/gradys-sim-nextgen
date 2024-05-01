@@ -286,7 +286,7 @@ class Simulator:
             next_event = self._event_loop.peek_event()
 
             if current_time >= self._configuration.duration:
-                if next_event is None or next_event.timestamp > self._configuration.duration:
+                if next_event.timestamp > self._configuration.duration:
                     return True
 
         if self._configuration.max_iterations is not None and self._iteration >= self._configuration.max_iterations:
