@@ -6,7 +6,6 @@ The logger annotates the output with timing information and execution context to
 """
 
 import logging
-from datetime import timedelta
 from pathlib import Path
 from typing import Optional
 
