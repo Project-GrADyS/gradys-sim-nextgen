@@ -68,6 +68,12 @@ class SimulationConfiguration:
     Simulation logs will be saved in this path.
     """
 
+    execution_logging: bool = True
+    """
+    Setting this flag to true will enable logging of the simulation execution. Even if disabled logging will still
+    happen at the end of the simulation. Disabling this can improve performance.
+    """
+
 
 class Simulator:
     """
@@ -149,14 +155,36 @@ class Simulator:
         """
         return self._nodes[identifier]
 
+    def scope_event(self, iteration: int, timestamp: float, context: str):
+        """
+        Call this method to update the formatter's annotation with current information. This module is called by
+        the [Simulator][gradysim.simulator.simulation.Simulator].
+
+        Args:
+            iteration: Current iteration the simulation is at
+            timestamp: Simulation timestamp in seconds
+            context: Context of what's being currently executed in the simulation
+
+        Returns:
+
+        """
+        if not self._configuration.execution_logging:
+            return
+
+        self._formatter.prefix = f"[it={iteration} time={timedelta(seconds=timestamp)} | {context}] "
+
     def _initialize_simulation(self) -> None:
         self._initialized = True
+
+        self._old_logger_level = self._logger.level
+        if not self._configuration.execution_logging:
+            self._logger.setLevel(logging.WARNING)
 
         for handler in self._handlers.values():
             handler.initialize()
 
         for node in self._nodes.values():
-            self._formatter.scope_event(0, 0, f"{label_node(node)} Initialization")
+            self.scope_event(0, 0, f"{label_node(node)} Initialization")
             node.protocol_encapsulator.initialize()
 
     def _finalize_simulation(self) -> None:
@@ -164,7 +192,7 @@ class Simulator:
             return
 
         for node in self._nodes.values():
-            self._formatter.scope_event(self._iteration, 0, f"{label_node(node)} Finalization")
+            self.scope_event(self._iteration, 0, f"{label_node(node)} Finalization")
             node.protocol_encapsulator.finish()
 
         for handler in self._handlers.values():
@@ -172,6 +200,9 @@ class Simulator:
 
         self._formatter.clear_iteration()
         self._finalized = True
+
+        if not self._configuration.execution_logging:
+            self._logger.setLevel(self._old_logger_level)
 
     def step_simulation(self) -> bool:
         """
@@ -191,7 +222,7 @@ class Simulator:
 
 
         event = self._event_loop.pop_event()
-        self._formatter.scope_event(self._iteration, event.timestamp, event.context)
+        self.scope_event(self._iteration, event.timestamp, event.context)
 
         event.callback()
 
@@ -255,7 +286,7 @@ class Simulator:
             next_event = self._event_loop.peek_event()
 
             if current_time >= self._configuration.duration:
-                if next_event is None or next_event.timestamp > self._configuration.duration:
+                if next_event.timestamp > self._configuration.duration:
                     return True
 
         if self._configuration.max_iterations is not None and self._iteration >= self._configuration.max_iterations:
