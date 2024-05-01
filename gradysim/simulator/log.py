@@ -21,29 +21,14 @@ class SimulationFormatter(logging.Formatter):
     def __init__(self):
         super().__init__("%(message)s")
 
-    _prefix: str = ""
-
-    def scope_event(self, iteration: int, timestamp: float, context: str):
-        """
-        Call this method to update the formatter's annotation with current information. This module is called by
-        the [Simulator][gradysim.simulator.simulation.Simulator].
-
-        Args:
-            iteration: Current iteration the simulation is at
-            timestamp: Simulation timestamp in seconds
-            context: Context of what's being currently executed in the simulation
-
-        Returns:
-
-        """
-        self._prefix = f"[it={iteration} time={timedelta(seconds=timestamp)} | {context}] "
+    prefix: str = ""
 
     def clear_iteration(self):
-        self._prefix = ""
+        self.prefix = ""
 
     def format(self, record: logging.LogRecord) -> str:
         log = super().format(record)
-        return f"{record.levelname: <8} {self._prefix}{log}"
+        return f"{record.levelname: <8} {self.prefix}{log}"
 
 
 def setup_simulation_formatter(debug: bool, log_file: Optional[Path]) -> SimulationFormatter:
