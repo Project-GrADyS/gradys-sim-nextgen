@@ -1,4 +1,5 @@
 site_name: GrADyS-SIM NextGen
+repo_url: https://github.com/Project-GrADyS/gradys-sim-nextgen
 theme:
   name: material
   features:
