@@ -1,3 +1,5 @@
+from typing import Set
+
 from gradysim.simulator.event import EventLoop
 from gradysim.simulator.log import label_node
 from gradysim.simulator.node import Node
@@ -16,13 +18,13 @@ class TimerHandler(INodeHandler):
     """
     _event_loop: EventLoop
 
-    _cancelled_timers: set[str]
+    _cancelled_timers: Set[str]
 
     def __init__(self):
         """
         Constructs a TimerHandler, no configuration is necessary.
         """
-        self._registed_nodes: set[Node] = set()
+        self._registed_nodes: Set[Node] = set()
         self._cancelled_timers = set()
 
     def get_current_time(self):
