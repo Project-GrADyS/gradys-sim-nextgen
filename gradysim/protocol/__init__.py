@@ -30,5 +30,6 @@ its concern. The protocol only needs to know how to move the node and the IProvi
 necessary tools to do so.
 
 The protocol can also schedule timers using the IProvider instance. Timers are scheduled using the schedule_timer()
-method. The method takes a timer and a timestamp as arguments.
+method. The method takes a timer and a timestamp as arguments. These timers can be cancelled using the cancel_timer()
+method.
 """

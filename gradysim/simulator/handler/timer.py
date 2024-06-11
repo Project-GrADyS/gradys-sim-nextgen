@@ -1,3 +1,5 @@
+from typing import Set
+
 from gradysim.simulator.event import EventLoop
 from gradysim.simulator.log import label_node
 from gradysim.simulator.node import Node
@@ -16,11 +18,14 @@ class TimerHandler(INodeHandler):
     """
     _event_loop: EventLoop
 
+    _cancelled_timers: Set[str]
+
     def __init__(self):
         """
         Constructs a TimerHandler, no configuration is necessary.
         """
-        self._registed_nodes: set[Node] = set()
+        self._registed_nodes: Set[Node] = set()
+        self._cancelled_timers = set()
 
     def get_current_time(self):
         return self._event_loop.current_time
@@ -35,6 +40,16 @@ class TimerHandler(INodeHandler):
     def register_node(self, node: Node) -> None:
         self._registed_nodes.add(node)
 
+    def fire_timer(self, message: str, node: Node):
+        """
+        Fires a timer. Should be called by the event loop.
+        """
+        if message in self._cancelled_timers:
+            self._cancelled_timers.remove(message)
+            return
+
+        node.protocol_encapsulator.handle_timer(message)
+
     def set_timer(self, message: str, timestamp: float, node: Node):
         """
         Sets a timer. Should be called by the nodes' providers. Node needs to be
@@ -47,5 +62,15 @@ class TimerHandler(INodeHandler):
             raise TimerException("Could not set timer: Timer cannot be set in the past")
 
         self._event_loop.schedule_event(timestamp,
-                                        lambda: node.protocol_encapsulator.handle_timer(message),
+                                        lambda: self.fire_timer(message, node),
                                         label_node(node))
+
+    def cancel_timer(self, message: str, node: Node):
+        """
+        Cancels a timer. Should be called by the nodes' providers. Node needs to be
+        registered.
+        """
+        if node not in self._registed_nodes:
+            raise TimerException(f"Could not cancel timer: Node {node.id} not registered")
+
+        self._cancelled_timers.add(message)

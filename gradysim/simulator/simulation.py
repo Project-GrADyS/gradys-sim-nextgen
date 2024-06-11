@@ -270,7 +270,7 @@ class Simulator:
                           f"Total iterations: {self._iteration}\t"
                           f"Simulation time: {timedelta(seconds=self._current_timestamp)}")
 
-    def is_simulation_done(self):
+    def is_simulation_done(self) -> bool:
         """
         Checks if the simulation is done. The simulation is done if any of the termination conditions are met or
         if there are no mode events

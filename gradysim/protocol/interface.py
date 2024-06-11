@@ -51,6 +51,17 @@ class IProvider(ABC):
         pass
 
     @abstractmethod
+    def cancel_timer(self, timer: str) -> None:
+        """
+        Cancels a timer that was previously scheduled. If a timer with the given identifier is not scheduled,
+        this method does nothing.
+
+        Args:
+            timer: identifier of the timer to cancel
+        """
+        pass
+
+    @abstractmethod
     def current_time(self) -> float:
         """
         Returns the current simulator time in seconds

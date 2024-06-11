@@ -50,6 +50,15 @@ The protocol above is very simple. All it does is use the _provider_ methods
 available to the protocol to schedule a timer that fires every second. When this
 timer fires the protocol increments a counter and sets the timer again.
 
+!!!info
+    Timers are a very important part of protocols. They are used to schedule
+    events that will happen in the future. This is a very common pattern in
+    distributed systems. Timers can be scheduled using the
+    [IProvider.schedule_timer][gradysim.protocol.interface.IProvider.schedule_timer]
+    method and cancelled using the
+    [IProvider.cancel_timer][gradysim.protocol.interface.IProvider.cancel_timer]
+    method.
+
 Now that we have created a protocol, we just have to execute it. As mentioned we
 will be using [prototype mode](../Getting%20Started/execution.md#prototype-mode) for this example. Creating a simulation is 
 preferably done through the [SimulationBuilder][gradysim.simulator.simulation.SimulationBuilder] 

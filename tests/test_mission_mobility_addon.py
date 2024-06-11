@@ -43,6 +43,9 @@ class TestMissionMobilityPlugin(unittest.TestCase):
             def schedule_timer(self, timer: str, timestamp: float) -> None:
                 pass
 
+            def cancel_timer(self, timer: str) -> None:
+                pass
+
             def current_time(self) -> float:
                 pass
 
