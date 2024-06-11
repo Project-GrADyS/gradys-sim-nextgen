@@ -87,6 +87,23 @@ class PythonProvider(IProvider):
         else:
             self._logger.warning("Timer cannot be set with no timer handler configured")
 
+    def cancel_timer(self, timer: str) -> None:
+        """
+        Cancels a timer using the timer handler. If one is not present in the simulation issues a warning and does
+        nothing
+
+        Args:
+            timer: Timer being cancelled
+
+        Returns:
+
+        """
+        if self.timer_handler is not None:
+            self.timer_handler.cancel_timer(timer, self.node)
+        else:
+            self._logger.warning("Timer cannot be cancelled with no timer handler configured")
+
+
     def current_time(self) -> float:
         """
         Returns the current time consulted from the timer handler. If one is not present issues a warning and returns

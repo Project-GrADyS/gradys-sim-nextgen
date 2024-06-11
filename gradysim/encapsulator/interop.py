@@ -106,6 +106,11 @@ class InteropProvider(IProvider):
         """
         self.consequences.append((ConsequenceType.TIMER, (timer, timestamp)))
 
+    def cancel_timer(self, timer: str) -> None:
+        raise NotImplementedError("Canceling timers is not supported in the OMNeT++ environment. "
+                                  "If you need this feature, please show your interest by opening an issue at "
+                                  "the github repository.")
+
     def current_time(self) -> int:
         """
         Returns the current simulation time in seconds

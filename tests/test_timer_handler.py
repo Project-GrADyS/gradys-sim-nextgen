@@ -68,3 +68,39 @@ class TestTimerHandler(unittest.TestCase):
         timer_handler.register_node(node)
         with self.assertRaises(TimerException):
             timer_handler.set_timer("test", -1, node)
+
+    def test_cancel_timer(self):
+        event_loop, timer_handler = create_timer_handler()
+
+        received = 0
+
+        class DummyEncapsulator:
+            def handle_timer(self, _msg: str):
+                nonlocal received
+                received += 1
+
+        node = Node()
+        node.id = 0
+        node.protocol_encapsulator = DummyEncapsulator()
+
+        timer_handler.register_node(node)
+        timer_handler.set_timer("test", 10, node)
+        timer_handler.cancel_timer("test", node)
+
+        self.assertEqual(len(event_loop), 1)
+
+        # Event still fires, but should not be handled
+        event = event_loop.pop_event()
+        self.assertEqual(event.timestamp, 10)
+        event.callback()
+        self.assertEqual(received, 0)
+
+
+    def test_cancel_non_existing_timer(self):
+        event_loop, timer_handler = create_timer_handler()
+
+        node = Node()
+        node.id = 0
+
+        with self.assertRaises(TimerException):
+            timer_handler.cancel_timer("test", node)
