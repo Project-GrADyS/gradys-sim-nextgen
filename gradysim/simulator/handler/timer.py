@@ -1,4 +1,5 @@
-from typing import Set
+from collections import defaultdict
+from typing import Set, Dict
 
 from gradysim.simulator.event import EventLoop
 from gradysim.simulator.log import label_node
@@ -18,14 +19,17 @@ class TimerHandler(INodeHandler):
     """
     _event_loop: EventLoop
 
-    _cancelled_timers: Set[str]
+    _timer_id: int
+    _pending_timers: Dict[int, Dict[str, Set[int]]]
+    """Timers pending for each node. A dict of nodes where the value is a dict of messages and their identifiers."""
 
     def __init__(self):
         """
         Constructs a TimerHandler, no configuration is necessary.
         """
         self._registed_nodes: Set[Node] = set()
-        self._cancelled_timers = set()
+        self._timer_id = 0
+        self._pending_timers = defaultdict(lambda : defaultdict(set))
 
     def get_current_time(self):
         return self._event_loop.current_time
@@ -40,15 +44,15 @@ class TimerHandler(INodeHandler):
     def register_node(self, node: Node) -> None:
         self._registed_nodes.add(node)
 
-    def fire_timer(self, message: str, node: Node):
+    def fire_timer(self, message: str, node: Node, identifier: int):
         """
         Fires a timer. Should be called by the event loop.
         """
-        if message in self._cancelled_timers:
-            self._cancelled_timers.remove(message)
+        if identifier not in self._pending_timers[node.id][message]:
             return
 
         node.protocol_encapsulator.handle_timer(message)
+        self._pending_timers[node.id][message].remove(identifier)
 
     def set_timer(self, message: str, timestamp: float, node: Node):
         """
@@ -61,9 +65,12 @@ class TimerHandler(INodeHandler):
         if timestamp < self._event_loop.current_time:
             raise TimerException("Could not set timer: Timer cannot be set in the past")
 
+        identifier = self._timer_id
         self._event_loop.schedule_event(timestamp,
-                                        lambda: self.fire_timer(message, node),
+                                        lambda: self.fire_timer(message, node, identifier),
                                         label_node(node))
+        self._pending_timers[node.id][message].add(identifier)
+        self._timer_id += 1
 
     def cancel_timer(self, message: str, node: Node):
         """
@@ -73,4 +80,4 @@ class TimerHandler(INodeHandler):
         if node not in self._registed_nodes:
             raise TimerException(f"Could not cancel timer: Node {node.id} not registered")
 
-        self._cancelled_timers.add(message)
+        self._pending_timers[node.id][message].clear()
