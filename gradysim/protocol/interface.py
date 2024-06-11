@@ -54,7 +54,7 @@ class IProvider(ABC):
     def cancel_timer(self, timer: str) -> None:
         """
         Cancels a timer that was previously scheduled. If a timer with the given identifier is not scheduled,
-        this method does nothing.
+        this method does nothing. If multiple timers with the same identifier are scheduled, all of them are canceled.
 
         Args:
             timer: identifier of the timer to cancel
