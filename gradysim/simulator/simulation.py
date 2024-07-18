@@ -74,6 +74,13 @@ class SimulationConfiguration:
     happen at the end of the simulation. Disabling this can improve performance.
     """
 
+    profile: bool = False
+    """
+    Setting this flag to true will enable profiling of the simulation. This will output to the logs profiling 
+    information about the simulation execution. This can be useful to identify bottlenecks in the simulation.
+    """
+
+
 
 class Simulator:
     """
@@ -114,6 +121,11 @@ class Simulator:
 
         self._initialized = False
         self._finalized = False
+
+        self._profiling_context_total_count = {}
+        self._profiling_context_total_time = {}
+
+
 
     def create_node(self, position: Position, protocol: Type[IProtocol], identifier: int) -> Node:
         """
@@ -201,6 +213,14 @@ class Simulator:
         self._formatter.clear_iteration()
         self._finalized = True
 
+        if self._configuration.profile:
+            self._logger.info("[--------- Profiling information ---------]")
+            for context, count in self._profiling_context_total_count.items():
+                self._logger.warning(f"Context: {context}\t\t"
+                                     f"Total count: {count}\t\t"
+                                     f"Total time: {self._profiling_context_total_time[context]}\t\t"
+                                     f"Average time: {self._profiling_context_total_time[context] / count}")
+
         if not self._configuration.execution_logging:
             self._logger.setLevel(self._old_logger_level)
 
@@ -224,7 +244,16 @@ class Simulator:
         event = self._event_loop.pop_event()
         self.scope_event(self._iteration, event.timestamp, event.context)
 
+        if self._configuration.profile:
+            start_time = time.time()
+
         event.callback()
+
+        if self._configuration.profile:
+            self._profiling_context_total_count[event.context] = (
+                    self._profiling_context_total_count.get(event.context, 0) + 1)
+            self._profiling_context_total_time[event.context] = (
+                    self._profiling_context_total_time.get(event.context, 0) + time.time() - start_time)
 
         for handler in self._handlers.values():
             handler.after_simulation_step(self._iteration, event.timestamp)
