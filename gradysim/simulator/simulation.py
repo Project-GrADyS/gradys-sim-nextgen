@@ -215,11 +215,14 @@ class Simulator:
 
         if self._configuration.profile:
             self._logger.info("[--------- Profiling information ---------]")
-            for context, count in self._profiling_context_total_count.items():
+            contexts = list(self._profiling_context_total_count.keys())
+            contexts.sort(key=lambda x: self._profiling_context_total_time[x],
+                          reverse=True)
+            for context in contexts:
                 self._logger.warning(f"Context: {context}\t\t"
-                                     f"Total count: {count}\t\t"
+                                     f"Total count: {self._profiling_context_total_count[context]}\t\t"
                                      f"Total time: {self._profiling_context_total_time[context]}\t\t"
-                                     f"Average time: {self._profiling_context_total_time[context] / count}")
+                                     f"Average time: {self._profiling_context_total_time[context] / self._profiling_context_total_count[context]}")
 
         if not self._configuration.execution_logging:
             self._logger.setLevel(self._old_logger_level)
@@ -312,11 +315,9 @@ class Simulator:
 
         if self._configuration.duration is not None:
             current_time = self._event_loop.current_time
-            next_event = self._event_loop.peek_event()
 
-            if current_time >= self._configuration.duration:
-                if next_event.timestamp > self._configuration.duration:
-                    return True
+            if current_time > self._configuration.duration:
+                return True
 
         if self._configuration.max_iterations is not None and self._iteration >= self._configuration.max_iterations:
             return True
