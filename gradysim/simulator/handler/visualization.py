@@ -265,6 +265,9 @@ class VisualizationController:
     def __init__(self):
         self._visualization_handler = _active_handler
 
+        if _active_handler is None:
+            logging.warning("No visualization handler active, visualization commands will be ignored")
+
     def paint_node(self, node_id: int, color: Tuple[float, float, float]) -> None:
         """
         Paints a node in the visualization with a specific color.
