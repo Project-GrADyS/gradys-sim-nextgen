@@ -68,7 +68,7 @@ class TimerHandler(INodeHandler):
         identifier = self._timer_id
         self._event_loop.schedule_event(timestamp,
                                         lambda: self.fire_timer(message, node, identifier),
-                                        label_node(node))
+                                        label_node(node) + " handle_timer")
         self._pending_timers[node.id][message].add(identifier)
         self._timer_id += 1
 

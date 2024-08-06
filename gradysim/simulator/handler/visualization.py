@@ -18,7 +18,7 @@ import multiprocessing
 import time
 import webbrowser
 from dataclasses import dataclass
-from typing import List, Tuple, TypedDict, Literal
+from typing import List, Tuple, TypedDict, Literal, Optional
 
 import websockets
 
@@ -82,6 +82,11 @@ class _VisualizationInformation(TypedDict):
     tracked_variables: List[dict]
 
 
+class _VisualizationCommand(TypedDict):
+    command: Literal["paint_node", "paint_environment", "resize_nodes"]
+    payload: dict
+
+
 class _VisualizationState(TypedDict):
     # Set by the visualization thread, pauses the simulation if set to True
     paused: bool
@@ -107,6 +112,7 @@ class VisualizationHandler(INodeHandler):
     _visualization_state: _VisualizationState
     _information_thread: multiprocessing.Process
     _start_time: float
+    command_queue: multiprocessing.Queue
 
     def __init__(self, configuration: VisualizationConfiguration = VisualizationConfiguration()):
         """
@@ -121,11 +127,15 @@ class VisualizationHandler(INodeHandler):
         manager = multiprocessing.Manager()
         self._information = manager.dict()
         self._visualization_state = manager.dict()
+        self.command_queue = manager.Queue()
         self._visualization_state["paused"] = False
 
         self._configuration = configuration
 
         self._logger = logging.getLogger()
+
+        global _active_handler
+        _active_handler = self
 
     @staticmethod
     def get_label() -> str:
@@ -154,7 +164,8 @@ class VisualizationHandler(INodeHandler):
                                                            args=(self._configuration,
                                                                  initialization_information,
                                                                  self._information,
-                                                                 self._visualization_state))
+                                                                 self._visualization_state,
+                                                                 self.command_queue))
         self._information_thread.start()
 
     def finalize(self) -> None:
@@ -189,7 +200,8 @@ class VisualizationHandler(INodeHandler):
 def _visualization_thread(config: VisualizationConfiguration,
                           init_data: _InitializationInformation,
                           information: _VisualizationInformation,
-                          state: _VisualizationState) -> None:
+                          state: _VisualizationState,
+                          command_queue: multiprocessing.Queue) -> None:
     """
     Visualization server thread that runs the WebSocket server and broadcasts the simulation information to
     connected clients.
@@ -198,9 +210,8 @@ def _visualization_thread(config: VisualizationConfiguration,
         config: Visualization handler's configuration
         init_data: Initial information about the simulation to send to the client
         information: Current information about the simulation to send to the client
-
-    Returns:
-
+        state: Current state of the visualization
+        command_queue: Queue of commands to execute in the visualization
     """
     websocket_connections = set()
 
@@ -221,6 +232,11 @@ def _visualization_thread(config: VisualizationConfiguration,
     async def update_information():
         while True:
             websockets.broadcast(websocket_connections, json.dumps(information.copy()))
+
+            while not command_queue.empty():
+                command: _VisualizationCommand = command_queue.get()
+                websockets.broadcast(websocket_connections, json.dumps(command))
+
             await asyncio.sleep(config.update_rate)
 
     async def main():
@@ -231,3 +247,82 @@ def _visualization_thread(config: VisualizationConfiguration,
             await update_information()
 
     asyncio.run(main())
+
+_active_handler: Optional[VisualizationHandler] = None
+"""
+Tracks the active visualization handler. This is used to access the handler from the simulation thread.
+"""
+
+class VisualizationController:
+    """
+    Controller for the visualization handler. Can be used to send commands to the visualization handler from a
+    protocol. Commands can be used to affect the visualization, such as painting nodes or changing the
+    environment's color.
+
+    !!!info
+        Every method in this class is a no-op if a visualization handler is not active. This includes when the protocol is
+        not runnign on a python simulation environment.
+
+    !!!warning
+        The VisualizationController is attached to the last active visualization handler. This means that if you have
+        multiple visualization handlers active for some reason, the controller will only affect the last one. This also
+        means that this class should always be instantiated in the protocol's `initialize` method, to avoid
+        initialization before the visualization handler is active.
+    """
+    def __init__(self):
+        self._visualization_handler = _active_handler
+
+        if _active_handler is None:
+            logging.warning("No visualization handler active, visualization commands will be ignored")
+
+    def paint_node(self, node_id: int, color: Tuple[float, float, float]) -> None:
+        """
+        Paints a node in the visualization with a specific color.
+
+        Args:
+            node_id: ID of the node to paint
+            color: RGB color of the node
+        """
+        if self._visualization_handler is None:
+            return
+
+        self._visualization_handler.command_queue.put({
+            "command": "paint_node",
+            "payload": {
+                "node_id": node_id,
+                "color": color
+            }
+        })
+
+    def paint_environment(self, color: Tuple[float, float, float]) -> None:
+        """
+        Paints the environment in the visualization with a specific color.
+
+        Args:
+            color: RGB color of the environment
+        """
+        if self._visualization_handler is None:
+            return
+
+        self._visualization_handler.command_queue.put({
+            "command": "paint_environment",
+            "payload": {
+                "color": color
+            }
+        })
+
+    def resize_nodes(self, size: float) -> None:
+        """
+        Resizes the nodes in the visualization
+        Args:
+            size: New size of the nodes
+        """
+        if self._visualization_handler is None:
+            return
+
+        self._visualization_handler.command_queue.put({
+            "command": "resize_nodes",
+            "payload": {
+                "size": size
+            }
+        })

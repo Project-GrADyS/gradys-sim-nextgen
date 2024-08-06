@@ -119,7 +119,7 @@ class MobilityHandler(INodeHandler):
             self._event_loop.schedule_event(
                 self._event_loop.current_time,
                 make_send_telemetry(node, telemetry),
-                label_node(node)
+                label_node(node) + " handle_telemetry"
             )
 
         self._event_loop.schedule_event(self._event_loop.current_time + self._configuration.update_rate,

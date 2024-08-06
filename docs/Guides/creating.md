@@ -258,6 +258,19 @@ page can be automatically opened by the handler by setting the `open_browser` pa
 to `True` on the handler's configuration. The web page will show the nodes' position and
 some other basic information about the simulation. 
 
+Another feature of the visualization is the ability of controlling aspects of
+the visualization from your protocol through the
+[VisualizationController][gradysim.simulator.handler.visualization.VisualizationController]. 
+You can use this to visually display information about your protocol's state. 
+In this case we will be using it to display the node's received messages as a 
+color gradient from black to red.
+
+!!!warning
+    The `VisualizationController` only runs when the protocol is running in the
+    python simulator, in prototype-mode. There is no need to modify your protocol
+    when running it in another environment, all the visualization commands will
+    be ignored in that case.
+
 The web page interface can be accessed anytime on 
 [this URL](https://project-gradys.github.io/gradys-sim-nextgen-visualization/). The visualization
 will automatically connect to the websocket server once you start the simulation.
