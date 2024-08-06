@@ -178,11 +178,11 @@ class CommunicationHandler(INodeHandler):
                 self._event_loop.schedule_event(
                     self._event_loop.current_time,
                     lambda: destination.receive_message(message, source),
-                    label_node(destination.node)
+                    label_node(destination.node) + " handle_packet"
                 )
             else:
                 self._event_loop.schedule_event(
                     self._event_loop.current_time + self.communication_medium.delay,
                     lambda: destination.receive_message(message, source),
-                    label_node(destination.node)
+                    label_node(destination.node) + " handle_packet"
                 )
