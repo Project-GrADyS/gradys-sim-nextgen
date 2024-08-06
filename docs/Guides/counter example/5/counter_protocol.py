@@ -5,11 +5,14 @@ from gradysim.protocol.interface import IProtocol
 from gradysim.protocol.messages.communication import BroadcastMessageCommand
 from gradysim.protocol.messages.mobility import GotoCoordsMobilityCommand
 from gradysim.protocol.messages.telemetry import Telemetry
+from gradysim.simulator.handler.visualization import VisualizationController
 
 
 class CounterProtocol(IProtocol):
     sent: int
     received: int
+
+    visualization_controller: VisualizationController
 
     def initialize(self):
         # We initialize two counters: one for sent and one
@@ -27,6 +30,11 @@ class CounterProtocol(IProtocol):
             "mobility",  # We don't care about the name since we're only going to use one
             self.provider.current_time() + 5  # Scheduling it 1 second from now
         )
+
+        self.visualization_controller = VisualizationController()
+
+        # The node will start painted black
+        self.visualization_controller.paint_node(self.provider.get_id(), (0, 0, 0))
 
     def handle_timer(self, timer: str):
         if timer == "message":
@@ -68,6 +76,9 @@ class CounterProtocol(IProtocol):
         # This time we care about received messages, we increment our received
         # counter every time a new one arrives.
         self.received += 1
+
+        # The node progressively changes its color to red as it receives more messages
+        self.visualization_controller.paint_node(self.provider.get_id(), (min(self.received, 255), 0, 0))
 
     def handle_telemetry(self, telemetry: Telemetry):
         # We don't care about mobility, so we are ignoring the received telemetry

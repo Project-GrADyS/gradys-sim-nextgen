@@ -259,8 +259,15 @@ class VisualizationController:
     protocol. Commands can be used to affect the visualization, such as painting nodes or changing the
     environment's color.
 
-    Every method in this class is a no-op if a visualization handler is not active. This includes when the protocol is
-    not runnign on a python simulation environment.
+    !!!info
+        Every method in this class is a no-op if a visualization handler is not active. This includes when the protocol is
+        not runnign on a python simulation environment.
+
+    !!!warning
+        The VisualizationController is attached to the last active visualization handler. This means that if you have
+        multiple visualization handlers active for some reason, the controller will only affect the last one. This also
+        means that this class should always be instantiated in the protocol's `initialize` method, to avoid
+        initialization before the visualization handler is active.
     """
     def __init__(self):
         self._visualization_handler = _active_handler
