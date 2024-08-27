@@ -275,24 +275,29 @@ class VisualizationController:
         if _active_handler is None:
             logging.warning("No visualization handler active, visualization commands will be ignored")
 
-    def paint_node(self, node_id: int, color: Tuple[float, float, float]) -> None:
+    def paint_node(self, node_id: int, color: Tuple[float, float, float], show_id: bool) -> None:
         """
         Paints a node in the visualization with a specific color.
 
         Args:
             node_id: ID of the node to paint
             color: RGB color of the node
+            show_id: Boolean indicating if node_id should be painted
         """
+        print("CHAMANDO PAINT_NODE")
         if self._visualization_handler is None:
+            print("NO VISUALIZATION HANDLER")
             return
 
         self._visualization_handler.command_queue.put({
             "command": "paint_node",
             "payload": {
                 "node_id": node_id,
-                "color": color
+                "color": color,
+                "show_id": show_id
             }
         })
+        print("COMMAND SENT")
 
     def paint_environment(self, color: Tuple[float, float, float]) -> None:
         """
