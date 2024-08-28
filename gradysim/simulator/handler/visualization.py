@@ -284,9 +284,7 @@ class VisualizationController:
             color: RGB color of the node
             show_id: Boolean indicating if node_id should be painted
         """
-        print("CHAMANDO PAINT_NODE")
         if self._visualization_handler is None:
-            print("NO VISUALIZATION HANDLER")
             return
 
         self._visualization_handler.command_queue.put({
@@ -297,7 +295,6 @@ class VisualizationController:
                 "show_id": show_id
             }
         })
-        print("COMMAND SENT")
 
     def paint_environment(self, color: Tuple[float, float, float]) -> None:
         """
