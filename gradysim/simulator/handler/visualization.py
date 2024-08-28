@@ -294,7 +294,7 @@ class VisualizationController:
             }
         })
 
-    def show_node_id(self, node_id: int, show: bool):
+    def show_id(self, node_id: int, show: bool):
         """
         Paints or unpaints the node_id text over the node.
 
