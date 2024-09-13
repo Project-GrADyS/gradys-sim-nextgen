@@ -290,7 +290,26 @@ class VisualizationController:
             "command": "paint_node",
             "payload": {
                 "node_id": node_id,
-                "color": color
+                "color": color,
+            }
+        })
+
+    def show_node_id(self, node_id: int, show: bool):
+        """
+        Paints or unpaints the node_id text over the node.
+
+        Args:
+            node_id: ID of the node
+            show: wheter to show the node_id or not
+        """
+        if self._visualization_handler is None:
+            return
+        
+        self._visualization_handler.command_queue.put({
+            "command": "show_node_id",
+            "payload": {
+                "node_id": node_id,
+                "show": show,
             }
         })
 
