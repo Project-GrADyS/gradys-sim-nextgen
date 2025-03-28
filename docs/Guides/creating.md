@@ -260,7 +260,7 @@ some other basic information about the simulation.
 
 Another feature of the visualization is the ability of controlling aspects of
 the visualization from your protocol through the
-[VisualizationController][gradysim.simulator.handler.visualization.VisualizationController]. 
+[VisualizationController][gradysim.simulator.extension.visualization_controller.VisualizationController]. 
 You can use this to visually display information about your protocol's state. 
 In this case we will be using it to display the node's received messages as a 
 color gradient from black to red.
