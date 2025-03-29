@@ -11,6 +11,7 @@ from gradysim.protocol.interface import IProtocol, IProvider
 from gradysim.encapsulator.interface import IEncapsulator
 from gradysim.protocol.messages.communication import CommunicationCommand
 from gradysim.protocol.messages.mobility import MobilityCommand
+from gradysim.simulator.handler.interface import INodeHandler
 from gradysim.simulator.handler.timer import TimerHandler
 from gradysim.protocol.messages.telemetry import Telemetry
 from gradysim.simulator.handler.mobility import MobilityHandler
@@ -22,23 +23,19 @@ class PythonProvider(IProvider):
     """
     Handles protocols actions translating them into actions inside the python simulation
     """
-    def __init__(self, node: Node,
-                 communication_handler: Optional[CommunicationHandler] = None,
-                 timer_handler: Optional[TimerHandler] = None,
-                 mobility_handler: Optional[MobilityHandler] = None):
+    def __init__(self, node: Node, **handlers: INodeHandler):
         """
         Instantiates a python provider
 
         Args:
-            node: The node being encapsulated
-            communication_handler: The communication handler if available
-            timer_handler: The timer handler if available
-            mobility_handler: The mobility handler if available
+            node: Node being encapsulated
+            handlers: Handlers being used in the simulation
         """
         self.node = node
-        self.communication_handler = communication_handler
-        self.timer_handler = timer_handler
-        self.mobility_handler = mobility_handler
+        self.communication_handler: Optional[CommunicationHandler] = handlers.get('communication')
+        self.timer_handler: Optional[TimerHandler] = handlers.get('timer')
+        self.mobility_handler: Optional[MobilityHandler] = handlers.get('mobility')
+        self.handlers = handlers
         self.tracked_variables = {}
         self._logger = logging.getLogger()
 
@@ -136,20 +133,15 @@ class PythonEncapsulator(IEncapsulator):
 
     def __init__(self,
                  node: Node,
-                 communication: Optional[CommunicationHandler] = None,
-                 timer: Optional[TimerHandler] = None,
-                 mobility: Optional[MobilityHandler] = None,
-                 **_kwargs: dict):
+                 **handlers: INodeHandler):
         """
         Instantiates a python encapsulator
 
         Args:
             node: Node being encapsulated
-            communication: Communication handler, if present
-            timer: Timer handler, if present
-            mobility: Mobility handler, if present
+            handlers: Handlers being used in the simulation
         """
-        self.provider = PythonProvider(node, communication, timer, mobility)
+        self.provider = PythonProvider(node, **handlers)
 
     def encapsulate(self, protocol: Type[IProtocol]) -> None:
         """

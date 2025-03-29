@@ -49,9 +49,9 @@ class MobilityHandler(INodeHandler):
 
     _event_loop: EventLoop
 
-    _nodes: Dict[int, Node]
-    _targets: Dict[int, Position]
-    _speeds: Dict[int, float]
+    nodes: Dict[int, Node]
+    targets: Dict[int, Position]
+    speeds: Dict[int, float]
 
     def __init__(self, configuration: MobilityConfiguration = MobilityConfiguration()):
         """
@@ -61,9 +61,9 @@ class MobilityHandler(INodeHandler):
             configuration: Configuration for the mobility handler. If not set all default values will be used.
         """
         self._configuration = configuration
-        self._nodes = {}
-        self._targets = {}
-        self._speeds = {}
+        self.nodes = {}
+        self.targets = {}
+        self.speeds = {}
         self._injected = False
 
     def inject(self, event_loop: EventLoop):
@@ -79,18 +79,18 @@ class MobilityHandler(INodeHandler):
             raise MobilityException("Error registering node: cannot register nodes while mobility handler "
                                     "is uninitialized.")
 
-        self._nodes[node.id] = node
-        self._speeds[node.id] = self._configuration.default_speed
+        self.nodes[node.id] = node
+        self.speeds[node.id] = self._configuration.default_speed
 
     def _update_movement(self):
-        for node_id in self._nodes.keys():
-            node = self._nodes[node_id]
+        for node_id in self.nodes.keys():
+            node = self.nodes[node_id]
 
             # If the node has a target update its position
-            if node_id in self._targets:
-                target = self._targets[node_id]
+            if node_id in self.targets:
+                target = self.targets[node_id]
                 current_position = node.position
-                speed = self._speeds[node_id]
+                speed = self.speeds[node_id]
                 target_vector: Position = (target[0] - current_position[0],
                                            target[1] - current_position[1],
                                            target[2] - current_position[2])
@@ -135,7 +135,7 @@ class MobilityHandler(INodeHandler):
             command: Command being issued
             node: Node that issued the command
         """
-        if node.id not in self._nodes:
+        if node.id not in self.nodes:
             raise MobilityException("Error handling commands: Cannot handle command from unregistered node")
 
         if command.command_type == MobilityCommandType.GOTO_COORDS:
@@ -145,10 +145,10 @@ class MobilityHandler(INodeHandler):
                                                (command.param_1, command.param_2, command.param_3))
             self._goto(relative_coords, node)
         elif command.command_type == MobilityCommandType.SET_SPEED:
-            self._speeds[node.id] = command.param_1
+            self.speeds[node.id] = command.param_1
 
     def _goto(self, position: Position, node: Node):
-        self._targets[node.id] = position
+        self.targets[node.id] = position
 
     def _stop(self, node: Node):
-        del self._targets[node.id]
+        del self.targets[node.id]

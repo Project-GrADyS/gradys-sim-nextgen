@@ -18,7 +18,7 @@ import multiprocessing
 import time
 import webbrowser
 from dataclasses import dataclass
-from typing import List, Tuple, TypedDict, Literal, Optional
+from typing import List, Tuple, TypedDict, Literal
 
 import websockets
 
@@ -247,100 +247,3 @@ def _visualization_thread(config: VisualizationConfiguration,
             await update_information()
 
     asyncio.run(main())
-
-_active_handler: Optional[VisualizationHandler] = None
-"""
-Tracks the active visualization handler. This is used to access the handler from the simulation thread.
-"""
-
-class VisualizationController:
-    """
-    Controller for the visualization handler. Can be used to send commands to the visualization handler from a
-    protocol. Commands can be used to affect the visualization, such as painting nodes or changing the
-    environment's color.
-
-    !!!info
-        Every method in this class is a no-op if a visualization handler is not active. This includes when the protocol is
-        not runnign on a python simulation environment.
-
-    !!!warning
-        The VisualizationController is attached to the last active visualization handler. This means that if you have
-        multiple visualization handlers active for some reason, the controller will only affect the last one. This also
-        means that this class should always be instantiated in the protocol's `initialize` method, to avoid
-        initialization before the visualization handler is active.
-    """
-    def __init__(self):
-        self._visualization_handler = _active_handler
-
-        if _active_handler is None:
-            logging.warning("No visualization handler active, visualization commands will be ignored")
-
-    def paint_node(self, node_id: int, color: Tuple[float, float, float]) -> None:
-        """
-        Paints a node in the visualization with a specific color.
-
-        Args:
-            node_id: ID of the node to paint
-            color: RGB color of the node
-        """
-        if self._visualization_handler is None:
-            return
-
-        self._visualization_handler.command_queue.put({
-            "command": "paint_node",
-            "payload": {
-                "node_id": node_id,
-                "color": color
-            }
-        })
-
-    def paint_environment(self, color: Tuple[float, float, float]) -> None:
-        """
-        Paints the environment in the visualization with a specific color.
-
-        Args:
-            color: RGB color of the environment
-        """
-        if self._visualization_handler is None:
-            return
-
-        self._visualization_handler.command_queue.put({
-            "command": "paint_environment",
-            "payload": {
-                "color": color
-            }
-        })
-
-    def resize_nodes(self, size: float) -> None:
-        """
-        Resizes the nodes in the visualization
-        Args:
-            size: New size of the nodes
-        """
-        if self._visualization_handler is None:
-            return
-
-        self._visualization_handler.command_queue.put({
-            "command": "resize_nodes",
-            "payload": {
-                "size": size
-            }
-        })
-
-    def show_node_id(self, node_id: int, show: bool):
-        """
-        Paints or unpaints the node_id text over the node.
-        Args:
-            node_id: ID of the node
-            show: wheter to show the node_id or not
-        """
-        if self._visualization_handler is None:
-            return
-
-        self._visualization_handler.command_queue.put({
-            "command": "show_node_id",
-            "payload": {
-                "node_id": node_id,
-                "show": show,
-            }
-        })

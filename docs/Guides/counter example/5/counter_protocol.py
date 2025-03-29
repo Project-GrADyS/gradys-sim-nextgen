@@ -5,7 +5,7 @@ from gradysim.protocol.interface import IProtocol
 from gradysim.protocol.messages.communication import BroadcastMessageCommand
 from gradysim.protocol.messages.mobility import GotoCoordsMobilityCommand
 from gradysim.protocol.messages.telemetry import Telemetry
-from gradysim.simulator.handler.visualization import VisualizationController
+from gradysim.simulator.extension.visualization_controller import VisualizationController
 
 
 class CounterProtocol(IProtocol):

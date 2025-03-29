@@ -87,18 +87,6 @@ class CommunicationMedium:
     """Failure chance between 0 and 1 for message delivery. 0 represents messages never failing and 1 always fails."""
 
 
-def can_transmit(source_position: Position, destination_position: Position, communication_medium: CommunicationMedium):
-    squared_distance = (destination_position[0] - source_position[0]) ** 2 + \
-                       (destination_position[1] - source_position[1]) ** 2 + \
-                       (destination_position[2] - source_position[2]) ** 2
-    in_range = squared_distance <= (communication_medium.transmission_range * communication_medium.transmission_range)
-
-    rng = True
-    if communication_medium.failure_rate > 0:
-        rng = random.random() > communication_medium.failure_rate
-    return rng & in_range
-
-
 class CommunicationHandler(INodeHandler):
     """
     Adds communication to the simulation. Nodes, through their providers, can
@@ -126,8 +114,10 @@ class CommunicationHandler(INodeHandler):
         """
         self._injected = False
 
-        self._sources = {}
-        self._destinations = {}
+        self._sources: Dict[int, CommunicationSource] = {}
+        self._destinations: Dict[int, CommunicationDestination] = {}
+
+        self.transmission_ranges: Dict[int, float] = {}
         self.communication_medium = communication_medium
 
     def inject(self, event_loop: EventLoop):
@@ -140,6 +130,7 @@ class CommunicationHandler(INodeHandler):
                                          "node handler")
         self._sources[node.id] = CommunicationSource(node)
         self._destinations[node.id] = CommunicationDestination(node)
+        self.transmission_ranges[node.id] = self.communication_medium.transmission_range
 
     def handle_command(self, command: CommunicationCommand, sender: Node):
         """
@@ -170,10 +161,22 @@ class CommunicationHandler(INodeHandler):
 
             self._transmit_message(command.message, source, self._destinations[destination])
 
+    def can_transmit(self, source_position: Position, destination_position: Position,
+                     node: Node):
+        squared_distance = (destination_position[0] - source_position[0]) ** 2 + \
+                           (destination_position[1] - source_position[1]) ** 2 + \
+                           (destination_position[2] - source_position[2]) ** 2
+        in_range = squared_distance <= self.transmission_ranges[node.id] ** 2
+
+        rng = True
+        if self.communication_medium.failure_rate > 0:
+            rng = random.random() > self.communication_medium.failure_rate
+        return rng and in_range
+
     def _transmit_message(self, message: str, source: CommunicationSource, destination: CommunicationDestination):
         source.hand_over_message(message, destination)
 
-        if can_transmit(source.node.position, destination.node.position, self.communication_medium):
+        if self.can_transmit(source.node.position, destination.node.position, source.node):
             if self.communication_medium.delay <= 0:
                 self._event_loop.schedule_event(
                     self._event_loop.current_time,
