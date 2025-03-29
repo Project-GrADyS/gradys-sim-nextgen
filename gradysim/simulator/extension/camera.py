@@ -4,7 +4,7 @@ from typing import Optional, TypedDict, Tuple, List
 
 from gradysim.protocol.interface import IProtocol
 from gradysim.protocol.position import Position
-from gradysim.simulator.extension import Extension
+from gradysim.simulator.extension.extension import Extension
 from gradysim.simulator.handler.mobility import MobilityHandler
 
 class DetectedNode(TypedDict):

@@ -15,5 +15,3 @@ modify the simulation environment.
     Most extensions rely on a specific handler being present in the simulation. Check their own documentation to see
     which handlers they rely on.
 """
-
-from .extension import Extension

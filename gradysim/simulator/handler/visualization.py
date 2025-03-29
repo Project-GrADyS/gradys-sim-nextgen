@@ -18,7 +18,7 @@ import multiprocessing
 import time
 import webbrowser
 from dataclasses import dataclass
-from typing import List, Tuple, TypedDict, Literal, Optional
+from typing import List, Tuple, TypedDict, Literal
 
 import websockets
 

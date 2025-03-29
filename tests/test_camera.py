@@ -1,14 +1,12 @@
 import unittest
 
-import pytest
-
 from gradysim.protocol.interface import IProtocol
 from gradysim.protocol.messages.telemetry import Telemetry
 from gradysim.protocol.position import Position
 from gradysim.simulator.extension.camera import CameraHardware, CameraConfiguration
 from gradysim.simulator.handler.mobility import MobilityHandler
 from gradysim.simulator.node import Node
-from gradysim.simulator.simulation import SimulationBuilder, Simulator
+from gradysim.simulator.simulation import SimulationBuilder
 
 
 class TestCameraHardware(unittest.TestCase):
