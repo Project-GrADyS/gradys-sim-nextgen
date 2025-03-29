@@ -168,4 +168,9 @@ class TestCommunication(unittest.TestCase):
         self.assertTrue(handler.can_transmit((0, 0, 0), (0, 0, 0), node))
 
         medium = CommunicationMedium(failure_rate=1)
+        node = Node()
+        node.id = 0
+        handler = CommunicationHandler(medium)
+        handler.inject(None)
+        handler.register_node(node)
         self.assertFalse(handler.can_transmit((0, 0, 0), (0, 0, 0), node))
