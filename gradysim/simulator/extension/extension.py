@@ -12,7 +12,7 @@ class Extension:
     sophisticated way.
     """
 
-    provider: Optional[PythonProvider]
+    _provider: Optional[PythonProvider]
 
     def __init__(self, protocol: IProtocol):
         provider = protocol.provider
@@ -24,6 +24,6 @@ class Extension:
         if not isinstance(provider, PythonProvider):
             warnings.warn("Extensions can only be ran in a python simulation environment. "
                           "Every functionality in this extension will be a no-op.")
-            self.provider = None
+            self._provider = None
         else:
-            self.provider = provider
+            self._provider = provider

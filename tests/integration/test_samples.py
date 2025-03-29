@@ -35,6 +35,7 @@ _FORCE_FAST_EXECUTION = True
     ('docs/Guides/counter example/5', 'counter_execution'),
     ('docs/Guides/counter example/6', 'counter_execution'),
     ('docs/Guides/simple example/', 'main'),
+    ('docs/Guides/camera example/', 'main')
 ])
 def test_sample(sample_path: str, main_script: str):
     with simulation._ForceFastExecution():

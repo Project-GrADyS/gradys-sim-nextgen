@@ -16,4 +16,4 @@ modify the simulation environment.
     which handlers they rely on.
 """
 
-from extension import Extension
+from .extension import Extension

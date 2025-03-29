@@ -3,7 +3,7 @@ import unittest
 from gradysim.simulator.event import EventLoop
 from gradysim.protocol.messages.communication import CommunicationCommand, CommunicationCommandType
 from gradysim.simulator.node import Node
-from gradysim.simulator.handler.communication import CommunicationMedium, can_transmit, CommunicationHandler, \
+from gradysim.simulator.handler.communication import CommunicationMedium, CommunicationHandler, \
     CommunicationException
 
 
@@ -44,15 +44,20 @@ def handle_command_helper(command: CommunicationCommand):
 class TestCommunication(unittest.TestCase):
     def test_transmission_range(self):
         medium = CommunicationMedium(transmission_range=10)
+        handler = CommunicationHandler(medium)
+        node = Node()
+        node.id = 0
+        handler.inject(None)
+        handler.register_node(node)
 
-        self.assertTrue(can_transmit((0, 0, 0), (10, 0, 0), medium))
-        self.assertTrue(can_transmit((0, 0, 0), (0, 0, 0), medium))
-        self.assertTrue(can_transmit((0, 0, 0), (-3, -3, 0), medium))
+        self.assertTrue(handler.can_transmit((0, 0, 0), (10, 0, 0), node))
+        self.assertTrue(handler.can_transmit((0, 0, 0), (0, 0, 0), node))
+        self.assertTrue(handler.can_transmit((0, 0, 0), (-3, -3, 0), node))
 
-        self.assertFalse(can_transmit((0, 0, 0), (10.001, 0, 0), medium))
-        self.assertFalse(can_transmit((10, 0, 0), (-10, 0, 0), medium))
-        self.assertFalse(can_transmit((0, 0, 0), (30, 0, 0), medium))
-        self.assertFalse(can_transmit((0, 0, 0), (8, 8, 8), medium))
+        self.assertFalse(handler.can_transmit((0, 0, 0), (10.001, 0, 0), node))
+        self.assertFalse(handler.can_transmit((10, 0, 0), (-10, 0, 0), node))
+        self.assertFalse(handler.can_transmit((0, 0, 0), (30, 0, 0), node))
+        self.assertFalse(handler.can_transmit((0, 0, 0), (8, 8, 8), node))
 
     def test_successful_send_command(self):
         command = CommunicationCommand(
@@ -155,7 +160,12 @@ class TestCommunication(unittest.TestCase):
 
     def test_failure(self):
         medium = CommunicationMedium(failure_rate=0)
-        self.assertTrue(can_transmit((0, 0, 0), (0, 0, 0), medium))
+        node = Node()
+        node.id = 0
+        handler = CommunicationHandler(medium)
+        handler.inject(None)
+        handler.register_node(node)
+        self.assertTrue(handler.can_transmit((0, 0, 0), (0, 0, 0), node))
 
         medium = CommunicationMedium(failure_rate=1)
-        self.assertFalse(can_transmit((0, 0, 0), (0, 0, 0), medium))
+        self.assertFalse(handler.can_transmit((0, 0, 0), (0, 0, 0), node))

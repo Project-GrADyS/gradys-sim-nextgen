@@ -22,8 +22,9 @@ class CommunicationController(Extension):
 
     def __init__(self, protocol: IProtocol):
         super().__init__(protocol)
-        self.communication: Optional[CommunicationHandler] = self.provider.handlers.get("communication")
-        if self.communication is None:
+        if self._provider is not None:
+            self._communication: Optional[CommunicationHandler] = self._provider.handlers.get("communication")
+        if self._communication is None:
             logging.warning("No communication handler detected. All commands will be no-ops.")
 
     def set_transmission_range(self, transmission_range: float):
@@ -42,8 +43,8 @@ class CommunicationController(Extension):
         if transmission_range < 0:
             raise ValueError("Transmission range must be a positive number.")
 
-        if self.communication is None:
+        if self._communication is None:
             logging.warning("No communication handler detected, command ignored.")
             return
 
-        self.communication.transmission_ranges[self.provider.get_id()] = transmission_range
+        self._communication.transmission_ranges[self._provider.get_id()] = transmission_range

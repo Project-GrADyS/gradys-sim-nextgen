@@ -21,8 +21,9 @@ class VisualizationController(Extension):
     """
     def __init__(self, protocol: IProtocol):
         super().__init__(protocol)
-        self._visualization_handler: Optional[VisualizationHandler] = \
-            self.provider.handlers.get("visualization") if self.provider is not None else None
+        if self._provider is not None:
+            self._visualization_handler: Optional[VisualizationHandler] = \
+                self._provider.handlers.get("visualization") if self._provider is not None else None
 
     def paint_node(self, node_id: int, color: Tuple[float, float, float]) -> None:
         """

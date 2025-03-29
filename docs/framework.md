@@ -45,8 +45,8 @@ providing common functionalities that are often needed in protocols. You can
 read more about them in the [plugins documentation][gradysim.protocol.plugin].
 
 !!!info
-    View the [creating a protocol](./Guides/creating.md) and the 
-    [implementation of a simulation scenario](./Guides/creating.md) guides for 
+    View the [creating a protocol](./Guides/1_creating.md) and the 
+    [implementation of a simulation scenario](./Guides/1_creating.md) guides for 
     concrete examples of using this package. For a more in-depth view read the 
     documentation for the `protocol` subpackage [here][gradysim.protocol].
 
@@ -63,8 +63,8 @@ the communication between nodes. The protocol interacts with the simulation
 environment through glue-code provided in the `encapsulator` package.
 
 !!!info
-    Both the [creating a protocol](./Guides/creating.md) and the 
-    [implementation of a simulation scenario](./Guides/creating.md) guides use
+    Both the [creating a protocol](./Guides/1_creating.md) and the 
+    [implementation of a simulation scenario](./Guides/1_creating.md) guides use
     the prototype-mode simulator to execute the protocols. You can read them to 
     understand how to use this package. For a more in-depth view read the 
     documentation for the `simulator` subpackage [here][gradysim.simulator].
