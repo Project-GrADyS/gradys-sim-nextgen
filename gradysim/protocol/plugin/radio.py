@@ -1,3 +1,8 @@
+"""
+This module declares a plugin for the protocol that allows a protocol to instantiate multiple radios, each with their own
+communication characteristics. This plugin is only available in a Python simulation environment and will raise an
+error if used in other environments. Alternative implementations should be provided for other simulation environments,
+"""
 from dataclasses import dataclass
 
 from gradysim.encapsulator.python import PythonProvider

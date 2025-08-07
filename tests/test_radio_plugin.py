@@ -6,7 +6,6 @@ from gradysim.protocol.messages.communication import CommunicationCommand, Commu
 from gradysim.simulator.handler.communication import CommunicationHandler
 from gradysim.simulator.simulation import SimulationBuilder, SimulationConfiguration
 from gradysim.protocol.interface import IProtocol
-from gradysim.protocol.position import Position
 
 # Factory function to generate protocol classes with custom radio config
 
