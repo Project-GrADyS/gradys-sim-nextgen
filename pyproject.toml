@@ -7,7 +7,7 @@ include = ["gradys*"]
 
 [project]
 name = "gradysim"
-version = "0.7.2"
+version = "0.7.3"
 description = "GrADyS-SIM NextGen is a framework for implementing distributed algorithms in a simulated network environment"
 keywords = ["network", "distributed", "algorithm", "simulation", "gradys", "LAC", "PUC", "drone", "sensor"]
 authors = [
