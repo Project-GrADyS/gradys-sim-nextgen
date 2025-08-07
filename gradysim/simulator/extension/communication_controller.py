@@ -48,3 +48,16 @@ class CommunicationController(Extension):
             return
 
         self._communication.transmission_ranges[self._provider.get_id()] = transmission_range
+
+    def get_transmission_range(self) -> Optional[float]:
+        """
+        Gets the current transmission range of the protocol. If no communication handler is active, returns None.
+
+        Returns:
+            The transmission range of the protocol. If no communication handler is active, returns None
+        """
+        if self._communication is None:
+            logging.warning("No communication handler detected, returning 0.")
+            return None
+
+        return self._communication.transmission_ranges[self._provider.get_id()]
