@@ -2,7 +2,7 @@ import logging
 
 from gradysim.protocol.interface import IProtocol
 from gradysim.protocol.messages.telemetry import Telemetry
-from gradysim.protocol.plugin.raft import RaftConfig, RaftMode, RaftConsensus
+from gradysim.protocol.plugin.raft import RaftConfig, RaftMode, RaftConsensusPlugin
 
 
 class RaftProtocol(IProtocol):
@@ -49,7 +49,7 @@ class RaftProtocol(IProtocol):
         failure_config.set_heartbeat_timeout(4)      # 4× heartbeat_interval = 200ms timeout
 
         # Create the Raft consensus instance
-        self.consensus = RaftConsensus(
+        self.consensus = RaftConsensusPlugin(
             config=config,
             protocol=self
         )

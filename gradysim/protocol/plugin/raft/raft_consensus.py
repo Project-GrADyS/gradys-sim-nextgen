@@ -19,7 +19,7 @@ from .raft_state import RaftState
 from ..dispatcher import create_dispatcher, DispatchReturn
 from ...interface import IProtocol
 
-class RaftConsensus:
+class RaftConsensusPlugin:
     """
     Main interface for Raft consensus implementation.
     
