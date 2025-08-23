@@ -16,8 +16,8 @@ from .adapters import GradysimAdapter
 from .raft_config import RaftConfig
 from .raft_node import RaftNode
 from .raft_state import RaftState
+from ..dispatcher import create_dispatcher, DispatchReturn
 from ...interface import IProtocol
-
 
 class RaftConsensus:
     """
@@ -154,7 +154,13 @@ class RaftConsensus:
         self.logger = logging.getLogger(f"RaftConsensus-{self.node_id}")
         if config._enable_logging:
             self.logger.setLevel(getattr(logging, config._log_level))
-        
+
+        # Initializing dispatcher for protocol events
+        self._dispatcher = create_dispatcher(protocol)
+
+        self.configure_handle_message()
+        self.configure_handle_timer()
+
         self.logger.info(f"RaftConsensus initialized for node {self.node_id}")
     
     def _validate_adapter(self, adapter):
@@ -294,25 +300,27 @@ class RaftConsensus:
         """
         return self._raft_node.state
     
-    def handle_message(self, message_str: str) -> None:
+    def configure_handle_message(self) -> None:
         """
         Handle incoming message with automatic sender_id extraction.
         
         This method automatically extracts the sender_id from the message JSON,
         making it simpler to use. The message should contain a "sender_id" field.
         If the sender_id cannot be extracted, it defaults to 0.
-        
-        Args:
-            message_str: JSON string representation of the message
         """
-        try:
-            import json
-            data = json.loads(message_str)
-            sender_id = data.get("sender_id", 0)
-            self._raft_node.handle_message(message_str, sender_id)
-        except (json.JSONDecodeError, KeyError, TypeError):
-            # If parsing fails, assume sender is 0
-            self._raft_node.handle_message(message_str, 0)
+        def handle_message(_instance: IProtocol, message_str: str) -> DispatchReturn:
+            try:
+                import json
+                data = json.loads(message_str)
+                sender_id = data.get("sender_id", 0)
+                self._raft_node.handle_message(message_str, sender_id)
+            except (json.JSONDecodeError, KeyError, TypeError):
+                # If parsing fails, assume sender is 0
+                self._raft_node.handle_message(message_str, 0)
+            finally:
+                return DispatchReturn.CONTINUE
+
+        self._dispatcher.register_handle_packet(handle_message)
     
     def send_broadcast(self, message: str) -> None:
         """
@@ -333,18 +341,18 @@ class RaftConsensus:
                 if node_id != self.node_id:
                     self._raft_node._send_message(message, node_id)
     
-    def handle_timer(self, timer_name: str) -> None:
+    def configure_handle_timer(self) -> None:
         """
         Handle timer expiration.
         
         This method should be called whenever a timer expires. The timer
         will be processed according to the Raft protocol.
-        
-        Args:
-            timer_name: Name of the expired timer
         """
-        self._raft_node.handle_timer(timer_name)
-    
+        def handle_timer(_instance: IProtocol, timer_name: str) -> DispatchReturn:
+            self._raft_node.handle_timer(timer_name)
+            return DispatchReturn.CONTINUE
+        self._dispatcher.register_handle_timer(handle_timer)
+
     def set_known_nodes(self, node_ids: List[int]) -> None:
         """
         Set the list of known node IDs.
