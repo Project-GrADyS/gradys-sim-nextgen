@@ -12,9 +12,11 @@ to integrate Raft consensus into their Gradysim protocols.
 import logging
 from typing import Any, Callable, Dict, List, Optional, Set, Type
 
+from .adapters import GradysimAdapter
 from .raft_config import RaftConfig
 from .raft_node import RaftNode
 from .raft_state import RaftState
+from ...interface import IProtocol
 
 
 class RaftConsensus:
@@ -96,16 +98,16 @@ class RaftConsensus:
         consensus.stop()
     """
     
-    def __init__(self, config: RaftConfig, adapter=None):
+    def __init__(self, config: RaftConfig, protocol: IProtocol):
         """
         Initialize Raft consensus.
         
         Args:
             config: Raft configuration
-            adapter: Adapter object that provides all necessary callbacks
+            protocol: The protocol instance using this consensus
             
         Raises:
-            ValueError: If configuration is invalid or adapter is not provided
+            ValueError: If configuration is invalid
             
         Example:
             # Simple usage with adapter (recommended):
@@ -120,9 +122,7 @@ class RaftConsensus:
         if errors:
             raise ValueError(f"Invalid configuration: {'; '.join(errors)}")
 
-        # Validate adapter is provided
-        if adapter is None:
-            raise ValueError("Adapter must be provided. Use: RaftConsensus(config=config, adapter=adapter)")
+        adapter = GradysimAdapter(protocol.provider, protocol)
 
         # Validate adapter has required methods
         self._validate_adapter(adapter)
