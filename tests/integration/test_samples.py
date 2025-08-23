@@ -28,6 +28,7 @@ _FORCE_FAST_EXECUTION = True
     ('showcases/follow-mobility', 'main'),
     ('showcases/ping-pong', 'main'),
     ('showcases/ping-pong', 'main_stepped'),
+    ('showcases/raft', 'main'),
     ('docs/Guides/counter example/1', 'counter_execution'),
     ('docs/Guides/counter example/2', 'counter_execution'),
     ('docs/Guides/counter example/3', 'counter_execution'),
