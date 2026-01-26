@@ -104,3 +104,21 @@ class SetSpeedMobilityCommand(MobilityCommand):
             speed: The desired speed in m/s
         """
         super().__init__(MobilityCommandType.SET_SPEED, speed)
+
+class SetVelocityMobilityCommand(MobilityCommand):
+    """
+    Represents a mobility command that sets the node's velocity along the x, y, and z axes. The parameters of this
+    command are the desired velocities in m/s along each axis. Uses the same command type as SetSpeedMobilityCommand,
+    but utilizes three parameters instead of one.
+    """
+
+    def __init__(self, vx: float, vy: float, vz: float):
+        """
+        Initializes a SetVelocityMobilityCommand
+
+        Args:
+            vx: The desired velocity along the x axis in m/s
+            vy: The desired velocity along the y axis in m/s
+            vz: The desired velocity along the z axis in m/s
+        """
+        super().__init__(MobilityCommandType.SET_SPEED, vx, vy, vz)

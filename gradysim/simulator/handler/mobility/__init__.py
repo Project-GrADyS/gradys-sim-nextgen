@@ -7,6 +7,7 @@ and for sending updated position telemetry back to the protocols.
 
 
 from .massless import MasslessMobilityConfiguration, MasslessMobilityHandler, MasslessMobilityException
+from .intertial import InertialMobilityConfiguration, InertialMobilityHandler
 
 # The MasslessMobility classes were at one point the only mobility classes available and were named
 # simply Mobility*. To maintain backwards compatibility with past versions, we alias their names here.
@@ -16,9 +17,13 @@ MobilityException = MasslessMobilityException
 
 __all__ = [
     "MobilityException",
+
     "MasslessMobilityException",
     "MobilityHandler",
     "MasslessMobilityHandler",
     "MobilityConfiguration",
-    "MasslessMobilityConfiguration"
+    "MasslessMobilityConfiguration",
+
+    "InertialMobilityHandler",
+    "InertialMobilityConfiguration",
 ]
