@@ -1,3 +1,5 @@
-:::gradysim.simulator.handler.mobility.MobilityHandler
+:::gradysim.simulator.handler.mobility
 
-:::gradysim.simulator.handler.mobility.MobilityConfiguration
+:::gradysim.simulator.handler.mobility.massless.MasslessMobilityHandler
+
+:::gradysim.simulator.handler.mobility.massless.MasslessMobilityConfiguration

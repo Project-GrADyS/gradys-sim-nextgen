@@ -11,12 +11,12 @@ from gradysim.simulator.log import label_node
 from gradysim.simulator.node import Node
 
 
-class MobilityException(Exception):
+class MasslessMobilityException(Exception):
     pass
 
 
 @dataclass
-class MobilityConfiguration:
+class MasslessMobilityConfiguration:
     """
     Configuration class for the mobility handler
     """
@@ -34,13 +34,15 @@ class MobilityConfiguration:
     """
 
 
-class MobilityHandler(INodeHandler):
+class MasslessMobilityHandler(INodeHandler):
     """
-    Introduces mobility into the simulatuon. Works by registering a regular event that
-    updates every node's position based on it's target and speed. A node, through it's provider,
-    can sent this handler communication commands to alter it's behaviour including it's speed 
-    and current target. Nodes also recieve telemetry updates containing information pertaining
-    a node's current mobility status.
+    Introduces mobility into the simulation. Simulates nodes as massless and dimensionless points that can move
+    freely in 3D space. There is no concept of acceleration or inertia, all changes in velocity are instantaneous.
+
+    Works by registering a regular event that updates every node's position based on its target and speed. A protocol
+    is capable of altering its own speed and heading by sending mobility commands through its provider. These commands
+    will reach the mobility handler which will update the node's target and speed accordingly. Nodes also receive
+    telemetry updates containing information pertaining a node's current mobility status.
     """
 
     @staticmethod
@@ -53,7 +55,7 @@ class MobilityHandler(INodeHandler):
     targets: Dict[int, Position]
     speeds: Dict[int, float]
 
-    def __init__(self, configuration: MobilityConfiguration = MobilityConfiguration()):
+    def __init__(self, configuration: MasslessMobilityConfiguration = MasslessMobilityConfiguration()):
         """
         Constructor for the mobility handler
 
@@ -76,7 +78,7 @@ class MobilityHandler(INodeHandler):
 
     def register_node(self, node: Node):
         if not self._injected:
-            raise MobilityException("Error registering node: cannot register nodes while mobility handler "
+            raise MasslessMobilityException("Error registering node: cannot register nodes while mobility handler "
                                     "is uninitialized.")
 
         self.nodes[node.id] = node
@@ -136,7 +138,7 @@ class MobilityHandler(INodeHandler):
             node: Node that issued the command
         """
         if node.id not in self.nodes:
-            raise MobilityException("Error handling commands: Cannot handle command from unregistered node")
+            raise MasslessMobilityException("Error handling commands: Cannot handle command from unregistered node")
 
         if command.command_type == MobilityCommandType.GOTO_COORDS:
             self._goto((command.param_1, command.param_2, command.param_3), node)
