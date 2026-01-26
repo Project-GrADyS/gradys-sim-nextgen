@@ -33,22 +33,22 @@ class MobilityCommand:
     command_type: MobilityCommandType
     """The type of the mobility command"""
 
-    param_1: float = 0
+    param_1: float | None = None
     """The first parameter of the mobility command, it's meaning changes depending on the command type"""
 
-    param_2: float = 0
+    param_2: float | None = None
     """The second parameter of the mobility command, it's meaning changes depending on the command type"""
 
-    param_3: float = 0
+    param_3: float | None = None
     """The third parameter of the mobility command, it's meaning changes depending on the command type"""
 
-    param_4: float = 0
+    param_4: float | None = None
     """The fourth parameter of the mobility command, it's meaning changes depending on the command type"""
 
-    param_5: float = 0
+    param_5: float | None = None
     """The fifth parameter of the mobility command, it's meaning changes depending on the command type"""
 
-    param_6: float = 0
+    param_6: float | None = None
     """The sixth parameter of the mobility command, it's meaning changes depending on the command type"""
 
 
