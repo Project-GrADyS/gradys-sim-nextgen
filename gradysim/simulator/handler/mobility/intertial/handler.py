@@ -25,6 +25,7 @@ from .core import (
     apply_velocity_tracking_first_order,
     integrate_position,
 )
+from .telemetry import InertialTelemetry
 
 
 class InertialMobilityHandler(INodeHandler):
@@ -292,7 +293,10 @@ class InertialMobilityHandler(INodeHandler):
         
         The telemetry is sent directly to the node's protocol encapsulator.
         """
-        telemetry = Telemetry(current_position=node.position)
+        telemetry = InertialTelemetry(
+            current_position=node.position,
+            current_velocity=self._get_node_position(node.id),
+        )
         
         # Schedule telemetry delivery to protocol (same pattern as MobilityHandler)
         def send_telemetry():
