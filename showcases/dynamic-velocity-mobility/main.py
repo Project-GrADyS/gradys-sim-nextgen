@@ -8,29 +8,24 @@ in initialize(), and then changed periodically via a timer (every 10 seconds).
 Initial node position is set in builder.add_node().
 """
 
+import importlib.util
 import logging
-import sys
 from pathlib import Path
 
 from gradysim.simulator.handler.mobility import (
     DynamicVelocityMobilityConfiguration,
     DynamicVelocityMobilityHandler,
 )
+from gradysim.simulator.handler.communication import CommunicationHandler, CommunicationMedium
+from gradysim.simulator.handler.timer import TimerHandler
+from gradysim.simulator.simulation import SimulationBuilder, SimulationConfiguration
+from gradysim.simulator.handler.visualization import VisualizationConfiguration, VisualizationHandler
 
 # Suppress websockets handshake warnings
 logging.getLogger('websockets').setLevel(logging.CRITICAL)
 
-from gradysim.simulator.handler.communication import CommunicationHandler, CommunicationMedium
-from gradysim.simulator.handler.timer import TimerHandler
-from gradysim.simulator.handler.visualization import VisualizationHandler, VisualizationConfiguration
-from gradysim.simulator.simulation import SimulationBuilder, SimulationConfiguration
-
 SHOWCASE_DIR = Path(__file__).resolve().parent
-if str(SHOWCASE_DIR) in sys.path:
-    sys.path.remove(str(SHOWCASE_DIR))
-sys.path.insert(0, str(SHOWCASE_DIR))
-
-from protocol import DynamicVelocityProtocol
+PROTOCOL_PATH = SHOWCASE_DIR / "protocol.py"
 
 
 # ============================================================
@@ -118,9 +113,24 @@ MOBILITY_PRESETS: dict[str, DynamicVelocityMobilityConfiguration] = {
 }
 
 
+def _load_dynamic_velocity_protocol():
+    """Load the showcase-local protocol module without relying on sys.path ordering."""
+    spec = importlib.util.spec_from_file_location(
+        "dynamic_velocity_showcase_protocol",
+        PROTOCOL_PATH,
+    )
+    if spec is None or spec.loader is None:
+        raise ImportError(f"Could not load protocol module from {PROTOCOL_PATH}")
+
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module.DynamicVelocityProtocol
+
+
 def main():
     """Execute the dynamic velocity mobility simulation."""
-    
+    dynamic_velocity_protocol = _load_dynamic_velocity_protocol()
+
     # Simulation parameters
     duration = 50  # Simulation duration in seconds
     debug = False  # Simulation debug mode
@@ -187,7 +197,7 @@ def main():
     builder.add_handler(VisualizationHandler(vis_config))
     
     # Add a single node at position (-25, -25, -25) - initial position
-    builder.add_node(DynamicVelocityProtocol, (-25, -25, -25))
+    builder.add_node(dynamic_velocity_protocol, (-25, -25, -25))
     
     # Build and start simulation
     simulation = builder.build()

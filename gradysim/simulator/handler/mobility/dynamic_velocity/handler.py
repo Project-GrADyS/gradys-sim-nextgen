@@ -11,9 +11,8 @@ from typing import Dict, Tuple
 
 from gradysim.protocol.messages.mobility import MobilityCommand, MobilityCommandType
 from gradysim.simulator.event import EventLoop
-from gradysim.simulator.node import Node
 from gradysim.simulator.handler.interface import INodeHandler
-from gradysim.protocol.messages.telemetry import Telemetry
+from gradysim.simulator.node import Node
 
 from .config import DynamicVelocityMobilityConfiguration
 from .core import (

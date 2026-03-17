@@ -6,7 +6,6 @@ Uses direct method calls instead of standard GrADyS mobility commands.
 
 from gradysim.protocol.interface import IProtocol
 from gradysim.protocol.messages.mobility import SetVelocityMobilityCommand
-from gradysim.protocol.messages.telemetry import Telemetry
 from gradysim.simulator.handler.mobility.dynamic_velocity.telemetry import DynamicVelocityTelemetry
 
 
