@@ -1,15 +1,21 @@
-"""Simple velocity-based mobility example with visualization.
+"""Simple dynamic velocity mobility example with visualization.
 
 This script builds a GrADyS-SIM simulation with a single node controlled by
-InertialMobilityHandler. The node's velocity is commanded by InertialProtocol
+Dynamic Velocity Mobility Handler. The node's velocity is commanded by
+DynamicVelocityProtocol
 in initialize(), and then changed periodically via a timer (every 10 seconds).
 
 Initial node position is set in builder.add_node().
 """
 
 import logging
+import sys
+from pathlib import Path
 
-from gradysim.simulator.handler.mobility import InertialMobilityConfiguration, InertialMobilityHandler
+from gradysim.simulator.handler.mobility import (
+    DynamicVelocityMobilityConfiguration,
+    DynamicVelocityMobilityHandler,
+)
 
 # Suppress websockets handshake warnings
 logging.getLogger('websockets').setLevel(logging.CRITICAL)
@@ -18,7 +24,13 @@ from gradysim.simulator.handler.communication import CommunicationHandler, Commu
 from gradysim.simulator.handler.timer import TimerHandler
 from gradysim.simulator.handler.visualization import VisualizationHandler, VisualizationConfiguration
 from gradysim.simulator.simulation import SimulationBuilder, SimulationConfiguration
-from protocol import InertialProtocol
+
+SHOWCASE_DIR = Path(__file__).resolve().parent
+if str(SHOWCASE_DIR) in sys.path:
+    sys.path.remove(str(SHOWCASE_DIR))
+sys.path.insert(0, str(SHOWCASE_DIR))
+
+from protocol import DynamicVelocityProtocol
 
 
 # ============================================================
@@ -33,7 +45,7 @@ from protocol import InertialProtocol
 MOBILITY_PROFILE: str = "Cargo"  # Choose mobility profile here
 
 
-CUSTOM_MOBILITY_CONFIG = InertialMobilityConfiguration(
+CUSTOM_MOBILITY_CONFIG = DynamicVelocityMobilityConfiguration(
     update_rate=0.01,        # Update every 0.01 seconds
     max_speed_xy=5.0,        # Max horizontal speed: 5 m/s
     max_speed_z=5.0,         # Max vertical speed: 5 m/s
@@ -46,8 +58,8 @@ CUSTOM_MOBILITY_CONFIG = InertialMobilityConfiguration(
 )
 
 
-MOBILITY_PRESETS: dict[str, InertialMobilityConfiguration] = {
-    "Cinematic": InertialMobilityConfiguration(
+MOBILITY_PRESETS: dict[str, DynamicVelocityMobilityConfiguration] = {
+    "Cinematic": DynamicVelocityMobilityConfiguration(
         update_rate=0.04,
         max_speed_xy=10.0,
         max_speed_z=5.0,
@@ -58,7 +70,7 @@ MOBILITY_PRESETS: dict[str, InertialMobilityConfiguration] = {
         send_telemetry=True,
         telemetry_decimation=1,
     ),
-    "Survey": InertialMobilityConfiguration(
+    "Survey": DynamicVelocityMobilityConfiguration(
         update_rate=0.04,
         max_speed_xy=12.0,
         max_speed_z=2.0,
@@ -69,7 +81,7 @@ MOBILITY_PRESETS: dict[str, InertialMobilityConfiguration] = {
         send_telemetry=True,
         telemetry_decimation=1,
     ),
-    "Cargo": InertialMobilityConfiguration(
+    "Cargo": DynamicVelocityMobilityConfiguration(
         update_rate=0.04,
         max_speed_xy=8.0,
         max_speed_z=3.0,
@@ -80,7 +92,7 @@ MOBILITY_PRESETS: dict[str, InertialMobilityConfiguration] = {
         send_telemetry=True,
         telemetry_decimation=1,
     ),
-    "Racing": InertialMobilityConfiguration(
+    "Racing": DynamicVelocityMobilityConfiguration(
         update_rate=0.02,
         max_speed_xy=32.0,
         max_speed_z=16.0,
@@ -91,7 +103,7 @@ MOBILITY_PRESETS: dict[str, InertialMobilityConfiguration] = {
         send_telemetry=True,
         telemetry_decimation=1,
     ),
-    "Micro": InertialMobilityConfiguration(
+    "Micro": DynamicVelocityMobilityConfiguration(
         update_rate=0.02,
         max_speed_xy=5.0,
         max_speed_z=2.0,
@@ -107,7 +119,7 @@ MOBILITY_PRESETS: dict[str, InertialMobilityConfiguration] = {
 
 
 def main():
-    """Execute the velocity mobility simulation."""
+    """Execute the dynamic velocity mobility simulation."""
     
     # Simulation parameters
     duration = 50  # Simulation duration in seconds
@@ -135,7 +147,7 @@ def main():
     # Add the timer handler
     builder.add_handler(TimerHandler())
     
-    # Add the velocity mobility handler
+    # Add the dynamic velocity mobility handler
     # Quadrotor trajectory-level model (velocity command tracking):
     # - The protocol commands a desired velocity v_des.
     # - The handler updates the effective velocity v with bounded acceleration.
@@ -164,8 +176,8 @@ def main():
         f"max_acc_xy={mobility_config.max_acc_xy}, max_acc_z={mobility_config.max_acc_z}, "
         f"tau_xy={mobility_config.tau_xy}, tau_z={mobility_config.tau_z})"
     )
-    velocity_handler = InertialMobilityHandler(mobility_config)
-    builder.add_handler(velocity_handler)
+    dynamic_velocity_handler = DynamicVelocityMobilityHandler(mobility_config)
+    builder.add_handler(dynamic_velocity_handler)
     
     # Add the visualization handler
     vis_config = VisualizationConfiguration(
@@ -175,13 +187,13 @@ def main():
     builder.add_handler(VisualizationHandler(vis_config))
     
     # Add a single node at position (-25, -25, -25) - initial position
-    builder.add_node(InertialProtocol, (-25, -25, -25))
+    builder.add_node(DynamicVelocityProtocol, (-25, -25, -25))
     
     # Build and start simulation
     simulation = builder.build()
     print("=" * 60)
-    print("Starting velocity mobility simulation")
-    print("Node velocity is commanded by InertialProtocol (and changes every 10 seconds)")
+    print("Starting dynamic velocity mobility simulation")
+    print("Node velocity is commanded by DynamicVelocityProtocol (and changes every 10 seconds)")
     print("Starting position: (-25, -25, -25)")
     print("Visualization will open in browser automatically")
     print("=" * 60)

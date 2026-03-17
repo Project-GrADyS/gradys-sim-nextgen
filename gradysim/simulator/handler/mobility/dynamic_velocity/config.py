@@ -1,8 +1,5 @@
 """
-Configuration dataclass for velocity mobility handler.
-
-Author: Laércio Lucchesi
-Date: December 27, 2025
+Configuration dataclass for the Dynamic Velocity Mobility Handler.
 """
 
 from dataclasses import dataclass
@@ -10,9 +7,9 @@ from typing import Optional
 
 
 @dataclass
-class InertialMobilityConfiguration:
+class DynamicVelocityMobilityConfiguration:
     """
-    Configuration parameters for the VelocityMobilityHandler.
+    Configuration parameters for the Dynamic Velocity Mobility Handler.
     
     Attributes:
         update_rate: Time interval (in seconds) between mobility updates.

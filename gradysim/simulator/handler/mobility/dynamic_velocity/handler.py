@@ -1,13 +1,10 @@
 """
-Velocity-driven mobility handler for GrADyS-SIM NG.
+Dynamic Velocity Mobility Handler for GrADyS-SIM NG.
 
 This handler provides realistic, velocity-based mobility for nodes with
 explicit acceleration and velocity constraints. It is designed for
 distributed controllers that output velocity commands, such as
 soliton-like wave-based control laws for swarm encirclement.
-
-Author: Laércio Lucchesi
-Date: December 27, 2025
 """
 
 from typing import Dict, Tuple
@@ -18,46 +15,47 @@ from gradysim.simulator.node import Node
 from gradysim.simulator.handler.interface import INodeHandler
 from gradysim.protocol.messages.telemetry import Telemetry
 
-from .config import InertialMobilityConfiguration
+from .config import DynamicVelocityMobilityConfiguration
 from .core import (
     apply_acceleration_limits,
     apply_velocity_limits,
     apply_velocity_tracking_first_order,
     integrate_position,
 )
-from .telemetry import InertialTelemetry
+from .telemetry import DynamicVelocityTelemetry
 
 
-class InertialMobilityHandler(INodeHandler):
+class DynamicVelocityMobilityHandler(INodeHandler):
     """
-    Velocity-driven mobility handler for GrADyS-SIM NG.
+    Dynamic Velocity Mobility Handler for GrADyS-SIM NG.
     
     This handler updates node positions based on velocity commands with
     realistic physical constraints (velocity and acceleration limits).
     
     Key features:
+
     - Direct velocity control (no waypoints)
     - Independent horizontal and vertical constraints
     - Acceleration-limited velocity tracking (optionally with 1st-order lag via tau)
     - Optional telemetry emission
     
     Usage:
-        config = VelocityMobilityConfiguration(
+        config = DynamicVelocityMobilityConfiguration(
             update_rate=0.1,
             max_speed_xy=10.0,
             max_speed_z=5.0,
             max_acc_xy=2.0,
             max_acc_z=1.0
         )
-        handler = VelocityMobilityHandler(config)
+        handler = DynamicVelocityMobilityHandler(config)
         
         # In your protocol handler:
         handler.set_velocity(node.identifier, (vx, vy, vz))
     """
     
-    def __init__(self, config: InertialMobilityConfiguration):
+    def __init__(self, config: DynamicVelocityMobilityConfiguration):
         """
-        Initialize the velocity mobility handler.
+        Initialize the Dynamic Velocity Mobility Handler.
         
         Args:
             config: Configuration parameters for mobility constraints and update rate.
@@ -144,7 +142,7 @@ class InertialMobilityHandler(INodeHandler):
                                 "Make sure that the command is properly constructed using SetVelocityMobilityCommand.")
             self._set_velocity(node.id, (command.param_1, command.param_2, command.param_3))
         else:
-            raise Exception("The only command accepted in VelocityMobilityHandler is SET_SPEED")
+            raise Exception("The only command accepted in DynamicVelocityMobilityHandler is SET_SPEED")
     
     def _set_velocity(self, node_id: int, v_des: Tuple[float, float, float]) -> None:
         """
@@ -293,9 +291,9 @@ class InertialMobilityHandler(INodeHandler):
         
         The telemetry is sent directly to the node's protocol encapsulator.
         """
-        telemetry = InertialTelemetry(
+        telemetry = DynamicVelocityTelemetry(
             current_position=node.position,
-            current_velocity=self._get_node_position(node.id),
+            current_velocity=self._get_node_velocity(node.id),
         )
         
         # Schedule telemetry delivery to protocol (same pattern as MobilityHandler)

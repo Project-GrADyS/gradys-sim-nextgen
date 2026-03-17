@@ -8,9 +8,6 @@ This module contains stateless mathematical operations for:
 
 All functions operate on simple tuples and floats, making them
 easy to test and reuse independently of the simulation framework.
-
-Author: Laércio Lucchesi
-Date: December 27, 2025
 """
 
 import math
@@ -28,8 +25,9 @@ def apply_acceleration_limits(
     Limit velocity change based on acceleration constraints.
     
     Applies independent horizontal and vertical acceleration limits:
-    - Horizontal: ||a_xy|| ≤ max_acc_xy
-    - Vertical: |a_z| ≤ max_acc_z
+
+    - Horizontal: ||a_xy|| <= max_acc_xy
+    - Vertical: |a_z| <= max_acc_z
     
     Args:
         v_current: Current velocity (vx, vy, vz) in m/s.
@@ -164,8 +162,9 @@ def apply_velocity_limits(
     Apply velocity saturation constraints.
     
     Applies independent horizontal and vertical velocity limits:
-    - Horizontal: ||v_xy|| ≤ max_speed_xy
-    - Vertical: |v_z| ≤ max_speed_z
+
+    - Horizontal: ||v_xy|| <= max_speed_xy
+    - Vertical: |v_z| <= max_speed_z
     
     Args:
         v: Velocity vector (vx, vy, vz) in m/s.
@@ -231,3 +230,4 @@ def integrate_position(
         y + vy * dt,
         z + vz * dt
     )
+

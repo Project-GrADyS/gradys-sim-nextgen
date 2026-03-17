@@ -1,5 +1,5 @@
 """
-Protocol demonstrating velocity-based mobility using VelocityMobilityHandler.
+Protocol demonstrating dynamic velocity mobility using the Dynamic Velocity Mobility Handler.
 
 Uses direct method calls instead of standard GrADyS mobility commands.
 """
@@ -7,11 +7,11 @@ Uses direct method calls instead of standard GrADyS mobility commands.
 from gradysim.protocol.interface import IProtocol
 from gradysim.protocol.messages.mobility import SetVelocityMobilityCommand
 from gradysim.protocol.messages.telemetry import Telemetry
-from gradysim.simulator.handler.mobility.intertial.telemetry import InertialTelemetry
+from gradysim.simulator.handler.mobility.dynamic_velocity.telemetry import DynamicVelocityTelemetry
 
 
-class InertialProtocol(IProtocol):
-    """Protocol that commands velocity through VelocityMobilityHandler."""
+class DynamicVelocityProtocol(IProtocol):
+    """Protocol that commands velocity through the Dynamic Velocity Mobility Handler."""
 
     def __init__(self):
         super().__init__()
@@ -32,6 +32,12 @@ class InertialProtocol(IProtocol):
             (0.0, 0.0, 0.0),
         ]
         self._velocity_setpoint_index = 0
+
+    def _provider_position(self):
+        """Best-effort access to the current node position from the Python provider."""
+        node = getattr(self.provider, "node", None)
+        position = getattr(node, "position", None)
+        return tuple(position) if position is not None else None
 
     def _set_velocity(self, velocity: tuple[float, float, float]):
         """Helper method to set velocity and print info."""
@@ -55,6 +61,8 @@ class InertialProtocol(IProtocol):
     def initialize(self):
         """Initialize and command initial velocity."""
         self.node_id = self.provider.get_id()
+        self.initial_position = self._provider_position()
+        self.current_position = self.initial_position
         self._velocity_setpoint_index = 0
         self.desired_velocity = self._velocity_setpoints[self._velocity_setpoint_index]
 
@@ -82,7 +90,7 @@ class InertialProtocol(IProtocol):
         """Handle incoming packets."""
         pass
 
-    def handle_telemetry(self, telemetry: InertialTelemetry) -> None:
+    def handle_telemetry(self, telemetry: DynamicVelocityTelemetry) -> None:
         """Collect time, position and velocity on telemetry."""
         t = self.provider.current_time()
         pos = telemetry.current_position
@@ -96,16 +104,19 @@ class InertialProtocol(IProtocol):
             "vxd": vdes[0], "vyd": vdes[1], "vzd": vdes[2],
         })
 
+        if self.initial_position is None:
+            self.initial_position = pos
+
         self.current_velocity = vel
         self.current_position = pos
 
     def finish(self):
         """Called when simulation ends."""
         # Fetch final state from handler
-        final_position = self.current_position
+        final_position = self.current_position or self._provider_position()
         final_velocity = self.current_velocity
 
-        if final_position is None:
+        if final_position is None or self.initial_position is None:
             return
 
         # Calculate actual movement

@@ -6,8 +6,8 @@ and for sending updated position telemetry back to the protocols.
 """
 
 
+from .dynamic_velocity import DynamicVelocityMobilityConfiguration, DynamicVelocityMobilityHandler
 from .massless import MasslessMobilityConfiguration, MasslessMobilityHandler, MasslessMobilityException
-from .intertial import InertialMobilityConfiguration, InertialMobilityHandler
 
 # The MasslessMobility classes were at one point the only mobility classes available and were named
 # simply Mobility*. To maintain backwards compatibility with past versions, we alias their names here.
@@ -24,6 +24,6 @@ __all__ = [
     "MobilityConfiguration",
     "MasslessMobilityConfiguration",
 
-    "InertialMobilityHandler",
-    "InertialMobilityConfiguration",
+    "DynamicVelocityMobilityHandler",
+    "DynamicVelocityMobilityConfiguration",
 ]
