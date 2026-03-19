@@ -239,7 +239,7 @@ class Drone:
             raw_args.append(uav_api_log_path)
 
         self._api_process = run_with_args(raw_args)
-
+        time.sleep(5)
     async def goto_initial_position(self):
         """
         Performs a series of requests to UAV API in order to drive the vehicle to the simulation
