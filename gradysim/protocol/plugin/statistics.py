@@ -18,6 +18,8 @@ from gradysim.protocol.plugin.dispatcher import create_dispatcher, DispatchRetur
 from gradysim.protocol.interface import IProtocol
 
 
+DATA_COLLECTION_INTERVAL = 0.5
+
 def handle_timer_srt(protocol: IProtocol, timer: str) -> DispatchReturn:
     """'
     Starts collection of statistics when a timer with a name 'statistics' is scheduled 
@@ -35,7 +37,7 @@ def handle_timer_srt(protocol: IProtocol, timer: str) -> DispatchReturn:
             protocol.provider.current_time(), protocol.provider.tracked_variables
         )
 
-        protocol.provider.schedule_timer("statistics", protocol.provider.current_time() + 0.1)
+        protocol.provider.schedule_timer("statistics", protocol.provider.current_time() + DATA_COLLECTION_INTERVAL)
         
         return DispatchReturn.INTERRUPT
 

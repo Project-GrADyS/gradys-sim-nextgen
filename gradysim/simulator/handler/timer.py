@@ -66,6 +66,7 @@ class TimerHandler(INodeHandler):
             raise TimerException("Could not set timer: Timer cannot be set in the past")
 
         identifier = self._timer_id
+        print("Scheduled timer for node", node.id, "with message", message, "and identifier", identifier, "at time", timestamp)
         self._event_loop.schedule_event(timestamp,
                                         lambda: self.fire_timer(message, node, identifier),
                                         label_node(node) + " handle_timer")
