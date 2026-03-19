@@ -364,7 +364,7 @@ class ArdupilotMobilityConfiguration:
 class ArdupilotMobilityHandler(INodeHandler):
     """
     Introduces mobility into the simulatuon by communicating with a SITL-based simulation of the Node. Works by
-    seding requests to UAV API library which connects to the Ardupilot software. It implements telemetry by
+    sending requests to UAV API library which connects to the Ardupilot software. It implements telemetry by
     constantly making requests to 'telemetry/ned' at a fixed rate and translating mobility commands into HTTP 
     requests to UAV API
     """
