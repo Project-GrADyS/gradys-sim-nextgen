@@ -5,6 +5,7 @@ mobility action, like moving the node to a new location.
 
 from dataclasses import dataclass
 from enum import Enum
+from typing import Optional
 
 
 class MobilityCommandType(int, Enum):
@@ -33,22 +34,22 @@ class MobilityCommand:
     command_type: MobilityCommandType
     """The type of the mobility command"""
 
-    param_1: float | None = None
+    param_1: Optional[float] = None
     """The first parameter of the mobility command, it's meaning changes depending on the command type"""
 
-    param_2: float | None = None
+    param_2: Optional[float] = None
     """The second parameter of the mobility command, it's meaning changes depending on the command type"""
 
-    param_3: float | None = None
+    param_3: Optional[float] = None
     """The third parameter of the mobility command, it's meaning changes depending on the command type"""
 
-    param_4: float | None = None
+    param_4: Optional[float] = None
     """The fourth parameter of the mobility command, it's meaning changes depending on the command type"""
 
-    param_5: float | None = None
+    param_5: Optional[float] = None
     """The fifth parameter of the mobility command, it's meaning changes depending on the command type"""
 
-    param_6: float | None = None
+    param_6: Optional[float] = None
     """The sixth parameter of the mobility command, it's meaning changes depending on the command type"""
 
 

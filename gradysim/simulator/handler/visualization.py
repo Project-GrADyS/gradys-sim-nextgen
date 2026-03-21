@@ -19,7 +19,7 @@ import time
 import webbrowser
 from dataclasses import dataclass
 from multiprocessing.managers import SyncManager
-from typing import List, Tuple, TypedDict, Literal
+from typing import List, Tuple, TypedDict, Literal, Optional
 
 import websockets
 
@@ -111,8 +111,8 @@ class VisualizationHandler(INodeHandler):
     _nodes: List[Node]
     _information: _VisualizationInformation
     _visualization_state: _VisualizationState
-    _manager: SyncManager | None
-    _information_thread: multiprocessing.Process | None
+    _manager: Optional[SyncManager]
+    _information_thread: Optional[multiprocessing.Process]
     _start_time: float
     command_queue: multiprocessing.Queue
 

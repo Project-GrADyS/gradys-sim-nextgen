@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import logging
-from typing import List
+from typing import List, Optional
 
 from gradysim.protocol.interface import IProtocol
 from gradysim.protocol.messages.telemetry import Telemetry
@@ -20,8 +20,8 @@ class RadioProtocol(IProtocol):
 
     def __init__(self) -> None:
         self.received: List[str] = []
-        self.short_radio: Radio | None = None
-        self.long_radio: Radio | None = None
+        self.short_radio: Optional[Radio] = None
+        self.long_radio: Optional[Radio] = None
         self._logger = logging.getLogger()
 
     def initialize(self) -> None:

@@ -3,6 +3,7 @@ Protocol demonstrating dynamic velocity mobility using the Dynamic Velocity Mobi
 
 Uses direct method calls instead of standard GrADyS mobility commands.
 """
+from typing import Tuple
 
 from gradysim.protocol.interface import IProtocol
 from gradysim.protocol.messages.mobility import SetVelocityMobilityCommand
@@ -38,7 +39,7 @@ class DynamicVelocityProtocol(IProtocol):
         position = getattr(node, "position", None)
         return tuple(position) if position is not None else None
 
-    def _set_velocity(self, velocity: tuple[float, float, float]):
+    def _set_velocity(self, velocity: Tuple[float, float, float]):
         """Helper method to set velocity and print info."""
         message = SetVelocityMobilityCommand(*velocity)
         self.provider.send_mobility_command(message)

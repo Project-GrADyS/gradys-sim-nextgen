@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import Tuple
 
 from gradysim.protocol.messages.telemetry import Telemetry
 
@@ -12,4 +13,4 @@ class DynamicVelocityTelemetry(Telemetry):
     specifying the node's velocity, which is relevant information for
     protocols using dynamic velocity mobility.
     """
-    current_velocity: tuple[float, float, float]
+    current_velocity: Tuple[float, float, float]

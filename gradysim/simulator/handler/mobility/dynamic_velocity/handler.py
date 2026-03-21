@@ -7,7 +7,7 @@ distributed controllers that output velocity commands, such as
 soliton-like wave-based control laws for swarm encirclement.
 """
 
-from typing import Dict, Tuple
+from typing import Dict, Tuple, Optional
 
 from gradysim.protocol.messages.mobility import MobilityCommand, MobilityCommandType
 from gradysim.simulator.event import EventLoop
@@ -169,7 +169,7 @@ class DynamicVelocityMobilityHandler(INodeHandler):
         else:
             self._desired_velocity[node_id] = v_des
     
-    def _get_node_velocity(self, node_id: int) -> Tuple[float, float, float] | None:
+    def _get_node_velocity(self, node_id: int) -> Optional[Tuple[float, float, float]]:
         """
         Get the current velocity of a node.
         
@@ -181,7 +181,7 @@ class DynamicVelocityMobilityHandler(INodeHandler):
         """
         return self._current_velocity.get(node_id)
 
-    def _get_node_position(self, node_id: int) -> Tuple[float, float, float] | None:
+    def _get_node_position(self, node_id: int) -> Optional[Tuple[float, float, float]]:
         """
         Get the current position of a node.
         
