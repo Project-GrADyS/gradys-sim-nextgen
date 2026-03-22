@@ -3,6 +3,9 @@
 The Dynamic Velocity Mobility Handler is the mobility model for nodes that are
 controlled through velocity commands instead of waypoint targets.
 
+For the conceptual overview of mobility command interpretation, telemetry flow,
+and handler switching, see [How Mobility Works](../../../Guides/4_mobility.md).
+
 Use it when you need:
 
 - bounded horizontal and vertical speed
