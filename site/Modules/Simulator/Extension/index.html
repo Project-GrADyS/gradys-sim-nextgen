@@ -447,30 +447,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../Guides/3_extending/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Extending the Simulation
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../Guides/4_raft_consensus/" class="md-nav__link">
+      <a href="../../../Guides/3_raft_consensus/" class="md-nav__link">
         
   
   
@@ -501,15 +478,15 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_5" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_4" >
         
           
-          <label class="md-nav__link" for="__nav_4_5" id="__nav_4_5_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_4_4" id="__nav_4_4_label" tabindex="0">
             
   
   
   <span class="md-ellipsis">
-    Prototype Mode
+    Python Simulator
     
   </span>
   
@@ -517,10 +494,10 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_5_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4_5">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_4">
             <span class="md-nav__icon md-icon"></span>
-            Prototype Mode
+            Python Simulator
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -531,7 +508,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../Guides/Prototype%20Mode/" class="md-nav__link">
+      <a href="../../../Guides/Python%20Simulator/" class="md-nav__link">
         
   
   
@@ -554,12 +531,35 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../Guides/Prototype%20Mode/communication/" class="md-nav__link">
+      <a href="../../../Guides/Python%20Simulator/1_extending/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
-    Communication
+    Extending the Simulation (Camera Extension)
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../Guides/Python%20Simulator/2_radio/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Multi-radio systems (Radio Extension)
     
   </span>
   
@@ -1076,29 +1076,6 @@
   
   
     <li class="md-nav__item">
-      <a href="../../Protocol/plugins/radio/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Radio
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
       <a href="../../Protocol/plugins/raft/" class="md-nav__link">
         
   
@@ -1462,12 +1439,12 @@
   
   
     <li class="md-nav__item">
-      <a href="communication_controller/" class="md-nav__link">
+      <a href="radio/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
-    Communication controller
+    Radio
     
   </span>
   
@@ -1606,6 +1583,29 @@
   
   <span class="md-ellipsis">
     Communication
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../handlers/dynamic_velocity/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Dynamic Velocity Mobility Handler
     
   </span>
   
@@ -1788,6 +1788,11 @@
 
         <p>Simulator extensions or simply <em>extensions</em> are modules that extend the functionality of the <strong>python</strong> simulator.
 They are used to implement new features or to provide new ways to interact with the simulation environment.</p>
+<p>Extensions are akin to <a class="autorefs autorefs-internal" title="gradysim.protocol.plugin" href="../../Protocol/plugins/#gradysim.protocol.plugin">plugins</a>, but instead of expanding the functionality
+of a protocol they act on a simulation-level to implement new features that protocols can use. While
+plugins are designed to be environment-agnostic, extensions are tied to the python simulation environment,
+this is reflected in the fact that extensions are located within the <code>simulator</code> package. Extensions can be used
+to implement new simulation features, such as new types of sensors, actuators, or other simulation components.</p>
 <p>Extensions are implemented as classes that inherit from the <a class="autorefs autorefs-internal" title="gradysim.simulator.extension.extension.Extension" href="#gradysim.simulator.extension.extension.Extension">Extension</a>
 class. Extensions are attached to a protocol instance but have ways of interacting with the simulation environment
 that the protocol does not. In practice, extensions can directly access <a class="autorefs autorefs-internal" title="gradysim.simulator.handler" href="../handlers/#gradysim.simulator.handler">handlers</a> and

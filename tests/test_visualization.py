@@ -27,30 +27,42 @@ class TestVisualization(unittest.TestCase):
             def finish(self) -> None:
                 pass
 
-        builder = SimulationBuilder()
-        builder.add_handler(dummy_handler)
-        protocol_id = builder.add_node(DummyProtocol, (0, 0, 0))
-        simulation = builder.build()
+        try:
+            builder = SimulationBuilder()
+            builder.add_handler(dummy_handler)
+            protocol_id = builder.add_node(DummyProtocol, (0, 0, 0))
+            simulation = builder.build()
 
-        controller = VisualizationController(simulation.get_node(protocol_id).protocol_encapsulator.protocol)
+            controller = VisualizationController(simulation.get_node(protocol_id).protocol_encapsulator.protocol)
 
-        controller.paint_node(0, (0, 0, 0))
-        controller.resize_nodes(10)
-        controller.paint_environment((0, 0, 0))
+            controller.paint_node(0, (0, 0, 0))
+            controller.resize_nodes(10)
+            controller.paint_environment((0, 0, 0))
 
-        self.assertEqual(dummy_handler.command_queue.qsize(), 3)
+            self.assertEqual(dummy_handler.command_queue.qsize(), 3)
 
-        paint_command = dummy_handler.command_queue.get()
-        self.assertEqual(paint_command['command'], "paint_node")
-        self.assertEqual(paint_command['payload']['node_id'], 0)
-        self.assertEqual(paint_command['payload']['color'], (0, 0, 0))
+            paint_command = dummy_handler.command_queue.get()
+            self.assertEqual(paint_command['command'], "paint_node")
+            self.assertEqual(paint_command['payload']['node_id'], 0)
+            self.assertEqual(paint_command['payload']['color'], (0, 0, 0))
 
-        resize_command = dummy_handler.command_queue.get()
-        self.assertEqual(resize_command['command'], "resize_nodes")
-        self.assertEqual(resize_command['payload']['size'], 10)
+            resize_command = dummy_handler.command_queue.get()
+            self.assertEqual(resize_command['command'], "resize_nodes")
+            self.assertEqual(resize_command['payload']['size'], 10)
 
-        paint_environment_command = dummy_handler.command_queue.get()
-        self.assertEqual(paint_environment_command['command'], "paint_environment")
-        self.assertEqual(paint_environment_command['payload']['color'], (0, 0, 0))
+            paint_environment_command = dummy_handler.command_queue.get()
+            self.assertEqual(paint_environment_command['command'], "paint_environment")
+            self.assertEqual(paint_environment_command['payload']['color'], (0, 0, 0))
 
-        self.assertTrue(dummy_handler.command_queue.empty())
+            self.assertTrue(dummy_handler.command_queue.empty())
+        finally:
+            dummy_handler.finalize()
+
+    def test_visualization_finalize_without_initialize(self):
+        handler = VisualizationHandler()
+
+        self.assertIsNotNone(handler._manager)
+
+        handler.finalize()
+
+        self.assertIsNone(handler._manager)

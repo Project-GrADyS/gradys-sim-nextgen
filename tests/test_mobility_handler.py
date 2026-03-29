@@ -7,7 +7,14 @@ from gradysim.encapsulator.interface import IEncapsulator
 from gradysim.simulator.event import EventLoop
 from gradysim.protocol.messages.mobility import MobilityCommand, MobilityCommandType, GotoGeoCoordsMobilityCommand
 from gradysim.protocol.messages.telemetry import Telemetry
-from gradysim.simulator.handler.mobility import MobilityHandler, MobilityConfiguration, MobilityException
+from gradysim.simulator.handler.mobility import (
+    DynamicVelocityMobilityConfiguration,
+    DynamicVelocityMobilityHandler,
+    MobilityHandler,
+    MobilityConfiguration,
+    MobilityException,
+)
+from gradysim.simulator.handler.mobility.dynamic_velocity.telemetry import DynamicVelocityTelemetry
 from gradysim.simulator.node import Node
 from gradysim.simulator.simulation import SimulationBuilder, SimulationConfiguration
 
@@ -225,3 +232,43 @@ class TestMobility(unittest.TestCase):
         self.assertAlmostEqual(node.position[0], 11.119, 3)
         self.assertAlmostEqual(node.position[1], 11.119, 3)
         self.assertEqual(node.position[2], 10)
+
+    def test_dynamic_velocity_telemetry_reports_velocity(self):
+        captured_telemetry = []
+
+        class TelemetryCapturingEncapsulator(DummyEncapsulator):
+            def handle_telemetry(self, telemetry: Telemetry):
+                captured_telemetry.append(telemetry)
+
+        node = Node()
+        node.id = 0
+        node.position = (0.0, 0.0, 0.0)
+        node.protocol_encapsulator = TelemetryCapturingEncapsulator()
+
+        event_loop = EventLoop()
+        mobility_handler = DynamicVelocityMobilityHandler(DynamicVelocityMobilityConfiguration(
+            update_rate=0.1,
+            max_speed_xy=10.0,
+            max_speed_z=10.0,
+            max_acc_xy=100.0,
+            max_acc_z=100.0,
+            send_telemetry=True,
+            telemetry_decimation=1,
+        ))
+        mobility_handler.inject(event_loop)
+        mobility_handler.register_node(node)
+        mobility_handler.initialize()
+
+        mobility_handler.handle_command(MobilityCommand(
+            MobilityCommandType.SET_SPEED,
+            1.0,
+            2.0,
+            3.0,
+        ), node)
+
+        event_loop.pop_event().callback()
+        event_loop.pop_event().callback()
+
+        self.assertEqual(len(captured_telemetry), 1)
+        self.assertIsInstance(captured_telemetry[0], DynamicVelocityTelemetry)
+        self.assertEqual(captured_telemetry[0].current_velocity, (1.0, 2.0, 3.0))

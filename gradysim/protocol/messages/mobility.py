@@ -5,6 +5,7 @@ mobility action, like moving the node to a new location.
 
 from dataclasses import dataclass
 from enum import Enum
+from typing import Optional
 
 
 class MobilityCommandType(int, Enum):
@@ -33,22 +34,22 @@ class MobilityCommand:
     command_type: MobilityCommandType
     """The type of the mobility command"""
 
-    param_1: float = 0
+    param_1: Optional[float] = None
     """The first parameter of the mobility command, it's meaning changes depending on the command type"""
 
-    param_2: float = 0
+    param_2: Optional[float] = None
     """The second parameter of the mobility command, it's meaning changes depending on the command type"""
 
-    param_3: float = 0
+    param_3: Optional[float] = None
     """The third parameter of the mobility command, it's meaning changes depending on the command type"""
 
-    param_4: float = 0
+    param_4: Optional[float] = None
     """The fourth parameter of the mobility command, it's meaning changes depending on the command type"""
 
-    param_5: float = 0
+    param_5: Optional[float] = None
     """The fifth parameter of the mobility command, it's meaning changes depending on the command type"""
 
-    param_6: float = 0
+    param_6: Optional[float] = None
     """The sixth parameter of the mobility command, it's meaning changes depending on the command type"""
 
 
@@ -104,3 +105,21 @@ class SetSpeedMobilityCommand(MobilityCommand):
             speed: The desired speed in m/s
         """
         super().__init__(MobilityCommandType.SET_SPEED, speed)
+
+class SetVelocityMobilityCommand(MobilityCommand):
+    """
+    Represents a mobility command that sets the node's velocity along the x, y, and z axes. The parameters of this
+    command are the desired velocities in m/s along each axis. Uses the same command type as SetSpeedMobilityCommand,
+    but utilizes three parameters instead of one.
+    """
+
+    def __init__(self, vx: float, vy: float, vz: float):
+        """
+        Initializes a SetVelocityMobilityCommand
+
+        Args:
+            vx: The desired velocity along the x axis in m/s
+            vy: The desired velocity along the y axis in m/s
+            vz: The desired velocity along the z axis in m/s
+        """
+        super().__init__(MobilityCommandType.SET_SPEED, vx, vy, vz)

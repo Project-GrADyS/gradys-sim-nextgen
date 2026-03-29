@@ -19,7 +19,7 @@ These classes have access to simulation internals and can modify them as needed.
 To be more specific, extension classes have access to 
 [handlers][gradysim.simulator.handler], which are the classes that implement 
 parts of the simulation logic. Some examples of handlers are ones that 
-implement [mobility][gradysim.simulator.handler.mobility.MobilityHandler] or 
+implement [mobility][gradysim.simulator.handler.mobility] or 
 [communication][gradysim.simulator.handler.communication.CommunicationHandler].
 
 To showcase how to create an extension class, we are going to analyze the code

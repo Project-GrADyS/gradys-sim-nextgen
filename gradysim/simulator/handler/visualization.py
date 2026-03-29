@@ -18,7 +18,8 @@ import multiprocessing
 import time
 import webbrowser
 from dataclasses import dataclass
-from typing import List, Tuple, TypedDict, Literal
+from multiprocessing.managers import SyncManager
+from typing import List, Tuple, TypedDict, Literal, Optional
 
 import websockets
 
@@ -110,7 +111,8 @@ class VisualizationHandler(INodeHandler):
     _nodes: List[Node]
     _information: _VisualizationInformation
     _visualization_state: _VisualizationState
-    _information_thread: multiprocessing.Process
+    _manager: Optional[SyncManager]
+    _information_thread: Optional[multiprocessing.Process]
     _start_time: float
     command_queue: multiprocessing.Queue
 
@@ -124,11 +126,12 @@ class VisualizationHandler(INodeHandler):
         self._nodes = []
 
         # Current simulation information shared with the visualization server
-        manager = multiprocessing.Manager()
-        self._information = manager.dict()
-        self._visualization_state = manager.dict()
-        self.command_queue = manager.Queue()
+        self._manager = multiprocessing.Manager()
+        self._information = self._manager.dict()
+        self._visualization_state = self._manager.dict()
+        self.command_queue = self._manager.Queue()
         self._visualization_state["paused"] = False
+        self._information_thread = None
 
         self._configuration = configuration
 
@@ -169,7 +172,15 @@ class VisualizationHandler(INodeHandler):
         self._information_thread.start()
 
     def finalize(self) -> None:
-        self._information_thread.terminate()
+        if self._information_thread is not None and self._information_thread.is_alive():
+            self._information_thread.terminate()
+            self._information_thread.join(timeout=1)
+
+        self._information_thread = None
+
+        if self._manager is not None:
+            self._manager.shutdown()
+            self._manager = None
 
     def register_node(self, node: Node) -> None:
         self._nodes.append(node)
@@ -231,11 +242,14 @@ def _visualization_thread(config: VisualizationConfiguration,
 
     async def update_information():
         while True:
-            websockets.broadcast(websocket_connections, json.dumps(information.copy()))
+            try:
+                websockets.broadcast(websocket_connections, json.dumps(information.copy()))
 
-            while not command_queue.empty():
-                command: _VisualizationCommand = command_queue.get()
-                websockets.broadcast(websocket_connections, json.dumps(command))
+                while not command_queue.empty():
+                    command: _VisualizationCommand = command_queue.get()
+                    websockets.broadcast(websocket_connections, json.dumps(command))
+            except (BrokenPipeError, ConnectionResetError, EOFError):
+                return
 
             await asyncio.sleep(config.update_rate)
 
