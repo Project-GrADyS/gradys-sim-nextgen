@@ -71,6 +71,7 @@ def main():
     builder.add_handler(VisualizationHandler(vis_config))
 
     builder.add_node(trajectory_mpc_protocol, (0, 0, 0))
+    builder.add_node(trajectory_mpc_protocol, (0, 0, 0))
 
     simulation = builder.build()
     print("=" * 60)

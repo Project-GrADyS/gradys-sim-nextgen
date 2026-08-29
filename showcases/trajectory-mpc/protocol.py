@@ -23,16 +23,6 @@ DYNAMIC_VELOCITY_CONFIG = DynamicVelocityMobilityConfiguration(
     tau_z = 0.5,
 )
 
-TRAJECTORY = [
-    TrajectoryPoint((0, 0, 0), 0.0),
-    TrajectoryPoint((0, 0, 10), 5.0),    
-    TrajectoryPoint((15, 0, 10), 10.0),  
-    TrajectoryPoint((15, 15, 10), 15.0),  
-    TrajectoryPoint((0, 15, 10), 20.0),  
-    TrajectoryPoint((0, 0, 10), 25.0),  
-    TrajectoryPoint((0, 0, 0), 30.0),    
-]
-
 
 def build_mpc_configuration(dynamic_velocity_config: DynamicVelocityMobilityConfiguration) -> TrajectoryMPCConfiguration:
     return TrajectoryMPCConfiguration.from_dynamic_velocity_config(
@@ -51,6 +41,27 @@ class TrajectoryMPCProtocol(IProtocol):
 
     def initialize(self):
         self.node_id = self.provider.get_id()
+
+        if self.provider.get_id() == 0:
+            TRAJECTORY = [
+                TrajectoryPoint((0, 0, 0), 0.0),
+                TrajectoryPoint((0, 0, 10), 5.0),    
+                TrajectoryPoint((15, 0, 10), 10.0),  
+                TrajectoryPoint((15, 15, 10), 15.0),  
+                TrajectoryPoint((0, 15, 10), 20.0),  
+                TrajectoryPoint((0, 0, 10), 25.0),  
+                TrajectoryPoint((0, 0, 0), 30.0),    
+            ]
+        elif self.provider.get_id() == 1:
+            TRAJECTORY = [
+                TrajectoryPoint((0, 0, 0), 0.0),
+                TrajectoryPoint((0, 0, 10), 5.0),    
+                TrajectoryPoint((-15, 0, 10), 10.0),  
+                TrajectoryPoint((-15, -15, 10), 15.0),  
+                TrajectoryPoint((0, -15, 10), 20.0),  
+                TrajectoryPoint((0, 0, 10), 25.0),  
+                TrajectoryPoint((0, 0, 0), 30.0),    
+            ]
 
         config = build_mpc_configuration(DYNAMIC_VELOCITY_CONFIG)
         self.trajectory_plugin = TrajectoryMPCPlugin(self, config)
