@@ -1,11 +1,33 @@
 import logging
-import random
+import math
+from typing import Optional
 
-from gradysim.protocol.plugin.follow_mobility import MobilityFollowerPlugin, MobilityLeaderPlugin
+from gradysim.protocol.plugin.follow_mobility import (
+    MobilityFollowerPlugin,
+    MobilityFollowerConfiguration,
+    MobilityLeaderPlugin,
+    MobilityLeaderConfiguration,
+)
 from gradysim.protocol.plugin.mission_mobility import MissionMobilityPlugin, MissionMobilityConfiguration, LoopMission
 from gradysim.protocol.interface import IProtocol
 from gradysim.protocol.messages.mobility import SetSpeedMobilityCommand
 from gradysim.protocol.messages.telemetry import Telemetry
+from gradysim.protocol.position import Position
+
+# V-formation offsets: followers spread behind and to the sides of the leader.
+# These are relative positions in the leader's local frame when follow_orientation=True.
+FORMATION_OFFSETS: list[Position] = [
+    (-5, -5, 0),
+    (-5,  5, 0),
+    (-10, -10, 0),
+    (-10,  10, 0),
+    (-15, -5, 0),
+    (-15,  5, 0),
+    (-20, -10, 0),
+    (-20,  10, 0),
+    (-25, -5, 0),
+    (-25,  5, 0),
+]
 
 
 class FollowerProtocol(IProtocol):
@@ -15,13 +37,17 @@ class FollowerProtocol(IProtocol):
         self._logger = logging.getLogger()
 
     def initialize(self) -> None:
-        self.follower = MobilityFollowerPlugin(self)
+        self.follower = MobilityFollowerPlugin(
+            self,
+            MobilityFollowerConfiguration(
+                follow_orientation=True,
+            ),
+        )
 
-        self.follower.set_relative_position((
-            random.uniform(-5, 5),
-            random.uniform(-5, 5),
-            random.uniform(0, 5)
-        ))
+        # Pick a formation offset based on this node's ID (node 0 is the leader)
+        follower_index = self.provider.get_id() - 1
+        if 0 <= follower_index < len(FORMATION_OFFSETS):
+            self.follower.set_relative_position(FORMATION_OFFSETS[follower_index])
 
         self.provider.schedule_timer("", 0.1)
 
@@ -45,12 +71,15 @@ class FollowerProtocol(IProtocol):
 
 class LeaderProtocol(IProtocol):
     leader: MobilityLeaderPlugin
+    _previous_position: Optional[Position] = None
 
     def __init__(self):
         self._logger = logging.getLogger()
 
     def initialize(self) -> None:
-        self.leader = MobilityLeaderPlugin(self)
+        self.leader = MobilityLeaderPlugin(self, MobilityLeaderConfiguration(
+            initial_orientation=0.0,
+        ))
 
         mission = MissionMobilityPlugin(self, MissionMobilityConfiguration(loop_mission=LoopMission.RESTART))
         mission.start_mission([
@@ -65,7 +94,8 @@ class LeaderProtocol(IProtocol):
         self.provider.schedule_timer("", self.provider.current_time() + 1)
 
     def handle_timer(self, timer: str) -> None:
-        self._logger.info(f"Being followed by: {self.leader.followers}")
+        self._logger.info(f"Being followed by: {self.leader.followers} "
+                          f"| orientation: {self.leader.orientation:.1f}°")
 
         self.provider.schedule_timer("", self.provider.current_time() + 1)
 
@@ -73,7 +103,19 @@ class LeaderProtocol(IProtocol):
         pass
 
     def handle_telemetry(self, telemetry: Telemetry) -> None:
-        pass
+        current = telemetry.current_position
+
+        if self._previous_position is not None:
+            dx = current[0] - self._previous_position[0]
+            dy = current[1] - self._previous_position[1]
+
+            # Only update orientation when there is meaningful movement
+            if dx * dx + dy * dy > 1e-6:
+                angle = math.degrees(math.atan2(dy, dx))
+                self.leader.set_orientation(angle)
+
+        self._previous_position = current
 
     def finish(self) -> None:
         pass
+
