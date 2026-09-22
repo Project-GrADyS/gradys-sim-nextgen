@@ -1,13 +1,13 @@
 import json
 from dataclasses import dataclass
-from typing import Optional, Dict, Set, List
+from typing import Optional, Dict, Set
 
 from gradysim.protocol.interface import IProtocol
 from gradysim.protocol.messages.communication import CommunicationCommand, CommunicationCommandType
 from gradysim.protocol.messages.mobility import GotoCoordsMobilityCommand
 from gradysim.protocol.plugin.dispatcher import create_dispatcher, DispatchReturn
 from gradysim.protocol.plugin.follow_mobility.mobility import LEADER_TAG, FOLLOWER_TAG, FOLLOWER_TIMER_TAG
-from gradysim.protocol.position import Position
+from gradysim.protocol.position import Position, rotate_position_2d
 
 class FollowMobilityException(Exception):
     pass
@@ -33,10 +33,18 @@ class MobilityFollowerConfiguration:
     to that leader is lost the follower will automatically follow the first leader available.
     """
 
+    follow_orientation: bool = True
+    """
+    Whether the follower's relative position should shift with the leader's orientation.
+    If True, relative (X, Y) is rotated by the leader's orientation.
+    If False, relative position remains fixed in world coordinates.
+    """
+
 
 class MobilityFollowerPlugin:
     _leader: Optional[int] = None
     _leader_position: Optional[Position] = None
+    _leader_orientation: Optional[float] = None
 
     _relative_position: Position = (0, 0, 0)
 
@@ -67,10 +75,16 @@ class MobilityFollowerPlugin:
 
             if leader_id == self._leader:
                 self._leader_position = leader_payload["position"]
+                self._leader_orientation = leader_payload.get("orientation", 0.0)
+
+                if self._config.follow_orientation and self._leader_orientation is not None:
+                    relative_position = rotate_position_2d(self._relative_position, self._leader_orientation)
+                else:
+                    relative_position = self._relative_position
 
                 # Going to the leader's position at relative coordinates
                 destination = (coord + relative_coord
-                               for coord, relative_coord in zip(self._leader_position, self._relative_position))
+                               for coord, relative_coord in zip(self._leader_position, relative_position))
                 mobility_command = GotoCoordsMobilityCommand(*destination)
                 self._protocol.provider.send_mobility_command(mobility_command)
 
@@ -102,6 +116,7 @@ class MobilityFollowerPlugin:
             if self._leader is not None and self._leader not in self._last_leader_broadcast:
                 self._leader = None
                 self._leader_position = None
+                self._leader_orientation = None
 
             if self._leader is None and len(self.available_leaders) > 0:
                 self.follow_leader(list(self.available_leaders)[0])
@@ -131,6 +146,10 @@ class MobilityFollowerPlugin:
     @property
     def current_leader_position(self) -> Optional[Position]:
         return self._leader_position
+
+    @property
+    def current_leader_orientation(self) -> Optional[float]:
+        return self._leader_orientation
 
     def follow_leader(self, leader_id: int) -> None:
         if leader_id not in self.available_leaders:

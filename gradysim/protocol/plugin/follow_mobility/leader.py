@@ -21,8 +21,12 @@ class MobilityLeaderConfiguration:
     If we don't receive a message from a follower for this amount of simulation seconds we consider it disconnected
     """
 
+    initial_orientation: float = 0.0
+    """The initial orientation of the leader in degrees (0° along +X, 90° along +Y)"""
+
 class MobilityLeaderPlugin:
     _position: Position
+    _orientation: float
 
     _last_connection_from_follower: Dict[int, float]
     """Last broadcast round in which a follower was connected"""
@@ -33,11 +37,19 @@ class MobilityLeaderPlugin:
         self._dispatcher = create_dispatcher(protocol)
         self._last_connection_from_follower = {}
         self._position = (0, 0, 0)
+        self._orientation = configuration.initial_orientation
         self.is_broadcasting = False
 
         self._initialize_position_watching()
         self._initialize_broadcast()
         self._initialize_listening()
+
+    @property
+    def orientation(self) -> float:
+        return self._orientation
+
+    def set_orientation(self, orientation: float) -> None:
+        self._orientation = orientation
 
     @property
     def followers(self) -> Set[int]:
@@ -69,7 +81,8 @@ class MobilityLeaderPlugin:
 
             leader_payload = {
                 "id": self._protocol.provider.get_id(),
-                "position": self._position
+                "position": self._position,
+                "orientation": self._orientation
             }
 
             command = CommunicationCommand(
