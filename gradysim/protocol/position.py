@@ -59,3 +59,23 @@ def squared_distance(start: Position, end: Position) -> float:
         The distance squared
     """
     return (end[0] - start[0]) ** 2 + (end[1] - start[1]) ** 2 + (end[2] - start[2]) ** 2
+
+
+def rotate_position_2d(position: Position, angle_degrees: float) -> Position:
+    """
+    Rotates a position's (x, y) coordinates around the z-axis by angle_degrees (in degrees)
+    counter-clockwise, keeping the z coordinate unchanged.
+
+    Args:
+        position: The original (x, y, z) position.
+        angle_degrees: The angle in degrees to rotate by (counter-clockwise).
+
+    Returns:
+        The rotated (x, y, z) position.
+    """
+    rad = math.radians(angle_degrees)
+    cos_a = math.cos(rad)
+    sin_a = math.sin(rad)
+    x, y, z = position
+    return x * cos_a - y * sin_a, x * sin_a + y * cos_a, z
+

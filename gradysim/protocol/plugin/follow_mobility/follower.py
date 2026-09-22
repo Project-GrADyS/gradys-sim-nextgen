@@ -1,143 +1,16 @@
-"""
-This module declares two plugin for the protocol: a leader and a follower. The leader broadcasts its position and the
-follower follows it.
-
-Beware that this plugin controls your protocol's mobility to implement its behaviour, so you should not use any other
-mobility plugin with it or implement any mobility behaviour in your protocol. The MobilityLeaderPlugin does not affect
-the node's movement and thus should be fine to use with other mobility plugin or mobility behaviour.
-"""
-
 import json
 from dataclasses import dataclass
 from typing import Optional, Dict, Set
 
-from gradysim.protocol.plugin.dispatcher import create_dispatcher, DispatchReturn
 from gradysim.protocol.interface import IProtocol
 from gradysim.protocol.messages.communication import CommunicationCommand, CommunicationCommandType
 from gradysim.protocol.messages.mobility import GotoCoordsMobilityCommand
-from gradysim.protocol.messages.telemetry import Telemetry
-from gradysim.protocol.position import Position
-
-BROADCAST_TIMER_TAG = "FollowMobilityPlugin__leader_broadcast_timer"
-"""
-The leader will broadcast its position using a timer with this name, make sure it doesn't conflict with other timers
-"""
-
-LEADER_TAG = "FollowMobilityPlugin__leader"
-"""
-The leader will broadcast its position using a packet with this tag, make sure it doesn't conflict with other packets
-"""
-
-FOLLOWER_TAG = "FollowMobilityPlugin__follower"
-"""
-
-"""
-
-FOLLOWER_TIMER_TAG = "FollowMobilityPlugin__follower_timer"
-
+from gradysim.protocol.plugin.dispatcher import create_dispatcher, DispatchReturn
+from gradysim.protocol.plugin.follow_mobility.mobility import LEADER_TAG, FOLLOWER_TAG, FOLLOWER_TIMER_TAG
+from gradysim.protocol.position import Position, rotate_position_2d
 
 class FollowMobilityException(Exception):
     pass
-
-
-@dataclass
-class MobilityLeaderConfiguration:
-    broadcast_interval: float = 0.02
-    """The interval at which the leader broadcasts its position"""
-
-    follower_timeout: float = 5
-    """
-    If we don't receive a message from a follower for this amount of simulation seconds we consider it disconnected
-    """
-
-
-class MobilityLeaderPlugin:
-    _position: Position
-
-    _last_connection_from_follower: Dict[int, float]
-    """Last broadcast round in which a follower was connected"""
-
-    def __init__(self, protocol: IProtocol, configuration: MobilityLeaderConfiguration = MobilityLeaderConfiguration()):
-        self._config = configuration
-        self._protocol = protocol
-        self._dispatcher = create_dispatcher(protocol)
-        self._last_connection_from_follower = {}
-        self._position = (0, 0, 0)
-        self.is_broadcasting = False
-
-        self._initialize_position_watching()
-        self._initialize_broadcast()
-        self._initialize_listening()
-
-    @property
-    def followers(self) -> Set[int]:
-        return set(self._last_connection_from_follower.keys())
-
-    def _cull_disconnected_followers(self) -> None:
-        """Culls disconnected followers"""
-        self._last_connection_from_follower = {
-            follower_id: last_broadcast_round
-            for follower_id, last_broadcast_round in self._last_connection_from_follower.items()
-            if self._broadcast_round - last_broadcast_round < self._config.follower_timeout
-        }
-
-    def _initialize_position_watching(self) -> None:
-        """Listens for position updates from the position module"""
-
-        def position_handler(_instance: IProtocol, telemetry: Telemetry) -> DispatchReturn:
-            self._position = telemetry.current_position
-            return DispatchReturn.CONTINUE
-
-        self._dispatcher.register_handle_telemetry(position_handler)
-
-    def _initialize_broadcast(self) -> None:
-        """Initializes position broadcast"""
-
-        def broadcast_handler(_instance: IProtocol, timer: str):
-            if timer != BROADCAST_TIMER_TAG:
-                return DispatchReturn.CONTINUE
-
-            leader_payload = {
-                "id": self._protocol.provider.get_id(),
-                "position": self._position
-            }
-
-            command = CommunicationCommand(
-                CommunicationCommandType.BROADCAST,
-                f"{LEADER_TAG}:{json.dumps(leader_payload)}"
-            )
-            self._protocol.provider.send_communication_command(command)
-
-            self._cull_disconnected_followers()
-
-            self._broadcast_round += 1
-
-            self._protocol.provider.schedule_timer(
-                BROADCAST_TIMER_TAG,
-                self._protocol.provider.current_time() + self._config.broadcast_interval
-            )
-            return DispatchReturn.INTERRUPT
-
-        self._dispatcher.register_handle_timer(broadcast_handler)
-
-        self._protocol.provider.schedule_timer(BROADCAST_TIMER_TAG, self._config.broadcast_interval)
-        self.is_broadcasting = True
-        self._broadcast_round = 0
-
-    def _initialize_listening(self) -> None:
-        """Listens for messages from followers"""
-
-        def listen_handler(_instance: IProtocol, message: str):
-            if not message.startswith(FOLLOWER_TAG):
-                return DispatchReturn.CONTINUE
-
-            follower_id = int(message.split(":")[1])
-            self._last_connection_from_follower[follower_id] = self._broadcast_round
-
-            return DispatchReturn.INTERRUPT
-
-        self._dispatcher.register_handle_packet(listen_handler)
-
 
 @dataclass
 class MobilityFollowerConfiguration:
@@ -160,10 +33,18 @@ class MobilityFollowerConfiguration:
     to that leader is lost the follower will automatically follow the first leader available.
     """
 
+    follow_orientation: bool = True
+    """
+    Whether the follower's relative position should shift with the leader's orientation.
+    If True, relative (X, Y) is rotated by the leader's orientation.
+    If False, relative position remains fixed in world coordinates.
+    """
+
 
 class MobilityFollowerPlugin:
     _leader: Optional[int] = None
     _leader_position: Optional[Position] = None
+    _leader_orientation: Optional[float] = None
 
     _relative_position: Position = (0, 0, 0)
 
@@ -194,10 +75,16 @@ class MobilityFollowerPlugin:
 
             if leader_id == self._leader:
                 self._leader_position = leader_payload["position"]
+                self._leader_orientation = leader_payload.get("orientation", 0.0)
+
+                if self._config.follow_orientation and self._leader_orientation is not None:
+                    relative_position = rotate_position_2d(self._relative_position, self._leader_orientation)
+                else:
+                    relative_position = self._relative_position
 
                 # Going to the leader's position at relative coordinates
                 destination = (coord + relative_coord
-                               for coord, relative_coord in zip(self._leader_position, self._relative_position))
+                               for coord, relative_coord in zip(self._leader_position, relative_position))
                 mobility_command = GotoCoordsMobilityCommand(*destination)
                 self._protocol.provider.send_mobility_command(mobility_command)
 
@@ -229,6 +116,7 @@ class MobilityFollowerPlugin:
             if self._leader is not None and self._leader not in self._last_leader_broadcast:
                 self._leader = None
                 self._leader_position = None
+                self._leader_orientation = None
 
             if self._leader is None and len(self.available_leaders) > 0:
                 self.follow_leader(list(self.available_leaders)[0])
@@ -258,6 +146,10 @@ class MobilityFollowerPlugin:
     @property
     def current_leader_position(self) -> Optional[Position]:
         return self._leader_position
+
+    @property
+    def current_leader_orientation(self) -> Optional[float]:
+        return self._leader_orientation
 
     def follow_leader(self, leader_id: int) -> None:
         if leader_id not in self.available_leaders:

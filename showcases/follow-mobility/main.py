@@ -7,7 +7,7 @@ from protocol import LeaderProtocol, FollowerProtocol
 
 
 def main():
-    builder = SimulationBuilder(SimulationConfiguration(duration=30, debug=True, real_time=True))
+    builder = SimulationBuilder(SimulationConfiguration(duration=60, debug=True, real_time=True))
     builder.add_handler(CommunicationHandler())
     builder.add_handler(TimerHandler())
     builder.add_handler(MobilityHandler())
