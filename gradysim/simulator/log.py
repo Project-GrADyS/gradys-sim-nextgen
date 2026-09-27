@@ -7,7 +7,7 @@ The logger annotates the output with timing information and execution context to
 
 import logging
 from pathlib import Path
-from typing import Optional
+from typing import Optional, List
 
 from gradysim.simulator.node import Node
 
@@ -70,3 +70,24 @@ def label_node(node: Node) -> str:
     except AttributeError:
         protocol_type_name = 'Node'
     return f"{protocol_type_name} {node.id}"
+
+
+def format_table(headers: List[str], rows: List[List[str]]) -> str:
+    """
+    Formats a text table for console reports. Columns are right-aligned, separated by two spaces and every
+    line is indented by two spaces.
+
+    Args:
+        headers: Column headers
+        rows: Rows of already formatted cells, each with one cell per header
+
+    Returns:
+        The formatted table, without a trailing newline
+    """
+    widths = [max([len(header)] + [len(row[i]) for row in rows]) for i, header in enumerate(headers)]
+    lines = [
+        "  ".join(header.rjust(width) for header, width in zip(headers, widths)),
+        "  ".join("-" * width for width in widths),
+    ]
+    lines += ["  ".join(cell.rjust(width) for cell, width in zip(row, widths)) for row in rows]
+    return "\n".join("  " + line for line in lines)
