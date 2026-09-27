@@ -22,7 +22,9 @@ from gradysim.simulator.node import Node
 
 from uav_api.run_api import spawn_with_args, run_with_args
 
-SITL_SLEEP_TIME = 5
+REQUEST_TIMEOUT = 10
+COMMAND_RETRY_TIME = 5
+TELEMETRY_TIMEOUT = 5
 REPORT_TIMEOUT = 5
 PROCESS_EXIT_TIMEOUT = 10
 LOG_PREFIX = "[ArdupilotMobility]"
@@ -60,25 +62,53 @@ class Drone:
         self._session: Optional[aiohttp.ClientSession] = None
         self._consumer_task = None
         self._api_process = None
+        self._log_path = None
 
         self.queue = asyncio.Queue()
         """Asynchronous functions without arguments, awaited in order by the request consumer"""
         self.position = initial_position
         self.telemetry_requested = False
 
-    async def request(self, method, path, **kwargs) -> dict:
+    async def request(self, method, path, timeout: Optional[float] = REQUEST_TIMEOUT, retry_for: float = 0,
+                      **kwargs) -> dict:
         """
-        Performs an HTTP request to this drone's UAV API and returns its JSON response. Raises if the
-        response status is not successful.
+        Performs an HTTP request to this drone's UAV API and returns its JSON response. Transient failures
+        (connection errors, timeouts and 5xx responses) are retried with exponential backoff until retry_for
+        seconds have passed, this is also how requests wait for a UAV API that is still starting. Other
+        failures raise immediately.
+
+        Args:
+            method: HTTP method
+            path: path of the UAV API endpoint
+            timeout: timeout in seconds of each attempt, None disables it
+            retry_for: time in seconds during which transient failures are retried
+            kwargs: forwarded to aiohttp (params, json)
         """
-        async with self._session.request(method, path, **kwargs) as response:
-            return await response.json()
+        deadline = time.monotonic() + retry_for
+        backoff = 0.25
+        while True:
+            try:
+                async with self._session.request(method, path, timeout=aiohttp.ClientTimeout(total=timeout),
+                                                 **kwargs) as response:
+                    return await response.json()
+            except (aiohttp.ClientConnectionError, aiohttp.ClientResponseError, asyncio.TimeoutError) as e:
+                transient = not isinstance(e, aiohttp.ClientResponseError) or e.status >= 500
+                if not transient or time.monotonic() + backoff > deadline:
+                    raise
+                # Retrying is pointless if the UAV API process is gone
+                if self._api_process is not None and not self._api_process.is_alive():
+                    raise ArdupilotMobilityException(
+                        f"UAV API for drone {self._node_id} exited (exit code {self._api_process.exitcode}). "
+                        f"See {self._log_path}") from e
+            await asyncio.sleep(backoff)
+            backoff = min(backoff * 2, 2)
 
     async def update_telemetry(self):
         """
         Updates the drone position from UAV API telemetry and marks the telemetry request as fulfilled.
         """
-        position = (await self.request("GET", "/telemetry/ned"))["info"]["position"]
+        # Not retried, the next telemetry event requests a new update anyway
+        position = (await self.request("GET", "/telemetry/ned", timeout=TELEMETRY_TIMEOUT))["info"]["position"]
         self.position = (position["x"], position["y"], -position["z"]) # translating NED frame to XYZ frame
         self.telemetry_requested = False
 
@@ -95,8 +125,9 @@ class Drone:
 
     def spawn(self, configuration: "ArdupilotMobilityConfiguration"):
         """
-        Starts a simulated UAV API instance (and its SITL) for this drone. The process output is discarded
-        unless uav_api_log_console is set, UAV API still writes its log file.
+        Starts a simulated UAV API instance (and its SITL) for this drone without waiting for it to be ready,
+        requests are retried while it starts. The process output is discarded unless uav_api_log_console is
+        set, UAV API still writes its log file.
         """
         sysid = self._node_id + 10
         raw_args = [
@@ -115,6 +146,9 @@ class Drone:
         for flag, value in optional_args.items():
             if value is not None:
                 raw_args += [flag, value]
+        # Default log location used by UAV API
+        self._log_path = configuration.uav_api_log_path or \
+            os.path.expanduser(f"~/.uav_api/logs/uav_logs/uav_{sysid}.log")
 
         if configuration.uav_api_log_console:
             self._api_process = spawn_with_args(raw_args)
@@ -122,26 +156,19 @@ class Drone:
             self._api_process = multiprocessing.Process(target=_run_uav_api_quietly, args=(raw_args,))
             self._api_process.start()
 
-        time.sleep(SITL_SLEEP_TIME)
-
-        if not self._api_process.is_alive():
-            # Default log location used by UAV API
-            log_path = configuration.uav_api_log_path or \
-                os.path.expanduser(f"~/.uav_api/logs/uav_logs/uav_{sysid}.log")
-            raise ArdupilotMobilityException(
-                f"UAV API for drone {self._node_id} exited during startup "
-                f"(exit code {self._api_process.exitcode}). See {log_path}")
-
-    async def start(self, sim_speedup: Optional[float]):
+    async def start(self, sim_speedup: Optional[float], startup_timeout: float):
         """
         Opens the HTTP session and drives the vehicle to the simulation starting point, then starts the
         request consumer. Simulated vehicles are spawned with SITL running at simulation_startup_speedup, once
         the starting point is reached SITL is set to sim_speedup. None skips it (real vehicles).
+
+        The first request is retried for startup_timeout seconds while UAV API is starting, every step has
+        startup_timeout seconds to complete.
         """
         self._session = aiohttp.ClientSession(base_url=f"http://localhost:{self._api_port}", raise_for_status=True)
 
         steps = [
-            ("GET", "/command/arm", {}),
+            ("GET", "/command/arm", {"retry_for": startup_timeout}),
             ("GET", "/command/takeoff", {"params": {"alt": 10}}),
             ("POST", "/movement/go_to_ned_wait", {"json": _ned(self.position)}),
         ]
@@ -150,7 +177,7 @@ class Drone:
 
         for method, path, kwargs in steps:
             self._logger.debug(f"[DRONE-{self._node_id}] {method} {path} {kwargs}")
-            await self.request(method, path, **kwargs)
+            await self.request(method, path, timeout=startup_timeout, **kwargs)
 
         self._consumer_task = asyncio.create_task(self._consume())
         await self.update_telemetry()
@@ -248,6 +275,12 @@ class ArdupilotMobilityConfiguration:
 
     uav_api_log_path: str = None
     """Path in which UAV API will save log files. Used in simulated mode."""
+
+    uav_api_startup_timeout: float = 120
+    """
+    Maximum time in seconds a drone's UAV API has to start accepting requests, and each setup step (arm,
+    takeoff, reaching the initial position) has to complete.
+    """
 
     uav_api_log_console: bool = False
     """
@@ -348,15 +381,13 @@ class ArdupilotMobilityHandler(IAsyncNodeHandler):
             self._logger.warning(f"{LOG_PREFIX} Real vehicles cannot be sped up, the simulation running at "
                                  f"{self._real_time:g}x real time will diverge from them")
 
-        if self._configuration.simulate_drones:
-            sim_speedup = self._real_time if self._real_time > 0 else 1.0
-            self._logger.info(f"{LOG_PREFIX} Waiting for {len(self.drones)} UAV API instances to be ready...")
-            time.sleep(SITL_SLEEP_TIME) # Wait for API process to start
-        else:
-            sim_speedup = None # Real vehicles cannot be sped up
+        # Real vehicles cannot be sped up
+        sim_speedup = (self._real_time if self._real_time > 0 else 1.0) if self._configuration.simulate_drones else None
+        startup_timeout = self._configuration.uav_api_startup_timeout
 
+        self._logger.info(f"{LOG_PREFIX} Waiting for {len(self.drones)} drones to reach their initial positions...")
         try:
-            self._run_all(drone.start(sim_speedup) for drone in self.drones.values())
+            self._run_all(drone.start(sim_speedup, startup_timeout) for drone in self.drones.values())
         except Exception as e:
             self._shutdown()
             raise ArdupilotMobilityException(f"Error initializing drones: {e}") from e
@@ -433,7 +464,7 @@ class ArdupilotMobilityHandler(IAsyncNodeHandler):
 
         drone = self.drones[node.id]
         method, path, kwargs = request
-        drone.queue.put_nowait(lambda: drone.request(method, path, **kwargs))
+        drone.queue.put_nowait(lambda: drone.request(method, path, retry_for=COMMAND_RETRY_TIME, **kwargs))
 
     async def _finalize_report(self):
         """
