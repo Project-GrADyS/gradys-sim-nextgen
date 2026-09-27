@@ -25,7 +25,6 @@ from uav_api.run_api import spawn_with_args, run_with_args
 SITL_SLEEP_TIME = 5
 REPORT_TIMEOUT = 5
 PROCESS_EXIT_TIMEOUT = 10
-STARTUP_SITL_SPEEDUP = 10
 LOG_PREFIX = "[ArdupilotMobility]"
 
 def _run_uav_api_quietly(raw_args):
@@ -106,7 +105,7 @@ class Drone:
             '--sysid', str(sysid),
             '--port', str(self._api_port),
             '--uav_connection', f'127.0.0.1:17{171 + self._node_id}',
-            '--speedup', str(STARTUP_SITL_SPEEDUP),
+            '--speedup', str(configuration.simulation_startup_speedup),
         ]
         optional_args = {
             "--gs_connection": configuration.ground_station_ip,
@@ -136,8 +135,8 @@ class Drone:
     async def start(self, sim_speedup: Optional[float]):
         """
         Opens the HTTP session and drives the vehicle to the simulation starting point, then starts the
-        request consumer. Simulated vehicles are spawned with a sped up SITL, once the starting point is
-        reached SITL is set to sim_speedup. None skips it (real vehicles).
+        request consumer. Simulated vehicles are spawned with SITL running at simulation_startup_speedup, once
+        the starting point is reached SITL is set to sim_speedup. None skips it (real vehicles).
         """
         self._session = aiohttp.ClientSession(base_url=f"http://localhost:{self._api_port}", raise_for_status=True)
 
@@ -256,11 +255,11 @@ class ArdupilotMobilityConfiguration:
     UAV API still writes its log file (see uav_api_log_path). Used in simulated mode.
     """
 
-    simulation_startup_speedup: int = 1
+    simulation_startup_speedup: int = 10
     """
-    Multiplier for SITL simulation time. This value will only affect the setup of the simulation,
-    after all drones are positioned in the right place and are ready to start, the simulation time
-    goes back to matching real time.    
+    SITL speedup used while drones are set up (UAV API spawn, takeoff and reaching the initial position),
+    passed to UAV API when it is spawned. Once all drones are ready, SITL is set to match the simulation's
+    real_time factor. Only used in simulated mode. Values above ~10 may introduce MAVLink timing artifacts.
     """
 class ArdupilotMobilityHandler(IAsyncNodeHandler):
     """

@@ -133,7 +133,7 @@ docs/Guides/ardupilot example/main.py:22:29
 | `generate_report` | `True` | Generate a CSV report with battery and telemetry statistics |
 | `ground_station_ip` | `None` | Optional IP to connect a ground control station (e.g., `"127.0.0.1:14550"`) |
 | `uav_api_log_path` | `None` | Optional directory for UAV API log files |
-| `simulation_startup_speedup` | `1` | Time multiplier during drone initialization (higher values speed up setup) |
+| `simulation_startup_speedup` | `10` | SITL speedup during drone setup, applied when UAV API is spawned. SITL then runs at the simulation's `real_time` factor |
 
 ### SimulationConfiguration
 
