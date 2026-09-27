@@ -1,6 +1,9 @@
 import asyncio
+import csv
 import logging
+import os
 import random
+import statistics
 import time
 from dataclasses import dataclass
 from datetime import timedelta
@@ -11,8 +14,8 @@ from gradysim.encapsulator.python import PythonEncapsulator
 from gradysim.protocol.interface import IProtocol
 from gradysim.protocol.position import Position
 from gradysim.simulator.event import EventLoop
-from gradysim.simulator.handler.interface import INodeHandler
-from gradysim.simulator.log import setup_simulation_formatter, label_node
+from gradysim.simulator.handler.interface import INodeHandler, IAsyncNodeHandler
+from gradysim.simulator.log import setup_simulation_formatter, label_node, format_table
 from gradysim.simulator.node import Node
 
 _FORCE_FAST_EXECUTION = False
@@ -81,6 +84,17 @@ class SimulationConfiguration:
     information about the simulation execution. This can be useful to identify bottlenecks in the simulation.
     """
 
+    timing_report: bool = False
+    """
+    Setting this flag to true writes a CSV with real-time timing information for every iteration to
+    timing_report.csv in the current working directory at the end of the simulation, and logs a summary.
+    Columns are iteration, simulation_time, real_time, time_until_next_event and time_drift, all in seconds.
+    real_time is the wall-clock time since the simulation started (after initialization) when the event was
+    executed, time_until_next_event is the wall-clock time the simulation had to wait before the event
+    (negative when already late) and time_drift is how far behind the wall clock the event was executed. Only meaningful in
+    real-time mode.
+    """
+
 
 
 class Simulator:
@@ -103,11 +117,14 @@ class Simulator:
             configuration: Simulation configuration
         """
         self._event_loop = EventLoop()
+        self._loop = asyncio.new_event_loop()
         self._nodes: Dict[int, Node] = {}
         self._handlers: Dict[str, INodeHandler] = handlers
 
         for handler in self._handlers.values():
             handler.inject(self._event_loop)
+            if isinstance(handler, IAsyncNodeHandler):
+                handler.inject_async(self._loop, float(configuration.real_time))
 
         self._configuration = configuration
 
@@ -125,6 +142,8 @@ class Simulator:
 
         self._profiling_context_total_count = {}
         self._profiling_context_total_time = {}
+
+        self._timing_samples = []
 
 
 
@@ -200,19 +219,42 @@ class Simulator:
             self.scope_event(0, 0, f"{label_node(node)} Initialization")
             node.protocol_encapsulator.initialize()
 
-    def _finalize_simulation(self) -> None:
+    def _finalize_simulation(self, raise_errors: bool = True) -> None:
+        """
+        Finalizes protocols and handlers. Each step is isolated so that one failure does not prevent the
+        others from cleaning up. If raise_errors is True the first error found is re-raised at the end,
+        any other error is logged.
+        """
         if self._finalized:
             return
+        self._finalized = True
 
-        for node in self._nodes.values():
-            self.scope_event(self._iteration, 0, f"{label_node(node)} Finalization")
-            node.protocol_encapsulator.finish()
+        first_error = None
+        try:
+            for node in self._nodes.values():
+                self.scope_event(self._iteration, 0, f"{label_node(node)} Finalization")
+                try:
+                    node.protocol_encapsulator.finish()
+                except Exception as e:
+                    if raise_errors and first_error is None:
+                        first_error = e
+                    else:
+                        self._logger.error(f"Error finalizing {label_node(node)}: {e}", exc_info=e)
 
-        for handler in self._handlers.values():
-            handler.finalize()
+            for label, handler in self._handlers.items():
+                try:
+                    handler.finalize()
+                except Exception as e:
+                    if raise_errors and first_error is None:
+                        first_error = e
+                    else:
+                        self._logger.error(f"Error finalizing handler '{label}': {e}", exc_info=e)
+        finally:
+            if not self._loop.is_closed():
+                self._loop.run_until_complete(self._loop.shutdown_asyncgens())
+                self._loop.close()
 
         self._formatter.clear_iteration()
-        self._finalized = True
 
         if self._configuration.profile:
             self._logger.info("[--------- Profiling information ---------]")
@@ -228,6 +270,18 @@ class Simulator:
         if not self._configuration.execution_logging:
             self._logger.setLevel(self._old_logger_level)
 
+        if raise_errors and first_error is not None:
+            raise first_error
+
+    def _ensure_initialized(self) -> None:
+        if self._initialized:
+            return
+        try:
+            self._initialize_simulation()
+        except Exception:
+            self._close_async_loop()
+            raise
+
     def step_simulation(self) -> bool:
         """
         Performs a single step in the simulation. This method is useful if you want to run the simulation in a
@@ -237,8 +291,7 @@ class Simulator:
         Returns:
             False if the simulation is done, True otherwise
         """
-        if not self._initialized:
-            self._initialize_simulation()
+        self._ensure_initialized()
 
         if self.is_simulation_done():
             self._finalize_simulation()
@@ -288,31 +341,49 @@ class Simulator:
         event loop or a termination condition is met. If not termination condition is set and events are generated
         infinitely this simulation will run forever.
         """
-        self._logger.info("[--------- Simulation started ---------]")
-        start_time = time.time()
+        start_time = None
+        try:
+            # Initialization happens before the wall clock reference is taken so that slow handler
+            # initializations (e.g. ArdupilotMobilityHandler) do not make every event start late
+            self._ensure_initialized()
+            self._formatter.clear_iteration()
+            self._logger.info("[--------- Simulation started ---------]")
+            start_time = time.time()
 
-        last_step_duration = 0
-        is_running = True
-        while is_running:
-            next_event = self._event_loop.peek_event()
+            real_time = self._configuration.real_time and not _FORCE_FAST_EXECUTION
+            speed = float(self._configuration.real_time) or 1
 
-            if next_event is not None and self._configuration.real_time and not _FORCE_FAST_EXECUTION:
-                time_until_next_event = (next_event.timestamp - (self._current_timestamp + last_step_duration))
-                sleep_duration = time_until_next_event / self._configuration.real_time
-                self._logger.debug(f"Sleeping duration: {sleep_duration}")
-                self._logger.debug(f"Next event: {next_event.context} at {timedelta(seconds=next_event.timestamp)}")
-                self._logger.debug(f"Current timestamp: {timedelta(seconds=self._current_timestamp)}")
-                self._logger.debug(f"Last step duration: {timedelta(seconds=last_step_duration)}")
-                if sleep_duration > 0:
-                    self._logger.debug(f"Sleeping for {timedelta(seconds=sleep_duration)} until next event")
-                    # Asynchronous sleep is used here because some asynchronous coroutines might be running in the background, we can use this sleep
-                    # time to advance them.
-                    # Example: ArdupilotMobilityHandler uses asynchronous coroutines to read telemetry data from the Ardupilot SITL.
-                    asyncio.get_event_loop().run_until_complete(asyncio.sleep(sleep_duration))
+            is_running = True
+            while is_running:
+                next_event = self._event_loop.peek_event()
 
-            step_start = time.time()
-            is_running = self.step_simulation()
-            last_step_duration = time.time() - step_start
+                if next_event is not None and real_time:
+                    scheduled_time = next_event.timestamp / speed
+                    time_until_next_event = scheduled_time - (time.time() - start_time)
+                    self._logger.debug(f"Time until next event: {time_until_next_event}")
+                    self._logger.debug(f"Next event: {next_event.context} at {timedelta(seconds=next_event.timestamp)}")
+                    self._logger.debug(f"Current timestamp: {timedelta(seconds=self._current_timestamp)}")
+                    if time_until_next_event > 0:
+                        self._logger.debug(f"Sleeping for {timedelta(seconds=time_until_next_event)} until next event")
+                        # Asynchronous sleep is used here because some asynchronous coroutines might be running in the background, we can use this sleep
+                        # time to advance them.
+                        # Example: ArdupilotMobilityHandler uses asynchronous coroutines to read telemetry data from the Ardupilot SITL.
+                        self._loop.run_until_complete(asyncio.sleep(time_until_next_event))
+
+                    elapsed = time.time() - start_time
+                    time_drift = elapsed - scheduled_time
+                    self._logger.debug(f"Time drift: {time_drift}")
+                    if self._configuration.timing_report:
+                        self._timing_samples.append(
+                            (self._iteration, next_event.timestamp, elapsed, time_until_next_event, time_drift))
+
+                is_running = self.step_simulation()
+        except KeyboardInterrupt:
+            self._logger.warning("Simulation interrupted, finalizing...")
+            self._finalize_simulation(raise_errors=False)
+            raise
+        finally:
+            self._report_timing()
 
         self._logger.info("[--------- Simulation finished ---------]")
         total_time = time.time() - start_time
@@ -320,6 +391,38 @@ class Simulator:
         self._logger.info(f"Real time elapsed: {timedelta(seconds=total_time)}\t"
                           f"Total iterations: {self._iteration}\t"
                           f"Simulation time: {timedelta(seconds=self._current_timestamp)}")
+
+    def _report_timing(self) -> None:
+        """
+        Writes the timing samples collected during a real-time simulation to a CSV file and logs a summary
+        """
+        if not self._configuration.timing_report or not self._timing_samples:
+            return
+
+        csv_path = os.path.abspath("timing_report.csv")
+        try:
+            with open(csv_path, "w", newline="") as csvfile:
+                writer = csv.writer(csvfile)
+                writer.writerow(["iteration", "simulation_time", "real_time", "time_until_next_event", "time_drift"])
+                writer.writerows(self._timing_samples)
+            saved_line = f"Report saved to {csv_path}"
+        except Exception as e:
+            saved_line = f"Could not save report to {csv_path}: {e}"
+
+        rows = []
+        for name, column in (("time_until_next_event", 3), ("time_drift", 4)):
+            values = [sample[column] for sample in self._timing_samples]
+            rows.append([name] + [f"{value:.4f}" for value in (values[-1], statistics.fmean(values), max(values))])
+        table = format_table(["Metric", "Last (s)", "Mean (s)", "Max (s)"], rows)
+        _, final_simulation_time, final_real_time, _, _ = self._timing_samples[-1]
+        # Simulation seconds executed per wall-clock second, 1.0 means the simulation kept up with real time
+        real_time_factor = f"{final_simulation_time / final_real_time:.4f}" if final_real_time > 0 else "n/a"
+        self._logger.info(f"Timing report\n{table}\n"
+                          f"  Final simulation time: {final_simulation_time:.4f} s\n"
+                          f"  Final wall-clock time: {final_real_time:.4f} s\n"
+                          f"  Configured real_time:  {float(self._configuration.real_time):g}\n"
+                          f"  Real time factor:      {real_time_factor}\n"
+                          f"{saved_line}")
 
     def is_simulation_done(self) -> bool:
         """
