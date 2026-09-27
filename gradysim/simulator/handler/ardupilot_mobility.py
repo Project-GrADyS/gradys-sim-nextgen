@@ -137,6 +137,7 @@ class Drone:
             '--port', str(self._api_port),
             '--uav_connection', f'127.0.0.1:17{171 + self._node_id}',
             '--speedup', str(configuration.simulation_startup_speedup),
+            '--mavlink_streamrate', str(configuration.mavlink_streamrate),
         ]
         optional_args = {
             "--gs_connection": configuration.ground_station_ip,
@@ -293,6 +294,13 @@ class ArdupilotMobilityConfiguration:
     SITL speedup used while drones are set up (UAV API spawn, takeoff and reaching the initial position),
     passed to UAV API when it is spawned. Once all drones are ready, SITL is set to match the simulation's
     real_time factor. Only used in simulated mode. Values above ~10 may introduce MAVLink timing artifacts.
+    """
+
+    mavlink_streamrate: int = 10
+    """
+    Rate in Hz of the MAVLink telemetry streams requested from the autopilot, passed to UAV API when it is
+    spawned. It bounds how fresh telemetry can be. Under SITL the effective rate is this value times the
+    SITL speedup. Only used in simulated mode.
     """
 class ArdupilotMobilityHandler(IAsyncNodeHandler):
     """
