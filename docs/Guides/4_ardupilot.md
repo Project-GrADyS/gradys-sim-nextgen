@@ -43,18 +43,39 @@ execution setup.
 ## Prerequisites
 
 !!!danger
-    ArdupilotMobilityHandler requires a local clone of the ArduPilot repository with SITL build tools configured.
-    Follow the [official ArduPilot SITL setup documentation](https://ardupilot.org/dev/docs/building-setup-linux.html) 
-    to clone and build the repository before proceeding.
+    ArdupilotMobilityHandler requires ArduPilot SITL to be installed and built on your machine. The easiest way to
+    do this is the `uav-api setup-sitl` command described below.
 
 Before running an Ardupilot-based simulation you need:
 
-1. **A cloned ArduPilot repository** — The `ardupilot_path` configuration parameter must point to your local clone.
-   Refer to the [ArduPilot developer documentation](https://ardupilot.org/dev/docs/building-setup-linux.html) for
-   cloning and setup instructions.
+1. **ArduPilot SITL** — [UAV API](https://github.com/Project-GrADyS/uav_api), which is installed together with
+   GrADyS-SIM NextGen, ships a command that sets up SITL for you. Run it once per machine, as your normal user
+   (not root). It asks for your password when it needs sudo:
+
+    ```bash
+    uav-api setup-sitl
+    source ~/.bashrc
+    ```
+
+    It takes several minutes and is safe to re-run, since every step that is already done is skipped. It clones
+    ArduPilot into `~/ardupilot`, installs its prerequisites (Debian/Ubuntu only), builds the SITL binaries and
+    adds ArduPilot's `Tools/autotest` directory to your `PATH`. Useful options:
+
+    | Option | Description |
+    |--------|-------------|
+    | `--ardupilot_path` | Where the ArduPilot checkout lives or will be cloned (default `~/ardupilot`) |
+    | `--vehicle copter` | Only build the copter binary, which is the one used by ArdupilotMobilityHandler |
+    | `--skip_prereqs` | Don't run the prerequisites script (no sudo/apt), if you installed them yourself |
+
+    See the [UAV API documentation](https://github.com/Project-GrADyS/uav_api#setting-up-sitl-setup-sitl) for
+    every option. On other systems, follow the
+    [official ArduPilot SITL setup documentation](https://ardupilot.org/dev/docs/building-setup-linux.html) instead.
+
+    Once `sim_vehicle.py` is on your `PATH`, you can leave the `ardupilot_path` configuration parameter as `None`.
+    Otherwise, point it at your ArduPilot checkout (`~/ardupilot` if you used `setup-sitl`).
 
 2. **Python dependencies** — The following packages are required and included in GrADyS-SIM NextGen's dependencies:
-    - `uav-api>=0.1.2` — HTTP interface to ArduPilot SITL
+    - `uav-api>=0.3.1` — HTTP interface to ArduPilot SITL
     - `aiohttp>=3.11.14` — Async HTTP client for drone communication
     - `pandas>=2.2.3` — Used for report generation
 
@@ -201,41 +222,59 @@ The handler supports the following mobility commands:
 
 ## Running the simulation
 
-To run the simulation, pass the path to your ArduPilot repository as a command-line argument:
+To run the simulation, pass the path to your ArduPilot repository as a command-line argument (`~/ardupilot` if
+you used `uav-api setup-sitl`):
 
 ```bash
-python main.py /path/to/ardupilot
+python main.py ~/ardupilot
 ```
 
 ### What happens at startup
 
-When the simulation starts, the following sequence occurs for each drone:
+When the simulation starts, the following sequence occurs for every drone, with all drones starting in parallel:
 
-1. **UAV API process spawns** — Each node gets its own UAV API HTTP server on a sequential port
-2. **SITL initializes** — ArduPilot SITL firmware boots up for each vehicle (takes a few seconds per drone)
+1. **UAV API process spawns** — Each node gets its own UAV API HTTP server on a sequential port. Its output is
+   discarded (set `uav_api_log_console=True` to see it); UAV API still writes its own log file
+2. **SITL initializes** — ArduPilot SITL firmware boots up for each vehicle, running at
+   `simulation_startup_speedup` to make the setup faster. The handler's requests are retried until UAV API
+   answers, for up to `uav_api_startup_timeout` seconds
 3. **Arming** — Each vehicle arms its motors
 4. **Takeoff** — Vehicles take off to 10 meters altitude
 5. **Navigate to start position** — Vehicles fly to their initial XYZ positions
-6. **Telemetry starts** — Periodic telemetry updates begin at the configured rate
+6. **Speedup adjusted** — SITL is set to match the simulation's `real_time` factor
+7. **Telemetry starts** — Periodic telemetry updates begin at the configured rate
 
 !!!info
-    Startup can take 30-60 seconds or more depending on the number of nodes, as each SITL 
-    instance needs time to boot and the vehicles must physically fly to their starting positions.
-    During this time you will see debug messages showing the progress of each drone.
+    Startup usually takes from a few seconds to a minute, since each SITL instance needs time to boot and the
+    vehicles must physically fly to their starting positions. If a UAV API process dies during startup, the
+    handler reports it right away together with the path of its log file.
 
 ### Expected console output
 
-Once running, you will see telemetry updates and protocol messages similar to the standard simulation. 
-At the end, the handler generates a report:
+During startup the handler reports the progress of every drone:
 
 ```
-GENERATING ARDUPILOT MOBILITY HANDLER REPORT:
-Report for drone 0:
-{'initial_battery': 100, 'telemetry_requests': 540, 'telemetry_drops': 12, 'final_battery': 87}
+INFO     [ArdupilotMobility] Starting simulated drone 0 (UAV API on port 8000)...
+INFO     [ArdupilotMobility] Starting simulated drone 1 (UAV API on port 8001)...
+INFO     [ArdupilotMobility] Waiting for 2 drones to reach their initial positions...
+INFO     [ArdupilotMobility] Drone 0 ready (UAV API on port 8000, at initial position (0.0, 0.0, 20.0))
+INFO     [ArdupilotMobility] Drone 1 ready (UAV API on port 8001, at initial position (100.0, 0.0, 20.0))
+INFO     [ArdupilotMobility] All 2 drones initialized
+```
 
-Report for drone 1:
-{'initial_battery': 100, 'telemetry_requests': 540, 'telemetry_drops': 8, 'final_battery': 89}
-...
+Once running, you will see telemetry updates and protocol messages similar to the standard simulation. 
+At the end, the handler logs a report and shuts every drone down:
+
+```
+INFO     [ArdupilotMobility] Mobility report
+  Node  Telemetry updates  Dropped  Drop rate  Battery start  Battery end  Consumed
+  ----  -----------------  -------  ---------  -------------  -----------  --------
+     0                540       12      2.22%           100%          87%       13%
+     1                540        8      1.48%           100%          89%       11%
+Report saved to /path/to/ardupilot_mobility_report.csv
+INFO     [ArdupilotMobility] Drone 0 shut down
+INFO     [ArdupilotMobility] Drone 1 shut down
+INFO     [ArdupilotMobility] All 2 drones shut down cleanly
 ```
 
 ## Understanding the report
