@@ -6,6 +6,6 @@ mkdocstrings==0.26.0
 mkdocstrings-python==1.11.1
 pytest==7.4.3
 websockets==12.0
-uav-api==0.1.3
+uav-api==0.3.1
 pandas==2.2.3
 aiohttp==3.11.14
