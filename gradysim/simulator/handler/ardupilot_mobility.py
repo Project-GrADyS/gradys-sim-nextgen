@@ -27,6 +27,7 @@ COMMAND_RETRY_TIME = 5
 TELEMETRY_TIMEOUT = 5
 REPORT_TIMEOUT = 5
 PROCESS_EXIT_TIMEOUT = 10
+MAX_STARTUP_STREAMRATE = 50 # Hz per drone
 LOG_PREFIX = "[ArdupilotMobility]"
 
 def _run_uav_api_quietly(raw_args):
@@ -123,11 +124,11 @@ class Drone:
             except Exception as e:
                 self._logger.debug(f"[DRONE-{self._node_id}] Error handling request: {e}")
 
-    def spawn(self, configuration: "ArdupilotMobilityConfiguration"):
+    def spawn(self, configuration: "ArdupilotMobilityConfiguration", startup_speedup: int):
         """
         Starts a simulated UAV API instance (and its SITL) for this drone without waiting for it to be ready,
         requests are retried while it starts. The process output is discarded unless uav_api_log_console is
-        set, UAV API still writes its log file.
+        set, UAV API still writes its log file. SITL starts running at startup_speedup.
         """
         sysid = self._node_id + 10
         raw_args = [
@@ -136,7 +137,7 @@ class Drone:
             '--sysid', str(sysid),
             '--port', str(self._api_port),
             '--uav_connection', f'127.0.0.1:17{171 + self._node_id}',
-            '--speedup', str(configuration.simulation_startup_speedup),
+            '--speedup', str(startup_speedup),
             '--mavlink_streamrate', str(configuration.mavlink_streamrate),
         ]
         optional_args = {
@@ -289,11 +290,12 @@ class ArdupilotMobilityConfiguration:
     UAV API still writes its log file (see uav_api_log_path). Used in simulated mode.
     """
 
-    simulation_startup_speedup: int = 10
+    simulation_startup_speedup: int = 5
     """
     SITL speedup used while drones are set up (UAV API spawn, takeoff and reaching the initial position),
     passed to UAV API when it is spawned. Once all drones are ready, SITL is set to match the simulation's
-    real_time factor. Only used in simulated mode. Values above ~10 may introduce MAVLink timing artifacts.
+    real_time factor. Only used in simulated mode. Capped so that mavlink_streamrate × speedup stays at or
+    below 50 Hz per drone.
     """
 
     mavlink_streamrate: int = 10
@@ -338,6 +340,7 @@ class ArdupilotMobilityHandler(IAsyncNodeHandler):
         self._loop = None
         self._real_time = 1.0
         self._shut_down = False
+        self._startup_speedup = None
 
     def inject(self, event_loop: EventLoop):
         self._injected = True
@@ -359,13 +362,27 @@ class ArdupilotMobilityHandler(IAsyncNodeHandler):
             raise ArdupilotMobilityException("Error registering node: cannot register nodes while Ardupilot "
                                              "mobility handler is uninitialized.")
 
+        if self._configuration.simulate_drones and self._startup_speedup is None:
+            # Under SITL the effective MAVLink stream rate is mavlink_streamrate × speedup
+            requested = self._configuration.simulation_startup_speedup
+            streamrate = self._configuration.mavlink_streamrate
+            self._startup_speedup = max(1, min(requested, MAX_STARTUP_STREAMRATE // streamrate))
+            if self._startup_speedup < requested:
+                self._logger.warning(f"{LOG_PREFIX} SITL startup speedup capped at {self._startup_speedup}x "
+                                     f"({requested}x requested) to keep MAVLink streams at or below "
+                                     f"{MAX_STARTUP_STREAMRATE} Hz per drone (mavlink_streamrate {streamrate} Hz)")
+            if streamrate > MAX_STARTUP_STREAMRATE:
+                self._logger.warning(f"{LOG_PREFIX} mavlink_streamrate {streamrate} Hz exceeds the "
+                                     f"{MAX_STARTUP_STREAMRATE} Hz per drone startup limit even without speedup, "
+                                     f"consider lowering it")
+
         drone = Drone(node.id, node.position, self._logger, self._configuration.starting_api_port)
         self.drones[node.id] = drone
 
         if self._configuration.simulate_drones:
             self._logger.info(f"{LOG_PREFIX} Starting simulated drone {node.id} (UAV API on port {drone._api_port})...")
             try:
-                drone.spawn(self._configuration)
+                drone.spawn(self._configuration, self._startup_speedup)
             except Exception as e:
                 # The simulator is not finalized during build, so processes already spawned must be stopped here
                 for spawned_drone in self.drones.values():

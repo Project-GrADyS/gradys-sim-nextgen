@@ -133,7 +133,7 @@ docs/Guides/ardupilot example/main.py:22:29
 | `generate_report` | `True` | Generate a CSV report with battery and telemetry statistics |
 | `ground_station_ip` | `None` | Optional IP to connect a ground control station (e.g., `"127.0.0.1:14550"`) |
 | `uav_api_log_path` | `None` | Optional directory for UAV API log files |
-| `simulation_startup_speedup` | `10` | SITL speedup during drone setup, applied when UAV API is spawned. SITL then runs at the simulation's `real_time` factor |
+| `simulation_startup_speedup` | `5` | SITL speedup during drone setup, applied when UAV API is spawned. SITL then runs at the simulation's `real_time` factor; capped so `mavlink_streamrate × speedup` ≤ 50 Hz per drone |
 | `mavlink_streamrate` | `10` | Rate in Hz of the MAVLink telemetry streams requested from the autopilot (applied when UAV API is spawned). Under SITL the effective rate is multiplied by the SITL speedup |
 | `uav_api_startup_timeout` | `120` | Maximum time in seconds a UAV API has to start accepting requests, and each setup step (arm, takeoff, reaching the initial position) has to complete |
 
