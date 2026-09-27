@@ -219,6 +219,12 @@ class Simulator:
             self.scope_event(0, 0, f"{label_node(node)} Initialization")
             node.protocol_encapsulator.initialize()
 
+    def _close_async_loop(self) -> None:
+        # The simulator owns the asyncio loop, so it is responsible for closing it
+        if not self._loop.is_closed():
+            self._loop.run_until_complete(self._loop.shutdown_asyncgens())
+            self._loop.close()
+
     def _finalize_simulation(self, raise_errors: bool = True) -> None:
         """
         Finalizes protocols and handlers. Each step is isolated so that one failure does not prevent the
@@ -250,9 +256,7 @@ class Simulator:
                     else:
                         self._logger.error(f"Error finalizing handler '{label}': {e}", exc_info=e)
         finally:
-            if not self._loop.is_closed():
-                self._loop.run_until_complete(self._loop.shutdown_asyncgens())
-                self._loop.close()
+            self._close_async_loop()
 
         self._formatter.clear_iteration()
 
