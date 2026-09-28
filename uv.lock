@@ -853,7 +853,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "aiohttp", specifier = ">=3.11.14" },
+    { name = "aiohttp", specifier = ">=3.14.3" },
     { name = "pandas", specifier = ">=2.2.3" },
     { name = "uav-api", specifier = ">=0.3.1" },
     { name = "websockets", specifier = ">=12" },

@@ -8,4 +8,4 @@ pytest==7.4.3
 websockets==12.0
 uav-api==0.3.1
 pandas==2.2.3
-aiohttp==3.11.14
+aiohttp==3.14.3

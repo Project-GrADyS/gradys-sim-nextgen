@@ -76,7 +76,7 @@ Before running an Ardupilot-based simulation you need:
 
 2. **Python dependencies** — The following packages are required and included in GrADyS-SIM NextGen's dependencies:
     - `uav-api>=0.3.1` — HTTP interface to ArduPilot SITL
-    - `aiohttp>=3.11.14` — Async HTTP client for drone communication
+    - `aiohttp>=3.14.3` — Async HTTP client for drone communication
     - `pandas>=2.2.3` — Used for report generation
 
 3. **Available network ports** — Each drone spawns a UAV API process on a sequential port starting from 
