@@ -171,11 +171,11 @@ class Drone:
 
         steps = [
             ("GET", "/command/arm", {"retry_for": startup_timeout}),
-            ("GET", "/command/takeoff", {"params": {"alt": 10}}),
-            ("POST", "/movement/go_to_ned_wait", {"json": _ned(self.position)}),
+            ("GET", "/command/takeoff", {"params": {"alt": 10}, "retry_for": startup_timeout}),
+            ("POST", "/movement/go_to_ned_wait", {"json": _ned(self.position), "retry_for": startup_timeout}),
         ]
         if sim_speedup is not None:
-            steps.append(("GET", "/command/set_sim_speedup", {"params": {"sim_factor": sim_speedup}}))
+            steps.append(("GET", "/command/set_sim_speedup", {"params": {"sim_factor": sim_speedup}, "retry_for": startup_timeout}))
 
         for method, path, kwargs in steps:
             self._logger.debug(f"[DRONE-{self._node_id}] {method} {path} {kwargs}")
