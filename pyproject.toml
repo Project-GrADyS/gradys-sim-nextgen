@@ -7,7 +7,7 @@ include = ["gradys*"]
 
 [project]
 name = "gradysim"
-version = "0.8.1"
+version = "0.8.2"
 description = "GrADyS-SIM NextGen is a framework for implementing distributed algorithms in a simulated network environment"
 keywords = ["network", "distributed", "algorithm", "simulation", "gradys", "LAC", "PUC", "drone", "sensor"]
 authors = [
@@ -24,9 +24,9 @@ classifiers = [
 requires-python = ">=3.10"
 dependencies = [
     'websockets>=12',
-    'uav-api>=0.1.3',
+    'uav-api>=0.3.1',
     'pandas>=2.2.3',
-    'aiohttp>=3.11.14'
+    'aiohttp>=3.14.3'
 ]
 
 [project.urls]

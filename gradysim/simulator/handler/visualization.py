@@ -260,4 +260,8 @@ def _visualization_thread(config: VisualizationConfiguration,
 
             await update_information()
 
-    asyncio.run(main())
+    try:
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        # The parent process terminates this process during finalization
+        pass

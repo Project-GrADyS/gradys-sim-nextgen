@@ -3,6 +3,7 @@ from abc import ABC, abstractmethod
 from gradysim.simulator.event import EventLoop
 from gradysim.simulator.node import Node
 
+from asyncio import AbstractEventLoop
 
 class INodeHandler(ABC):
     """
@@ -65,5 +66,24 @@ class INodeHandler(ABC):
         """
         This is called after the simulation is finished. Useful if the handler implements some functionality
         that depends on running code at the end of the simulation.
+        """
+        pass
+
+class IAsyncNodeHandler(INodeHandler):
+    """
+    The common interface for Asynchronous Hanlders (handlers that needs to spawn coroutines that will run
+    while main loop is sleeping)
+    """
+
+
+    def inject_async(self, asyncio_loop: AbstractEventLoop, real_time: float):
+        """
+        This function is called right after inject for asynchronous handlers. Provides the asyncio loop used to
+        run their coroutines and the simulation's real-time factor (0 when not running in real-time mode), so
+        handlers synchronized with the wall clock can match their external time source.
+
+        Args:
+            asyncio_loop: The asyncio loop owned by the simulator
+            real_time: The simulation's real-time factor, 0 if not running in real-time mode
         """
         pass
